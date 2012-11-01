@@ -289,3 +289,15 @@ Once you go through the authorization steps, you can Add/Edit/Delete Shopify Blo
   </runtime>
 </configuration>
 ```
+
+# TODO
+
+* Fetch of individual objects
+* build some logic for the standard REST object pattern.
+* following that, build out POCOs for standard Shopify API types
+* make dynamic (late bound-style) method fetchers separate from strong
+  typed API
+* make derivative ShopifyExceptions
+* decide whether or not to use a pull request or a renamed fork
+* retest in VS 2012 in Windows
+* retest demo MVC 4 app

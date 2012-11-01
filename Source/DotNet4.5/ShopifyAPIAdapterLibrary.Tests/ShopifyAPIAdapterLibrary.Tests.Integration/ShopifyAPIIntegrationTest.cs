@@ -14,7 +14,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
     /// Test the interaction with the actual, running service at api.shopify.com.
     /// </summary>
     [TestFixture]
-    public class ShopifyAuthorizerIntegrationTest
+    public class ShopifyAPIIntegrationTest
     {
         ShopifyAuthorizationState AuthorizationState {
             get;
@@ -24,7 +24,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         String TestStoreName;
         ShopifyAPIClient ShopifyClient;
 
-        public ShopifyAuthorizerIntegrationTest ()
+        public ShopifyAPIIntegrationTest ()
         {
             TestStoreName = ConfigurationManager.AppSettings ["Shopify.TestStoreName"];
         }
@@ -120,13 +120,19 @@ namespace ShopifyAPIAdapterLibrary.Tests
                 }
             });
             postTask.Wait();
-            // TODO attempt to fetch it back
-        }
 
-        [Test]
-        public void ShouldFetchAllArticles ()
-        {
+            dynamic postResult = postTask.Result;
 
+            var newId = postResult.product.id;
+
+            Assert.NotNull (newId);
+
+            // and fetch it back
+            var getTask = ShopifyClient.Get (String.Format("/admin/products/{0}.json", newId));
+            getTask.Wait ();
+            Assert.NotNull(getTask.Result);
+            dynamic getResult = getTask.Result;
+            Assert.AreEqual("Rearden Metal", (string)getResult.product.title);
         }
 
         [Test]

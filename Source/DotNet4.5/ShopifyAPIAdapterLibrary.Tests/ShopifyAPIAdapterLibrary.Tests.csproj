@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ShopifyAuthorizerTest.cs" />
-    <Compile Include="ShopifyAPIAdapterLibrary.Tests.Integration\ShopifyAuthorizerIntegrationTest.cs" />
+    <Compile Include="ShopifyAPIAdapterLibrary.Tests.Integration\ShopifyAPIIntegrationTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
