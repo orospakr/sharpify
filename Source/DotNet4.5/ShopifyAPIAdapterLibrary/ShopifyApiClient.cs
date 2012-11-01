@@ -5,6 +5,8 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Web;
+using System.Threading.Tasks;
+using System.Net.Http;
 
 
 namespace ShopifyAPIAdapterLibrary
@@ -45,7 +47,7 @@ namespace ShopifyAPIAdapterLibrary
         /// <param name="path">the path that should be requested</param>
         /// <seealso cref="http://api.shopify.com/"/>
         /// <returns>the server response</returns>
-        public object Call(HttpMethods method, string path)
+        public Task<object> Call(HttpMethod method, string path)
         {
             return Call(method, path, null);
         }
@@ -58,16 +60,21 @@ namespace ShopifyAPIAdapterLibrary
         /// <param name="callParams">any parameters needed or expected by the API</param>
         /// <seealso cref="http://api.shopify.com/"/>
         /// <returns>the server response</returns>
-        public object Call(HttpMethods method, string path, object callParams)
+        public async Task<object> Call(HttpMethod method, string path, object callParams)
         {
             string url = String.Format("https://{0}.myshopify.com{1}", State.ShopName, path);
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.ContentType = GetRequestContentType();
+
+            var http = new HttpClient();
+
+            var request = new HttpRequestMessage(method, url);
+            
+
             request.Headers.Add("X-Shopify-Access-Token", this.State.AccessToken);
-            request.Method = method.ToString();
+            request.Method = method;
+
             if (callParams != null)
             {
-                if (method == HttpMethods.GET || method == HttpMethods.DELETE)
+                if (method == HttpMethod.Get || method == HttpMethod.Delete)
                 {
                     // if no translator assume data is a query string
                     url = String.Format("{0}?{1}", url, callParams.ToString());
@@ -79,7 +86,7 @@ namespace ShopifyAPIAdapterLibrary
                     //    queryString.AppendFormat("{0}={1}", HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(callParams[key]));
                     //}
                 }
-                else if (method == HttpMethods.POST || method == HttpMethods.PUT)
+                else if (method == HttpMethod.Post || method == HttpMethod.Put)
                 {
                     string requestBody;
                     // put params into post body
@@ -93,36 +100,26 @@ namespace ShopifyAPIAdapterLibrary
                         requestBody = Translator.Encode(callParams);
                     }
 
-                    //add the requst body to the request stream
-                    if (!String.IsNullOrEmpty(requestBody))
-                    {
-                        using (var ms = new MemoryStream())
-                        {
-                            using (var writer = new StreamWriter(request.GetRequestStream()))
-                            {
-                                writer.Write(requestBody);
-                                writer.Close();
-                            }
-                        }
-                    }
+                    var postContent = new StringContent(requestBody);
+                    postContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(GetRequestContentType());
+
+                    request.Content = postContent;
                 }
             }
 
-            var response = (HttpWebResponse)request.GetResponse();
-            string result = null;
+            var response = await http.SendAsync(request);
 
-            using (Stream stream = response.GetResponseStream())
-            {
-                StreamReader sr = new StreamReader(stream);
-                result = sr.ReadToEnd();
-                sr.Close();
+            var result = await response.Content.ReadAsStringAsync();
+
+            if(response.IsSuccessStatusCode) {
+                if (Translator != null) {
+                    return Translator.Decode(result);
+                } else {
+                    return result;
+                }
+            } else {
+                throw new ShopifyException(result, response.StatusCode);
             }
-
-            if (Translator != null)
-                return Translator.Decode(result);
-
-            return result;
-
         }
 
         /// <summary>
@@ -131,7 +128,7 @@ namespace ShopifyAPIAdapterLibrary
         /// <param name="path">the path where the API call will be made.</param>
         /// <seealso cref="http://api.shopify.com/"/>
         /// <returns>the server response</returns>
-        public object Get(string path)
+        public Task<object> Get(string path)
         {
             return Get(path, null);
         }
@@ -143,9 +140,9 @@ namespace ShopifyAPIAdapterLibrary
         /// <param name="callParams">the querystring params</param>
         /// <seealso cref="http://api.shopify.com/"/>
         /// <returns>the server response</returns>
-        public object Get(string path, NameValueCollection callParams)
+        public Task<object> Get(string path, NameValueCollection callParams)
         {
-            return Call(HttpMethods.GET, path, callParams);
+            return Call(HttpMethod.Get, path, callParams);
         }
 
         /// <summary>
@@ -155,9 +152,9 @@ namespace ShopifyAPIAdapterLibrary
         /// <param name="data">the data that this path will be expecting</param>
         /// <seealso cref="http://api.shopify.com/"/>
         /// <returns>the server response</returns>
-        public object Post(string path, object data)
+        public Task<object> Post(string path, object data)
         {
-            return Call(HttpMethods.POST, path, data);
+            return Call(HttpMethod.Post, path, data);
         }
 
         /// <summary>
@@ -167,9 +164,9 @@ namespace ShopifyAPIAdapterLibrary
         /// <param name="data">the data that this path will be expecting</param>
         /// <seealso cref="http://api.shopify.com/"/>
         /// <returns>the server response</returns>
-        public object Put(string path, object data)
+        public Task<object> Put(string path, object data)
         {
-            return Call(HttpMethods.PUT, path, data);
+            return Call(HttpMethod.Put, path, data);
         }
 
         /// <summary>
@@ -178,9 +175,9 @@ namespace ShopifyAPIAdapterLibrary
         /// <param name="path">the path where the API call will be made.</param>
         /// <seealso cref="http://api.shopify.com/"/>
         /// <returns>the server response</returns>
-        public object Delete(string path)
+        public Task<object> Delete(string path)
         {
-            return Call(HttpMethods.DELETE, path);
+            return Call(HttpMethod.Delete, path);
         }
 
         /// <summary>
@@ -191,17 +188,6 @@ namespace ShopifyAPIAdapterLibrary
             if (Translator == null)
                 return DefaultContentType;
             return Translator.GetContentType();
-        }
-
-        /// <summary>
-        /// The enumeration of HTTP Methods used by the API
-        /// </summary>
-        public enum HttpMethods
-        {
-            GET,
-            POST,
-            PUT,
-            DELETE
         }
 
         /// <summary>

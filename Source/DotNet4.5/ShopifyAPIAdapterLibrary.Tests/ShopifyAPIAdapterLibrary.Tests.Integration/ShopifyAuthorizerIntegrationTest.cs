@@ -95,25 +95,32 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [Test]
         public void ShouldFetchAllProducts ()
         {
-            dynamic products = ShopifyClient.Get ("/admin/products.json");
+            var productsTask = ShopifyClient.Get ("/admin/products.json");
+            productsTask.Wait();
+            dynamic products = productsTask.Result;
             // validate that we're actually getting a list back, even though we can't check
             // deeper because we don't strictly know the content of the test store
             Assert.AreEqual (typeof(Newtonsoft.Json.Linq.JArray), products.products.GetType ());
+            Assert.Greater(products.products.Count, 2);
             // informative for the log:
+
             foreach (var product in products.products) {
                 Console.WriteLine ("GOT PRODUCT: " + product.title);
             }
         }
 
         [Test]
-        public void ShouldCreateAndReplaceAProduct ()
+        public void ShouldCreateAndFetchBackAProduct ()
         {
-            dynamic productResponse = ShopifyClient.Post ("/admin/products.json", new {
+            var postTask = ShopifyClient.Post ("/admin/products.json", new {
                 product = new {
                     title = "Rearden Metal",
-                    body_html = "Resistant to corrosion and evasion of reality"
+                    body_html = "Resistant to corrosion and evasion of reality",
+                    product_type = "metal"
                 }
             });
+            postTask.Wait();
+            // TODO attempt to fetch it back
         }
 
         [Test]
