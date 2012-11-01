@@ -3,7 +3,9 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Web;
+using System.Net.Http;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace ShopifyAPIAdapterLibrary
 {
@@ -84,7 +86,7 @@ namespace ShopifyAPIAdapterLibrary
         /// </summary>
         /// <param name="code">a code given to you by shopify</param>
         /// <returns>Authorization state needed by the API client to make API calls</returns>
-        public ShopifyAuthorizationState AuthorizeClient(string code)
+        public async Task<ShopifyAuthorizationState> AuthorizeClient(string code)
         {
             string url = String.Format("https://{0}.myshopify.com/admin/oauth/access_token", _shopName);
             string postBody = String.Format("client_id={0}&client_secret={1}&code={2}",
@@ -92,40 +94,31 @@ namespace ShopifyAPIAdapterLibrary
                 _secret,    // {1}
                 code);      // {2}
 
-            HttpWebRequest authRequest = (HttpWebRequest)WebRequest.Create(url);
-            authRequest.Method = "POST";
-            authRequest.ContentType = "application/x-www-form-urlencoded";
-            using (var ms = new MemoryStream())
+            var http = new HttpClient();
+            var postContent = new StringContent(postBody);
+            postContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
+
+            var respond = await http.PostAsync(url, postContent);
+
+            var responseText = await respond.Content.ReadAsStringAsync();
+            if (respond.IsSuccessStatusCode)
             {
-                using (var writer = new StreamWriter(authRequest.GetRequestStream()))
+                if (!String.IsNullOrEmpty(responseText))
                 {
-                    writer.Write(postBody);
-                    writer.Close();
+                    // it's JSON so decode it
+                    JObject jsonResult = JObject.Parse(responseText);
+                    return new ShopifyAuthorizationState
+                    {
+                        ShopName = this._shopName,
+                        AccessToken = (string)jsonResult["access_token"]
+                    };
+                } else {
+                    return null;
                 }
-            }
-
-            var response = (HttpWebResponse)authRequest.GetResponse();
-            string result = null;
-
-            using (Stream stream = response.GetResponseStream())
+            } else
             {
-                StreamReader sr = new StreamReader(stream);
-                result = sr.ReadToEnd();
-                sr.Close();
+                throw new ShopifyException(responseText, respond.StatusCode);
             }
-
-            if (!String.IsNullOrEmpty(result))
-            {
-                // it's JSON so decode it
-                JObject jsonResult = JObject.Parse(result);
-                return new ShopifyAuthorizationState
-                {
-                    ShopName = this._shopName,
-                    AccessToken = (string)jsonResult["access_token"]
-                };
-            }
-
-            return null;
         }
     }
 

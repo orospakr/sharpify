@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using SampleWebApp.Models;
 using ShopifyAPIAdapterLibrary;
+using System.Threading.Tasks;
 
 namespace SampleWebApp.Controllers
 {
@@ -58,7 +59,7 @@ namespace SampleWebApp.Controllers
         /// <param name="shop"></param>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult ShopifyAuthCallback(string code, string shop, string error)
+        public async Task<ActionResult> ShopifyAuthCallback(string code, string shop, string error)
         {
             if (!String.IsNullOrEmpty(error))
             {
@@ -71,7 +72,7 @@ namespace SampleWebApp.Controllers
             var shopName = shop.Replace(".myshopify.com", String.Empty);
             var authorizer = new ShopifyAPIAuthorizer(shopName, ConfigurationManager.AppSettings["Shopify.ConsumerKey"], ConfigurationManager.AppSettings["Shopify.ConsumerSecret"]);
 
-            ShopifyAuthorizationState authState = authorizer.AuthorizeClient(code);
+            ShopifyAuthorizationState authState = await authorizer.AuthorizeClient(code);
             if (authState != null && authState.AccessToken != null)
             {
                 Shopify.ShopifyAuthorize.SetAuthorization(this.HttpContext, authState);
