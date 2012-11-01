@@ -110,6 +110,25 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
+        public void ShouldThrowErrorWhenFetchingNonexistentResource ()
+        {
+            var getTask = ShopifyClient.Get ("/admin/products/doesnotexist.json");
+            var notFound = false;
+            try {
+                getTask.Wait ();
+            } catch (AggregateException ae) {
+                ae.Handle((e) => {
+                    if(e is NotFoundException) {
+                        notFound = true;
+                        return true;
+                    }
+                    return false;
+                });
+            }
+            Assert.IsTrue(notFound);
+        }
+
+        [Test]
         public void ShouldCreateAndFetchBackAProduct ()
         {
             var postTask = ShopifyClient.Post ("/admin/products.json", new {

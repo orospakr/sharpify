@@ -52,6 +52,17 @@ namespace ShopifyAPIAdapterLibrary
             return Call(method, path, null);
         }
 
+        public ShopifyException HandleError(HttpStatusCode statusCode, string reason)
+        {
+            if (statusCode == HttpStatusCode.NotFound)
+            {
+                return new NotFoundException(reason, statusCode);
+            } else
+            {
+                return new ShopifyException(reason, statusCode);
+            }
+        }
+
         /// <summary>
         /// Make an HTTP Request to the Shopify API
         /// </summary>
@@ -118,7 +129,7 @@ namespace ShopifyAPIAdapterLibrary
                     return result;
                 }
             } else {
-                throw new ShopifyException(result, response.StatusCode);
+                throw HandleError(response.StatusCode, result);
             }
         }
 

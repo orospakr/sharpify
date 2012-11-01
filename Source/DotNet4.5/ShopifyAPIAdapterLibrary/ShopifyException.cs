@@ -16,5 +16,11 @@ namespace ShopifyAPIAdapterLibrary
             StatusCode = statusCode;
         }
     }
+
+    public class NotFoundException : ShopifyException {
+        public NotFoundException(String reason, HttpStatusCode statusCode) : base(reason, statusCode)
+        {
+        }
+    }
 }
 
