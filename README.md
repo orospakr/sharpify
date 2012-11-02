@@ -1,30 +1,34 @@
 # shopify.net
-===========
 
-Lightweight object-oriented .NET client for the Shopify API
+Lightweight object-oriented .NET client for the Shopify API.
 
 ## Author
 
 Colin McDonald - [colinmcdonald.ca](http://colinmcdonald.ca)
+Andrew Clunis - [andrew@orospakr.ca](andrew@orospakr.ca)
 
 ## Requirements
 
-* .NET 2.0 or greater
-	* the DotNet2.0 folder contains a Visual Studio 2010 solution
-	* the DotNet4.5 folder contains a solution created with Visual Studio 11 Beta Express for Web
-		*  MVC3 is required to build and run the Sample App in the DotNet4.5
+* Mono 3.0 or .NET 4.5 or greater
+  * MVC3 is required to build and run the Sample Web app (I haven't
+    tried this with Mono yet)
 
 ## Installation
 
-For now, the easiest and only, download the source code and add the project to your solution.
+For now, the easiest and only, download the source code and add the
+project to your solution.
 
 ## Shopify API Authorization
 
-In order to understand how shopify authorizes your code to make API calls for a certain shopify customer, I recommend reading this document: [Shopify API Authentication](http://api.shopify.com/authentication.html)
+In order to understand how shopify authorizes your code to make API
+calls for a certain shopify customer, I recommend reading this
+document:
+[Shopify API Authentication](http://api.shopify.com/authentication.html)
 
 ### ShopifyAPIAuthorizer
 
-This is the class in this library that will enable your code to quickly authorize your app.
+This is the class in this library that will enable your code to
+quickly authorize your app.
 
 ```csharp
 
@@ -59,7 +63,7 @@ This is the class in this library that will enable your code to quickly authoriz
         /// </summary>
         /// <param name="code">a code given to you by shopify</param>
         /// <returns>Authorization state needed by the API client to make API calls</returns>
-        public ShopifyAuthorizationState AuthorizeClient(string code)
+        public async Task<ShopifyAuthorizationState> AuthorizeClient(string code)
     }
 
 ```
@@ -102,13 +106,16 @@ This is a quick litte example to show you how you would use the ShopifyAPIAuthor
     if (string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(shop))
         return RedirectToAction("Index", "Home");
 
+    // retrieve the shop name again from the incoming redirect
+    // because this is as likely as not elsewhere in your app
     var shopName = shop.Replace(".myshopify.com", String.Empty);
+    
 	var authorizer = new ShopifyAPIAuthorizer(shopName, 
 		ConfigurationManager.AppSettings["Shopify.ConsumerKey"], // In this case I keep my key and secret in my config file
 		ConfigurationManager.AppSettings["Shopify.ConsumerSecret"]);
 
 	// get the authorization state
-    ShopifyAuthorizationState authState = authorizer.AuthorizeClient(code);
+    ShopifyAuthorizationState authState = await authorizer.AuthorizeClient(code);
 
     if (authState != null && authState.AccessToken != null)
     {
@@ -119,9 +126,15 @@ This is a quick litte example to show you how you would use the ShopifyAPIAuthor
 
 ## Shopify API Usage
 
-In order to use the Shopify API you will have to become intimate knowledge-wise with this documentation: [API Docs](http://api.shopify.com/). It is for that reason that I have purposly designed this class.  You will not be hidden from the URLs of the API or the ways in which the API will require the data to be passed.
+In order to use the Shopify API you will have to become intimate
+knowledge-wise with this documentation:
+[API Docs](http://api.shopify.com/). It is for that reason that I have
+purposly designed this class.  You will not be hidden from the URLs of
+the API or the ways in which the API will require the data to be
+passed.
 
-Once you have used the ShopifyAPIAuthorizer class to get the authorization state you can make API calls.
+Once you have used the ShopifyAPIAuthorizer class to get the
+authorization state you can make API calls.
 
 ### Using ShopifyAPIClient
 
@@ -138,7 +151,7 @@ Get all Products from the API.  (.NET 2.0 and up)
 
 ```
 
-Get all Products from the API. (.NET 4.5)
+Get all Products from the API:
 
 ```csharp
 
@@ -146,7 +159,7 @@ Get all Products from the API. (.NET 4.5)
 	var api = new ShopifyAPIClient(authState, new JsonDataTranslator());
 
 	// The JSON Data Translator will automatically decode the JSON for you
-	dynamic data = api.Get("/admin/products.json");
+	dynamic data = await api.Get("/admin/products.json");
 
 	// the dynamic object will have all the fields just like in the API Docs
 	foreach(var product in data.products)
@@ -156,7 +169,7 @@ Get all Products from the API. (.NET 4.5)
 	
 ```
 
-Create a Product. (.NET 2.0 and up)
+Create a Product, using raw JSON in a string:
 
 ```csharp
 	
@@ -172,11 +185,11 @@ Create a Product. (.NET 2.0 and up)
 			"}" +
 		"}";
 
-	string createProductResponse = api.Post("/admin/products.json");
+	string createProductResponse = await api.Post("/admin/products.json");
 	
 ```
 
-Update a Product. (.NET 4.5)
+Create a product, using an anonymous class:
 
 ```csharp
 
@@ -192,29 +205,32 @@ Update a Product. (.NET 4.5)
             body_html	= "<strong>Good snowboard!</strong>"
         } 
     };
-    dynamic createProductResponse = api.Post("/admin/products.json", newProduct);
+    dynamic createProductResponse = await api.Post("/admin/products.json", newProduct);
 
 	
 ```
 
-Delete a Product. (.NET 4.5)
+Delete a Product:
 
 ```csharp
 
 	// id of the product you wish to delete
 	int id = 123;
 	var api = new ShopifyAPIClient(authState, new JsonDataTranslator());
-	api.Delete(String.Format("/admin/products/{0}.json", id));
+	await api.Delete(String.Format("/admin/products/{0}.json", id));
 
 ```
 
 ## Sample Web Application
 
-This sample application should give you an excellent idea how you will need to perform the required oAuth authentication and API calls.
+This sample application should give you an excellent idea how you will
+need to perform the required oAuth authentication and API calls.
 
-For the DotNet4.5 folder, first you must install MVC3 and then open, compile and run the web application.  
+For the DotNet4.5 folder, first you must install MVC3 and then open,
+compile and run the web application.
 
-Once you go through the authorization steps, you can Add/Edit/Delete Shopify Blog objects.
+Once you go through the authorization steps, you can Add/Edit/Delete
+Shopify Blog objects.
 
 ### Web.config for Sample Application
 
@@ -290,10 +306,53 @@ Once you go through the authorization steps, you can Add/Edit/Delete Shopify Blo
 </configuration>
 ```
 
-# TODO
+## Test Suite
 
-* Fetch of individual objects
+Included is a test suite, include both unit and integration tests.
+You'll need a NUnit harness to run them.
+
+To run the integration tests (ie., test the Adapter against the actual
+upstream service.
+
+1. Sign up for a [Shopify Partner account](http://www.shopify.com/partners);
+
+2. Via the Partner UI, create a Test store;
+
+3. Via the Partner UI, create a new Application for your local test
+   suite instance.  Make up a fake domain for "Application URL", as
+   nothing on their end needs to talk to it;
+   
+4. Modify the
+   `Source/DotNet4.5/ShopifyAPIAdapterLibrary.Tests/App.config` file
+   to reflect the app and shop you just created, along with your API
+   keys and so on;
+
+5. Modify your local `/etc/hosts` to add the fake domain you made for
+   the Application URL as an alias for localhost.  This is needed
+   because a local web browser will be redirected to it in order to
+   deliver the received authentication token;
+   
+6. From the Shopify Partners interface, select the "Login" button on
+   the list item for your test store.  If you try to skip this step
+   don't have an active session on the test store, you will be
+   prompted for a username and password in the next step.  As that
+   prompt expects a full Shopify account (and cannot be used for
+   Partners UI-created stores), nothing you type will succeed.
+   
+7. Run all the tests using your NUnit harness (either in MD or Visual
+   Studio .net 2012, there's a VSIX NUnit plugin for it).
+   
+8. A local web browser will be opened in order to obtain OAuth
+   authorization.  The first time you run the test suite, Shopify will
+   prompt you to add the Test App you created to your test store.
+
+## TODO
+
 * build some logic for the standard REST object pattern.
+* Fetch of individual object resources
+* Fetch of object resource lists
+* Queried fetching of the object resource lists (the query strings are
+  resource-specific!)
 * following that, build out POCOs for standard Shopify API types
 * make dynamic (late bound-style) method fetchers separate from strong
   typed API
