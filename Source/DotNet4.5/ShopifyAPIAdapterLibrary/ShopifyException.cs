@@ -11,7 +11,7 @@ namespace ShopifyAPIAdapterLibrary
             set;
         }
 
-        public ShopifyException(String reason, HttpStatusCode statusCode): base(reason)
+        public ShopifyException(String reason, HttpStatusCode statusCode): base(String.Format("{0}: {1}", statusCode, reason))
         {
             StatusCode = statusCode;
         }
@@ -19,6 +19,12 @@ namespace ShopifyAPIAdapterLibrary
 
     public class NotFoundException : ShopifyException {
         public NotFoundException(String reason, HttpStatusCode statusCode) : base(reason, statusCode)
+        {
+        }
+    }
+
+    public class InvalidContentException: ShopifyException {
+        public InvalidContentException(String reason, HttpStatusCode statusCode) : base(reason, statusCode)
         {
         }
     }

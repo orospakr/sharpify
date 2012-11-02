@@ -39,7 +39,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             server.RequestReceived += (s, e) =>
             {
                 using (var writer = new StreamWriter(e.Response.OutputStream)) {
-                    writer.Write ("Nom, delicious shop access code!");
+                    writer.Write ("Nom, delicious shop access code!  Test suite will now continue.");
                 }
 
                 // when we get our first request, have the TCS become ready
@@ -56,10 +56,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
         public void BeforeFixture ()
         {
             // because it's so expensive on requests, get our authorization key once for the entire integration test suite
-            // TODO: check to be sure the given shop doesn't already have us added?
-            // TODO: move sekrits/configs into App.config
 
-            // this Task will become ready once Shopify gets back to us with the test shop's consent
+            // this Task will become ready once Shopify redirects our browser back to us with the test shop's consent (in the form of the access token)
             var redirectReplyPromise = ListenForIncomingShopTokenFromRedirect (5409);
 
             Console.WriteLine ("Attempting to authorize against store " + TestStoreName);
@@ -95,7 +93,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [Test]
         public void ShouldFetchAllProducts ()
         {
-            var productsTask = ShopifyClient.Get ("/admin/products.json");
+            var productsTask = ShopifyClient.Get ("/admin/products");
             productsTask.Wait();
             dynamic products = productsTask.Result;
             // validate that we're actually getting a list back, even though we can't check
@@ -112,7 +110,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [Test]
         public void ShouldThrowErrorWhenFetchingNonexistentResource ()
         {
-            var getTask = ShopifyClient.Get ("/admin/products/doesnotexist.json");
+            var getTask = ShopifyClient.Get ("/admin/products/doesnotexist");
             var notFound = false;
             try {
                 getTask.Wait ();
@@ -131,7 +129,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [Test]
         public void ShouldCreateAndFetchBackAProduct ()
         {
-            var postTask = ShopifyClient.Post ("/admin/products.json", new {
+            var postTask = ShopifyClient.Post ("/admin/products", new {
                 product = new {
                     title = "Rearden Metal",
                     body_html = "Resistant to corrosion and evasion of reality",
@@ -147,11 +145,34 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.NotNull (newId);
 
             // and fetch it back
-            var getTask = ShopifyClient.Get (String.Format("/admin/products/{0}.json", newId));
+            var getTask = ShopifyClient.Get (String.Format("/admin/products/{0}", newId));
             getTask.Wait ();
             Assert.NotNull(getTask.Result);
             dynamic getResult = getTask.Result;
             Assert.AreEqual("Rearden Metal", (string)getResult.product.title);
+        }
+
+        [Test]
+        public void ShouldThrowErrorWhenPostingInvalidResource ()
+        {
+            var postTask = ShopifyClient.Post ("/admin/products", new {
+                product = new {
+                    title = "Invalid"
+                }
+            });
+            var gotError = false;
+            try {
+                postTask.Wait ();
+            } catch (AggregateException ae) {
+                ae.Handle ((e) => {
+                    if(e is InvalidContentException) {
+                        gotError = true;
+                        return true;
+                    }
+                    return false;
+                });
+            }
+            Assert.IsTrue(gotError);
         }
 
         [Test]

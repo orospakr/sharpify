@@ -7,6 +7,8 @@ using System.Text;
 using System.Web;
 using System.Threading.Tasks;
 using System.Net.Http;
+using ShopifyAPIAdapterLibrary.Models;
+using System.Net.Http.Headers;
 
 
 namespace ShopifyAPIAdapterLibrary
@@ -57,6 +59,9 @@ namespace ShopifyAPIAdapterLibrary
             if (statusCode == HttpStatusCode.NotFound)
             {
                 return new NotFoundException(reason, statusCode);
+            } else if ((int)statusCode == 422)
+            {
+                return new InvalidContentException(reason, statusCode);
             } else
             {
                 return new ShopifyException(reason, statusCode);
@@ -71,16 +76,28 @@ namespace ShopifyAPIAdapterLibrary
         /// <param name="callParams">any parameters needed or expected by the API</param>
         /// <seealso cref="http://api.shopify.com/"/>
         /// <returns>the server response</returns>
-        public async Task<object> Call(HttpMethod method, string path, object callParams)
+        public async Task<object> Call(HttpMethod method, string path, object callParams) {
+            var result = await CallRaw(method, new MediaTypeHeaderValue("application/json"), path, callParams);
+            if (Translator != null) {
+                return Translator.Decode(result);
+            } else {
+                return result;
+            }
+        }
+
+        public async Task<string> CallRaw(HttpMethod method, MediaTypeHeaderValue acceptType, string path, object callParams)
         {
-            string url = String.Format("https://{0}.myshopify.com{1}", State.ShopName, path);
+            // string url = String.Format("https://{0}.myshopify.com{1}", State.ShopName, path);
+            UriBuilder url = ShopUri();
+            url.Path = path;
 
             var http = new HttpClient();
 
-            var request = new HttpRequestMessage(method, url);
+            var request = new HttpRequestMessage(method, url.Uri);
             
 
             request.Headers.Add("X-Shopify-Access-Token", this.State.AccessToken);
+            request.Headers.Add("Accept", acceptType.ToString());
             request.Method = method;
 
             if (callParams != null)
@@ -88,7 +105,7 @@ namespace ShopifyAPIAdapterLibrary
                 if (method == HttpMethod.Get || method == HttpMethod.Delete)
                 {
                     // if no translator assume data is a query string
-                    url = String.Format("{0}?{1}", url, callParams.ToString());
+                    url.Query = callParams.ToString();
 
                     //// put params into query string
                     //StringBuilder queryString = new StringBuilder();
@@ -123,11 +140,8 @@ namespace ShopifyAPIAdapterLibrary
             var result = await response.Content.ReadAsStringAsync();
 
             if(response.IsSuccessStatusCode) {
-                if (Translator != null) {
-                    return Translator.Decode(result);
-                } else {
-                    return result;
-                }
+                return result;
+
             } else {
                 throw HandleError(response.StatusCode, result);
             }
@@ -201,8 +215,39 @@ namespace ShopifyAPIAdapterLibrary
             return Translator.GetContentType();
         }
 
+        public static string UriPathJoin(String basePath, String relativePath) {
+            if(basePath == null || basePath.Length == 0) {
+                return String.Format("/{1}", relativePath); 
+            } else if (basePath.EndsWith("/")) {
+                return String.Format("{0}{1}", basePath, relativePath);
+            } else {
+                return String.Format("{0}/{1}", basePath, relativePath);
+            }
+        }
+
+        public UriBuilder ShopUri()
+        {
+            return new UriBuilder(String.Format("http://{0}.myshopify.com/", ShopName));
+        }
+
+        public string ProductsPath() {
+            return "/products";
+        }
+
+
+
+        public string ProductPath(string id)
+        {
+            return UriPathJoin(ProductsPath(), id);
+        }
+
+        public async Task<Product> GetProduct(string id) {
+            var resourceString = await CallRaw(HttpMethod.Get, new MediaTypeHeaderValue("application/json"), ProductPath(id), null);
+            return null;
+        }
+
         /// <summary>
-        /// The default content type used on the HTTP Requests to the Shopify API
+        /// The default content type to POST/PUT content as on HTTP Requests to the Shopify API
         /// </summary>
         protected static readonly string DefaultContentType = "application/json";
 
@@ -220,7 +265,13 @@ namespace ShopifyAPIAdapterLibrary
         /// that consumes this class much more clean
         /// </example>
         protected IDataTranslator Translator { get; set; }
+
+        /// <summary>
+        /// Gets the name (as in, domain name fragment) of the Shop this ApiClient is associated with.
+        /// </summary>
+        public string ShopName { get {
+                return State.ShopName;
+            }
+        }
     }
-
-
 }
