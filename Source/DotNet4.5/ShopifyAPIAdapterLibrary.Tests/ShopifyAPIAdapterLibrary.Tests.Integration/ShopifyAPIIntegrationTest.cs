@@ -108,6 +108,16 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
+        public void ShouldFetchAllProductsTypesafe ()
+        {
+            var productsTask = ShopifyClient.GetProducts();
+            productsTask.Wait();
+
+            // HACK: making silly assumptions about the content of the test store, and because we have no fixtures we can't check contents
+            Assert.Greater(productsTask.Result.Count, 4);
+        }
+
+        [Test]
         public void ShouldThrowErrorWhenFetchingNonexistentResource ()
         {
             var getTask = ShopifyClient.Get ("/admin/products/doesnotexist");
@@ -140,16 +150,22 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             dynamic postResult = postTask.Result;
 
-            var newId = postResult.product.id;
+            String newId = postResult.product.id;
 
             Assert.NotNull (newId);
 
             // and fetch it back
             var getTask = ShopifyClient.Get (String.Format("/admin/products/{0}", newId));
+
             getTask.Wait ();
             Assert.NotNull(getTask.Result);
             dynamic getResult = getTask.Result;
             Assert.AreEqual("Rearden Metal", (string)getResult.product.title);
+
+            // and with the typesafe api:
+            var getTypeTask = ShopifyClient.GetProduct(newId);
+            getTypeTask.Wait();
+            Assert.AreEqual("Rearden Metal", getTypeTask.Result.Title);
         }
 
         [Test]

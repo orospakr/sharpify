@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net.Http.Headers;
 
 namespace ShopifyAPIAdapterLibrary
 {
@@ -29,6 +30,6 @@ namespace ShopifyAPIAdapterLibrary
         /// The Content Type (Mime Type) used by this translator
         /// </summary>
         /// <returns></returns>
-        string GetContentType();
+        MediaTypeHeaderValue GetContentType();
     }
 }

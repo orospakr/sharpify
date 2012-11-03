@@ -36,7 +36,8 @@ namespace ShopifyAPIAdapterLibrary.Models
 
         public string Vendor { get; set; }
 
-        public ICollection<string> Tags { get; set; }
+        // TODO should be munged into a collection, it arrives as comma separated
+        public String Tags { get; set; }
 
         public Product()
         {

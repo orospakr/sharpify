@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +6,7 @@ using System.Web.Script.Serialization;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
 
 namespace ShopifyAPIAdapterLibrary
 {
@@ -38,7 +39,7 @@ namespace ShopifyAPIAdapterLibrary
         /// The content type used by JSON
         /// </summary>
         /// <returns></returns>
-        public string GetContentType()
+        public MediaTypeHeaderValue GetContentType()
         {
             return ContentType;
         }
@@ -46,6 +47,6 @@ namespace ShopifyAPIAdapterLibrary
         /// <summary>
         /// The content type used by JSON
         /// </summary>
-        public static readonly string ContentType = "application/json";
+        public static readonly MediaTypeHeaderValue ContentType = new MediaTypeHeaderValue("application/json");
     }
 }

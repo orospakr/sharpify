@@ -9,10 +9,17 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using ShopifyAPIAdapterLibrary.Models;
 using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Linq;
 
 
 namespace ShopifyAPIAdapterLibrary
 {
+    public class SingleResource<T> {
+        public T Resource;
+    }
+
     /// <summary>
     /// This class is used to make Shopify API calls 
     /// </summary>
@@ -97,7 +104,7 @@ namespace ShopifyAPIAdapterLibrary
             
 
             request.Headers.Add("X-Shopify-Access-Token", this.State.AccessToken);
-            request.Headers.Add("Accept", acceptType.ToString());
+            request.Headers.Add("Accept", GetRequestContentType().ToString());
             request.Method = method;
 
             if (callParams != null)
@@ -129,7 +136,7 @@ namespace ShopifyAPIAdapterLibrary
                     }
 
                     var postContent = new StringContent(requestBody);
-                    postContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(GetRequestContentType());
+                    postContent.Headers.ContentType = GetRequestContentType();
 
                     request.Content = postContent;
                 }
@@ -208,10 +215,10 @@ namespace ShopifyAPIAdapterLibrary
         /// <summary>
         /// Get the content type that should be used for HTTP Requests
         /// </summary>
-        private string GetRequestContentType()
+        private MediaTypeHeaderValue GetRequestContentType()
         {
             if (Translator == null)
-                return DefaultContentType;
+                return new MediaTypeHeaderValue(DefaultContentType);
             return Translator.GetContentType();
         }
 
@@ -230,11 +237,14 @@ namespace ShopifyAPIAdapterLibrary
             return new UriBuilder(String.Format("http://{0}.myshopify.com/", ShopName));
         }
 
-        public string ProductsPath() {
-            return "/products";
+        public string AdminPath()
+        {
+            return "/admin";
         }
 
-
+        public string ProductsPath() {
+            return UriPathJoin(AdminPath(), "products");
+        }
 
         public string ProductPath(string id)
         {
@@ -243,7 +253,30 @@ namespace ShopifyAPIAdapterLibrary
 
         public async Task<Product> GetProduct(string id) {
             var resourceString = await CallRaw(HttpMethod.Get, new MediaTypeHeaderValue("application/json"), ProductPath(id), null);
-            return null;
+            return TranslateObject<Product>("product", resourceString);
+        }
+
+        public async Task<ICollection<Product>> GetProducts() {
+
+            var resourceString = await CallRaw(HttpMethod.Get, new MediaTypeHeaderValue("application/json"), ProductsPath(), null);
+            Console.WriteLine(resourceString);
+
+            return TranslateObject<List<Product>>("products", resourceString);
+        }
+
+        /// <summary>
+        /// Shopify's API returns most things wrapped in single JSON field, named by the
+        /// resource being fetched ("product", "products", and so on.)
+        /// </summary>
+        public T TranslateObject<T>(String subfieldName, String content)
+        {
+            if (Translator == null)
+            {
+                throw new NotSupportedException("ShopfiyApiClient needs a data translator (JSON, XML) before the type safe API can be used.");
+            }
+            JObject decoded = (JObject)Translator.Decode(content);
+
+            return decoded[subfieldName].ToObject<T>();
         }
 
         /// <summary>
