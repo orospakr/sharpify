@@ -18,6 +18,14 @@ Andrew Clunis - [andrew@orospakr.ca](andrew@orospakr.ca)
 For now, the easiest and only, download the source code and add the
 project to your solution.
 
+If, on Mono, you get Web Security crypto exceptions, try importing
+Mozilla's trusted CA list into Mono by running:
+
+    mozroots --import
+	
+(alternatively, you could try manually importing the certificate of
+the CA shopify uses by using Mono's `certmgr` tool.)
+
 ## Shopify API Authorization
 
 In order to understand how shopify authorizes your code to make API
@@ -351,6 +359,13 @@ upstream service.
 * build some logic for the standard REST object pattern.
 * Fetch of individual object resources
 * Fetch of object resource lists
+* fetch of object resource lists with a filter
+* rename Shopify to ShopifyContext
+* Create a Resource class that represents a given source
+* subresources (equivalent to nested map.resources blocks in Rails):
+  IEnumerable collections set on the model objects should ref back to
+  the ShopifyContext and fetch back the items filtered by the appropriate
+  host-resource filtered 
 * Queried fetching of the object resource lists (the query strings are
   resource-specific!)
 * following that, build out POCOs for standard Shopify API types

@@ -113,11 +113,11 @@ namespace ShopifyAPIAdapterLibrary
                         AccessToken = (string)jsonResult["access_token"]
                     };
                 } else {
-                    throw new ShopifyException("Authorization response came back empty?!", respond.StatusCode);
+                    throw new ShopifyHttpException("Authorization response came back empty?!", respond);
                 }
             } else
             {
-                throw new ShopifyException(responseText, respond.StatusCode);
+                throw new ShopifyHttpException(responseText, respond);
             }
         }
     }

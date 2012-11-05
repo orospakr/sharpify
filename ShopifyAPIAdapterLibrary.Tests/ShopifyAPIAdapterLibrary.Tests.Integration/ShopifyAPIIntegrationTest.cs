@@ -21,6 +21,11 @@ namespace ShopifyAPIAdapterLibrary.Tests
             set;
         }
 
+        HttpServer Server {
+            get;
+            set;
+        }
+
         String TestStoreName;
         ShopifyAPIClient ShopifyClient;
 
@@ -32,11 +37,11 @@ namespace ShopifyAPIAdapterLibrary.Tests
         public Task<string> ListenForIncomingShopTokenFromRedirect (int port)
         {
             var tcs = new TaskCompletionSource<string> ();
-            var server = new HttpServer ();
+            Server = new HttpServer ();
 
-            server.EndPoint.Port = port;
-            server.EndPoint.Address = IPAddress.Any;
-            server.RequestReceived += (s, e) =>
+            Server.EndPoint.Port = port;
+            Server.EndPoint.Address = IPAddress.Any;
+            Server.RequestReceived += (s, e) =>
             {
                 using (var writer = new StreamWriter(e.Response.OutputStream)) {
                     writer.Write ("Nom, delicious shop access code!  Test suite will now continue.");
@@ -47,7 +52,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
                 // server.Dispose();
             };
 
-            server.Start ();
+            Server.Start ();
 
             return tcs.Task;
         }
@@ -55,32 +60,45 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [TestFixtureSetUp]
         public void BeforeFixture ()
         {
-            // because it's so expensive on requests, get our authorization key once for the entire integration test suite
+            try {
+                // because it's so expensive on requests, get our authorization key once for the entire integration test suite
 
-            // this Task will become ready once Shopify redirects our browser back to us with the test shop's consent (in the form of the access token)
-            var redirectReplyPromise = ListenForIncomingShopTokenFromRedirect (5409);
+                // this Task will become ready once Shopify redirects our browser back to us with the test shop's consent (in the form of the access token)
+                var redirectReplyPromise = ListenForIncomingShopTokenFromRedirect (5409);
 
-            Console.WriteLine ("Attempting to authorize against store " + TestStoreName);
-            var sa = new ShopifyAPIAdapterLibrary.ShopifyAPIAuthorizer (TestStoreName, ConfigurationManager.AppSettings ["Shopify.TestAppKey"], ConfigurationManager.AppSettings ["Shopify.TestAppSecret"]);
-            var authUrl = sa.GetAuthorizationURL (new string[] { "write_content,write_themes,write_products" }, ConfigurationManager.AppSettings ["Shopify.TestHttpServerUri"]);
-            Console.WriteLine (authUrl);
+                Console.WriteLine ("Attempting to authorize against store " + TestStoreName);
+                var sa = new ShopifyAPIAdapterLibrary.ShopifyAPIAuthorizer (TestStoreName, ConfigurationManager.AppSettings ["Shopify.TestAppKey"], ConfigurationManager.AppSettings ["Shopify.TestAppSecret"]);
+                var authUrl = sa.GetAuthorizationURL (new string[] { "write_content,write_themes,write_products" }, ConfigurationManager.AppSettings ["Shopify.TestHttpServerUri"]);
+                Console.WriteLine (authUrl);
 
 
-            // pop a web browser with the authorization:
-            Process.Start (authUrl);
-            Console.WriteLine ("Waiting for Shopify to answer...");
-            redirectReplyPromise.Wait ();
-            var shopCode = redirectReplyPromise.Result;
-            Assert.NotNull (shopCode);
-            Console.WriteLine ("Got code: " + shopCode);
+                // pop a web browser with the authorization:
+                Process.Start (authUrl);
+                Console.WriteLine ("Waiting for Shopify to answer...");
+                redirectReplyPromise.Wait ();
+                var shopCode = redirectReplyPromise.Result;
+                Assert.NotNull (shopCode);
+                Console.WriteLine ("Got code: " + shopCode);
 
-            var authTask = sa.AuthorizeClient (shopCode);
-            authTask.Wait ();
+                var authTask = sa.AuthorizeClient (shopCode);
+                authTask.Wait ();
 
-            // acquire our authorization token for actual API requests
-            AuthorizationState = authTask.Result;
+                // acquire our authorization token for actual API requests
+                AuthorizationState = authTask.Result;
 
-            ShopifyClient = new ShopifyAPIClient (AuthorizationState, new JsonDataTranslator ());
+                ShopifyClient = new ShopifyAPIClient (AuthorizationState, new JsonDataTranslator ());
+            } catch (Exception e) {
+                using (var fd = new StreamWriter("sharpify_test_before_fixture_error.txt")) {
+                    fd.Write (e.ToString ());
+                }
+                throw new Exception ("Rethrowing exception emitted during BeforeFixture()", e);
+            }
+        }
+
+        [TestFixtureTearDown]
+        public void AfterFixture ()
+        {
+            Server.Dispose ();
         }
 
         [Test]
@@ -105,6 +123,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
             foreach (var product in products.products) {
                 Console.WriteLine ("GOT PRODUCT: " + product.title);
             }
+        }
+
+        [Test]
+        public void ShouldFetchAllArticles() {
+            var articlesTask = ShopifyClient.Get("/admin/articles.json");
+            articlesTask.Wait();
         }
 
         [Test]
@@ -163,7 +187,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("Rearden Metal", (string)getResult.product.title);
 
             // and with the typesafe api:
-            var getTypeTask = ShopifyClient.GetProduct(newId);
+            var getTypeTask = ShopifyClient.Products.Get(newId);
             getTypeTask.Wait();
             Assert.AreEqual("Rearden Metal", getTypeTask.Result.Title);
         }

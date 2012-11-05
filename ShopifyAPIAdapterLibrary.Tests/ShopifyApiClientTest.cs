@@ -16,5 +16,13 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var sapi = new ShopifyAPIClient(authState);
             Assert.AreEqual("/admin/products/67", sapi.ProductPath("67"));
         }
+
+        [Test]
+        public void ShouldPluralize() {
+            Assert.AreEqual("sandwiches", ShopifyAPIClient.Pluralize("sandwich"));
+            Assert.AreEqual("kitties", ShopifyAPIClient.Pluralize("kitty"));
+            Assert.AreEqual("apples", ShopifyAPIClient.Pluralize("apple"));
+            // yes, I know about police. I don't care :)
+        }
     }
 }

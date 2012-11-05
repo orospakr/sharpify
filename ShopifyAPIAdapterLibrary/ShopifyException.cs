@@ -1,30 +1,37 @@
 using System;
 using System.Net;
+using System.Net.Http;
 
 namespace ShopifyAPIAdapterLibrary
 {
     public class ShopifyException : Exception
     {
-        HttpStatusCode StatusCode
+        public ShopifyException(String reason): base(reason)
+        {
+        }
+    }
+
+    public class ShopifyHttpException : ShopifyException {
+        HttpResponseMessage Response
         {
             get;
             set;
         }
 
-        public ShopifyException(String reason, HttpStatusCode statusCode): base(String.Format("{0}: {1}", statusCode, reason))
+        public ShopifyHttpException(String reason, HttpResponseMessage response): base(String.Format("{0} --> {1}: {2}", response.RequestMessage.RequestUri.AbsolutePath, response.StatusCode, reason))
         {
-            StatusCode = statusCode;
+            Response = response;
         }
     }
 
-    public class NotFoundException : ShopifyException {
-        public NotFoundException(String reason, HttpStatusCode statusCode) : base(reason, statusCode)
+    public class NotFoundException : ShopifyHttpException {
+        public NotFoundException(String reason, HttpResponseMessage response) : base(reason, response)
         {
         }
     }
 
-    public class InvalidContentException: ShopifyException {
-        public InvalidContentException(String reason, HttpStatusCode statusCode) : base(reason, statusCode)
+    public class InvalidContentException: ShopifyHttpException {
+        public InvalidContentException(String reason, HttpResponseMessage response) : base(reason, response)
         {
         }
     }

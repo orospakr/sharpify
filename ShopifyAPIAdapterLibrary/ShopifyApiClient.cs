@@ -13,11 +13,35 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Linq;
 
-
 namespace ShopifyAPIAdapterLibrary
 {
-    public class SingleResource<T> {
-        public T Resource;
+    public class RestResource<T> {
+        public ShopifyAPIClient Context;
+        public string Name;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShopifyAPIAdapterLibrary.RestResource`1"/> class.
+        /// </summary>
+        /// <param name='name'>
+        /// The lowercase resource name, as it appears in URI
+        /// </param>
+        public RestResource(ShopifyAPIClient context, string name) {
+            Context = context;
+            Name = name;
+        }
+
+        public string Path() {
+            return ShopifyAPIClient.UriPathJoin(Context.AdminPath(), ShopifyAPIClient.Pluralize(Name));
+        }
+
+        public string InstancePath(string id) {
+            return ShopifyAPIClient.UriPathJoin(Path(), id);
+        }
+
+        public async Task<T> Get(string id) {
+            var resourceString = await Context.CallRaw(HttpMethod.Get, new MediaTypeHeaderValue("application/json"), InstancePath(id), null);
+            return Context.TranslateObject<T>(Name, resourceString);
+        }
     }
 
     /// <summary>
@@ -29,6 +53,8 @@ namespace ShopifyAPIAdapterLibrary
     /// <seealso cref="http://api.shopify.com/"/>
     public class ShopifyAPIClient
     {
+        public RestResource<Product> Products { get; private set; }
+
         /// <summary>
         /// Creates an instance of this class for use with making API Calls
         /// </summary>
@@ -36,6 +62,7 @@ namespace ShopifyAPIAdapterLibrary
         public ShopifyAPIClient(ShopifyAuthorizationState state)
         {
             this.State = state;
+            SetUpResources();
         }
 
         /// <summary>
@@ -47,6 +74,11 @@ namespace ShopifyAPIAdapterLibrary
         {
             this.State = state;
             this.Translator = translator;
+            SetUpResources();
+        }
+
+        private void SetUpResources() {
+            Products = new RestResource<Product>(this, "product");
         }
 
         /// <summary>
@@ -61,17 +93,17 @@ namespace ShopifyAPIAdapterLibrary
             return Call(method, path, null);
         }
 
-        public ShopifyException HandleError(HttpStatusCode statusCode, string reason)
+        public ShopifyException HandleError(HttpResponseMessage response, string reason)
         {
-            if (statusCode == HttpStatusCode.NotFound)
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return new NotFoundException(reason, statusCode);
-            } else if ((int)statusCode == 422)
+                return new NotFoundException(reason, response);
+            } else if ((int)response.StatusCode == 422)
             {
-                return new InvalidContentException(reason, statusCode);
+                return new InvalidContentException(reason, response);
             } else
             {
-                return new ShopifyException(reason, statusCode);
+                return new ShopifyHttpException(reason, response);
             }
         }
 
@@ -127,7 +159,7 @@ namespace ShopifyAPIAdapterLibrary
                     // put params into post body
                     if (Translator == null)
                     {
-                        //assume it's a string
+                        // assume it's a string
                         requestBody = callParams.ToString();
                     }
                     else
@@ -150,7 +182,7 @@ namespace ShopifyAPIAdapterLibrary
                 return result;
 
             } else {
-                throw HandleError(response.StatusCode, result);
+                throw HandleError(response, result);
             }
         }
 
@@ -222,6 +254,16 @@ namespace ShopifyAPIAdapterLibrary
             return Translator.GetContentType();
         }
 
+        public static string Pluralize(string input) {
+            if(input.EndsWith("h")) {
+                return input + "es";
+            } else if(input.EndsWith("y")) {
+                return input.Substring(0, input.Length - 1) + "ies";
+            } else {
+                return input + "s";
+            }
+        }
+
         public static string UriPathJoin(String basePath, String relativePath) {
             if(basePath == null || basePath.Length == 0) {
                 return String.Format("/{1}", relativePath); 
@@ -251,10 +293,6 @@ namespace ShopifyAPIAdapterLibrary
             return UriPathJoin(ProductsPath(), id);
         }
 
-        public async Task<Product> GetProduct(string id) {
-            var resourceString = await CallRaw(HttpMethod.Get, new MediaTypeHeaderValue("application/json"), ProductPath(id), null);
-            return TranslateObject<Product>("product", resourceString);
-        }
 
         public async Task<ICollection<Product>> GetProducts() {
 
@@ -276,6 +314,9 @@ namespace ShopifyAPIAdapterLibrary
             }
             JObject decoded = (JObject)Translator.Decode(content);
 
+            if(decoded[subfieldName] == null) {
+                throw new ShopifyException("Response does not contain field: " + subfieldName);
+            }
             return decoded[subfieldName].ToObject<T>();
         }
 
