@@ -51,7 +51,7 @@
       <Project>{6FF5A961-591A-47FC-BA85-00B8F44750D0}</Project>
       <Name>ShopifyAPIAdapterLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\NHttp\NHttp\NHttp.csproj">
+    <ProjectReference Include="..\dependencies\NHttp\NHttp\NHttp.csproj">
       <Project>{7AD9DA80-AFB9-43EA-BDF2-9B75C47DC2CC}</Project>
       <Name>NHttp</Name>
     </ProjectReference>

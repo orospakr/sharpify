@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopifyAPIAdapterLibrary", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopifyAPIAdapterLibrary.Tests", "ShopifyAPIAdapterLibrary.Tests\ShopifyAPIAdapterLibrary.Tests.csproj", "{518267B5-2759-4B38-9D4E-10F4E8706253}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHttp", "..\..\..\NHttp\NHttp\NHttp.csproj", "{7AD9DA80-AFB9-43EA-BDF2-9B75C47DC2CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHttp", "dependencies\NHttp\NHttp\NHttp.csproj", "{7AD9DA80-AFB9-43EA-BDF2-9B75C47DC2CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
