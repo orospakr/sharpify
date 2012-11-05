@@ -15,35 +15,6 @@ using Newtonsoft.Json.Linq;
 
 namespace ShopifyAPIAdapterLibrary
 {
-    public class RestResource<T> {
-        public ShopifyAPIClient Context;
-        public string Name;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ShopifyAPIAdapterLibrary.RestResource`1"/> class.
-        /// </summary>
-        /// <param name='name'>
-        /// The lowercase resource name, as it appears in URI
-        /// </param>
-        public RestResource(ShopifyAPIClient context, string name) {
-            Context = context;
-            Name = name;
-        }
-
-        public string Path() {
-            return ShopifyAPIClient.UriPathJoin(Context.AdminPath(), ShopifyAPIClient.Pluralize(Name));
-        }
-
-        public string InstancePath(string id) {
-            return ShopifyAPIClient.UriPathJoin(Path(), id);
-        }
-
-        public async Task<T> Get(string id) {
-            var resourceString = await Context.CallRaw(HttpMethod.Get, new MediaTypeHeaderValue("application/json"), InstancePath(id), null);
-            return Context.TranslateObject<T>(Name, resourceString);
-        }
-    }
-
     /// <summary>
     /// This class is used to make Shopify API calls 
     /// </summary>
@@ -116,7 +87,7 @@ namespace ShopifyAPIAdapterLibrary
         /// <seealso cref="http://api.shopify.com/"/>
         /// <returns>the server response</returns>
         public async Task<object> Call(HttpMethod method, string path, object callParams) {
-            var result = await CallRaw(method, new MediaTypeHeaderValue("application/json"), path, callParams);
+            var result = await CallRaw(method, GetRequestContentType(), path, callParams);
             if (Translator != null) {
                 return Translator.Decode(result);
             } else {
@@ -136,7 +107,7 @@ namespace ShopifyAPIAdapterLibrary
             
 
             request.Headers.Add("X-Shopify-Access-Token", this.State.AccessToken);
-            request.Headers.Add("Accept", GetRequestContentType().ToString());
+            request.Headers.Add("Accept", acceptType.ToString());
             request.Method = method;
 
             if (callParams != null)
@@ -247,7 +218,7 @@ namespace ShopifyAPIAdapterLibrary
         /// <summary>
         /// Get the content type that should be used for HTTP Requests
         /// </summary>
-        private MediaTypeHeaderValue GetRequestContentType()
+        public MediaTypeHeaderValue GetRequestContentType()
         {
             if (Translator == null)
                 return new MediaTypeHeaderValue(DefaultContentType);
@@ -296,7 +267,7 @@ namespace ShopifyAPIAdapterLibrary
 
         public async Task<ICollection<Product>> GetProducts() {
 
-            var resourceString = await CallRaw(HttpMethod.Get, new MediaTypeHeaderValue("application/json"), ProductsPath(), null);
+            var resourceString = await CallRaw(HttpMethod.Get, GetRequestContentType(), ProductsPath(), null);
             Console.WriteLine(resourceString);
 
             return TranslateObject<List<Product>>("products", resourceString);

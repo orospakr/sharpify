@@ -57,6 +57,7 @@
     <Compile Include="ShopifyAuthorizationState.cs" />
     <Compile Include="ShopifyException.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Product.cs" />
+    <Compile Include="RestResource.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
