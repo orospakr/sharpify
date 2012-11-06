@@ -1,3 +1,0 @@
-[submodule "dependencies/NHttp"]
-	path = dependencies/NHttp
-	url = git://github.com/pvginkel/NHttp.git

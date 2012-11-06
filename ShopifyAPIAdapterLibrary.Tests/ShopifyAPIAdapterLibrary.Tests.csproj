@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -30,10 +30,16 @@
     <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="nunit.framework">
-      <Private>False</Private>
+    <Reference Include="Common.Logging">
+      <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
     </Reference>
+    <Reference Include="NHttp">
+      <HintPath>..\packages\NHttp.0.1.3.0\lib\net20\NHttp.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Configuration" />
     <Reference Include="Newtonsoft.Json">
@@ -52,15 +58,11 @@
       <Project>{6FF5A961-591A-47FC-BA85-00B8F44750D0}</Project>
       <Name>ShopifyAPIAdapterLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dependencies\NHttp\NHttp\NHttp.csproj">
-      <Project>{7AD9DA80-AFB9-43EA-BDF2-9B75C47DC2CC}</Project>
-      <Name>NHttp</Name>
-    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="ShopifyAPIAdapterLibrary.Tests.Integration\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
 </Project>
