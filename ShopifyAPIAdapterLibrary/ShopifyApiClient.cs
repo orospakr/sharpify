@@ -52,6 +52,12 @@ namespace ShopifyAPIAdapterLibrary
             Products = new RestResource<Product>(this, "product");
         }
 
+        private void EnsureTranslator() {
+            if(Translator == null) {
+                throw new ShopifyConfigurationException("In order to use object types with ShopifyApiClient, an IDataTranslator must be provided.");
+            }
+        }
+
         /// <summary>
         /// Make an HTTP Request to the Shopify API
         /// </summary>
@@ -59,9 +65,22 @@ namespace ShopifyAPIAdapterLibrary
         /// <param name="path">the path that should be requested</param>
         /// <seealso cref="http://api.shopify.com/"/>
         /// <returns>the server response</returns>
-        public Task<object> Call(HttpMethod method, string path)
+        public async Task<object> Call(HttpMethod method, string path, NameValueCollection parameters = null, object data = null)
         {
-            return Call(method, path, null);
+            // cute bit of dynamic feature.
+            String reqBody;
+            if(data is String) {
+                reqBody = (String)data;
+            } else {
+                EnsureTranslator();
+                reqBody = Translator.Encode(data);
+            }
+            var result = await CallRaw(method, GetRequestContentType(), path, parameters, reqBody);
+            if (Translator != null) {
+                return Translator.Decode(result);
+            } else {
+                return result;
+            }
         }
 
         public ShopifyException HandleError(HttpResponseMessage response, string reason)
@@ -78,80 +97,45 @@ namespace ShopifyAPIAdapterLibrary
             }
         }
 
-        /// <summary>
-        /// Make an HTTP Request to the Shopify API
-        /// </summary>
-        /// <param name="method">method to be used in the request</param>
-        /// <param name="path">the path that should be requested</param>
-        /// <param name="callParams">any parameters needed or expected by the API</param>
-        /// <seealso cref="http://api.shopify.com/"/>
-        /// <returns>the server response</returns>
-        public async Task<object> Call(HttpMethod method, string path, object callParams) {
-            var result = await CallRaw(method, GetRequestContentType(), path, callParams);
-            if (Translator != null) {
-                return Translator.Decode(result);
-            } else {
-                return result;
+        public async Task<string> CallRaw(HttpMethod method, MediaTypeHeaderValue acceptType, string path, NameValueCollection parameters, string requestBody) {
+            // put params into query string
+            StringBuilder queryString = new StringBuilder();
+            if(parameters != null) {
+                foreach (string key in parameters.Keys)
+                {
+                    queryString.AppendFormat("{0}={1}", HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(parameters[key]), requestBody);
+                }
             }
-        }
 
-        public async Task<string> CallRaw(HttpMethod method, MediaTypeHeaderValue acceptType, string path, object callParams)
-        {
-            // string url = String.Format("https://{0}.myshopify.com{1}", State.ShopName, path);
             UriBuilder url = ShopUri();
             url.Path = path;
-
+            
             var http = new HttpClient();
-
+            
             var request = new HttpRequestMessage(method, url.Uri);
             
-
             request.Headers.Add("X-Shopify-Access-Token", this.State.AccessToken);
             request.Headers.Add("Accept", acceptType.ToString());
             request.Method = method;
 
-            if (callParams != null)
+            url.Query = queryString.ToString();
+
+            if (method == HttpMethod.Post || method == HttpMethod.Put)
             {
-                if (method == HttpMethod.Get || method == HttpMethod.Delete)
-                {
-                    // if no translator assume data is a query string
-                    url.Query = callParams.ToString();
+                var postContent = new StringContent(requestBody);
+                postContent.Headers.ContentType = GetRequestContentType();
 
-                    //// put params into query string
-                    //StringBuilder queryString = new StringBuilder();
-                    //foreach (string key in callParams.Keys)
-                    //{
-                    //    queryString.AppendFormat("{0}={1}", HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(callParams[key]));
-                    //}
-                }
-                else if (method == HttpMethod.Post || method == HttpMethod.Put)
-                {
-                    string requestBody;
-                    // put params into post body
-                    if (Translator == null)
-                    {
-                        // assume it's a string
-                        requestBody = callParams.ToString();
-                    }
-                    else
-                    {
-                        requestBody = Translator.Encode(callParams);
-                    }
-
-                    var postContent = new StringContent(requestBody);
-                    postContent.Headers.ContentType = GetRequestContentType();
-
-                    request.Content = postContent;
-                }
+                request.Content = postContent;
             }
-
+         
+            
             var response = await http.SendAsync(request);
-
+            
             var result = await response.Content.ReadAsStringAsync();
-
+            
             if(response.IsSuccessStatusCode) {
                 return result;
-
+                
             } else {
                 throw HandleError(response, result);
             }
@@ -189,7 +173,7 @@ namespace ShopifyAPIAdapterLibrary
         /// <returns>the server response</returns>
         public Task<object> Post(string path, object data)
         {
-            return Call(HttpMethod.Post, path, data);
+            return Call(HttpMethod.Post, path, parameters: null, data: data);
         }
 
         /// <summary>
@@ -201,7 +185,7 @@ namespace ShopifyAPIAdapterLibrary
         /// <returns>the server response</returns>
         public Task<object> Put(string path, object data)
         {
-            return Call(HttpMethod.Put, path, data);
+            return Call(HttpMethod.Put, path, parameters: null, data: data);
         }
 
         /// <summary>
@@ -267,7 +251,7 @@ namespace ShopifyAPIAdapterLibrary
 
         public async Task<ICollection<Product>> GetProducts() {
 
-            var resourceString = await CallRaw(HttpMethod.Get, GetRequestContentType(), ProductsPath(), null);
+            var resourceString = await CallRaw(HttpMethod.Get, GetRequestContentType(), ProductsPath(), parameters: null, requestBody: null);
             Console.WriteLine(resourceString);
 
             return TranslateObject<List<Product>>("products", resourceString);

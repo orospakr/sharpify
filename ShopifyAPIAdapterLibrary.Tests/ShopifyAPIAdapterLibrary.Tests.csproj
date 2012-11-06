@@ -44,6 +44,7 @@
     <Compile Include="ShopifyAPIAdapterLibrary.Tests.Integration\ShopifyAPIIntegrationTest.cs" />
     <Compile Include="ShopifyAuthorizerTest.cs" />
     <Compile Include="ShopifyApiClientTest.cs" />
+    <Compile Include="RestResourceTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

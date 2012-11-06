@@ -11,6 +11,12 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
+    public class ShopifyConfigurationException : ShopifyException {
+        public ShopifyConfigurationException(String reason): base(reason)
+        {
+        }
+    }
+
     public class ShopifyHttpException : ShopifyException {
         HttpResponseMessage Response
         {
