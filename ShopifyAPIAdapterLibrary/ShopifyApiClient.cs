@@ -22,7 +22,7 @@ namespace ShopifyAPIAdapterLibrary
     /// You will first need to use the ShopifyAPIAuthorizer to obtain the required authorization.
     /// </remarks>
     /// <seealso cref="http://api.shopify.com/"/>
-    public class ShopifyAPIClient
+    public class ShopifyAPIClient : ShopifyAPIAdapterLibrary.IShopifyAPIClient
     {
         public RestResource<Product> Products { get; private set; }
 
@@ -221,7 +221,7 @@ namespace ShopifyAPIAdapterLibrary
 
         public static string UriPathJoin(String basePath, String relativePath) {
             if(basePath == null || basePath.Length == 0) {
-                return String.Format("/{1}", relativePath); 
+                return String.Format("/{0}", relativePath); 
             } else if (basePath.EndsWith("/")) {
                 return String.Format("{0}{1}", basePath, relativePath);
             } else {
@@ -284,7 +284,7 @@ namespace ShopifyAPIAdapterLibrary
         /// The state required to make API calls.  It contains the access token and
         /// the name of the shop that your app will make calls on behalf of
         /// </summary>
-        protected ShopifyAuthorizationState State { get; set; }
+        public ShopifyAuthorizationState State { get; set; }
 
         /// <summary>
         /// Used to translate the data sent and recieved by the Shopify API

@@ -8,7 +8,7 @@ using System.Collections.Specialized;
 namespace ShopifyAPIAdapterLibrary
 {
     public class RestResource<T> {
-        public ShopifyAPIClient Context { get; protected set; }
+        public IShopifyAPIClient Context { get; protected set; }
 
         public string Name { get; protected set; }
 
@@ -22,23 +22,28 @@ namespace ShopifyAPIAdapterLibrary
         /// <param name='name'>
         /// The lowercase resource name, as it would appear in URIs
         /// </param>
-        public RestResource(ShopifyAPIClient context, string name) {
+        public RestResource(IShopifyAPIClient context, string name) {
             Context = context;
             Name = name;
         }
 
         public RestResource(RestResource<T> parent, NameValueCollection queryParameters) {
             this.Context = parent.Context;
+            this.Parent = parent;
             this.Name = parent.Name;
             this.QueryParameters = queryParameters;
         }
 
         public NameValueCollection FullParameters() {
-            var r = (Parent != null) ? new NameValueCollection(Parent.QueryParameters) : new NameValueCollection();
+            var r = (Parent != null) ? new NameValueCollection(Parent.FullParameters()) : new NameValueCollection();
            // var r = Parent.QueryParameters);
 
-            foreach(string key in QueryParameters.Keys) {
-                r[key] = QueryParameters[key];
+            if (QueryParameters != null)
+            {
+                foreach (string key in QueryParameters.Keys)
+                {
+                    r[key] = QueryParameters[key];
+                }
             }
             return r;
         }

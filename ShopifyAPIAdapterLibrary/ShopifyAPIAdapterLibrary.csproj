@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IDataTranslator.cs" />
+    <Compile Include="IShopifyAPIClient.cs" />
     <Compile Include="ShopifyAPIAuthorizer.cs" />
     <Compile Include="ShopifyApiClient.cs" />
     <Compile Include="JsonDataTranslator.cs" />
@@ -81,7 +82,5 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <Folder Include="ShopifyAPIAdapterLibrary.Models\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
