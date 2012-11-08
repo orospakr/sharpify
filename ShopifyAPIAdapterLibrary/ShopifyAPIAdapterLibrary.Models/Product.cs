@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ShopifyAPIAdapterLibrary.Models
 {
-    public class Product
+    public class Product : IResourceModel
     {
 
 //        "body_html": "<p>It's the small iPod with one very big idea: Video. Now the world's most popular music player, available in 4GB and 8GB models, lets you enjoy TV shows, movies, video podcasts, and more. The larger, brighter display means amazing picture quality. In six eye-catching colors, iPod nano is stunning all around. And with models starting at just $149, little speaks volumes.</p>",

@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="IDataTranslator.cs" />
     <Compile Include="IShopifyAPIClient.cs" />
+    <Compile Include="ShopifyAPIAdapterLibrary.Models\IResourceModel.cs" />
     <Compile Include="ShopifyAPIAuthorizer.cs" />
     <Compile Include="ShopifyApiClient.cs" />
     <Compile Include="JsonDataTranslator.cs" />
