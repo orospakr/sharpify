@@ -93,7 +93,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual(6.25, decoded.Taxes.ElementAt(0).Percentage);
         }
 
-        [Ignore]
+        [Test]
         public void ShouldSerializeObjectWithInlineResource()
         {
             var c = new Transaction()
@@ -106,12 +106,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
                 }
             };
 
-            var encoded = DataTranslator.Encode(c);
+            var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", c);
 
             dynamic decoded = JsonConvert.DeserializeObject(encoded);
             Assert.AreEqual("77", decoded.transaction.Id.ToString());
             Assert.AreEqual(1, decoded.transaction.Taxes.Count);
-            Assert.AreEqual("New Zealand", decoded.transaction.Taxes.ElementAt(0).Region);
+            Assert.AreEqual("New Zealand", decoded.transaction.Taxes[0].Region.ToString());
         }
     }
 }

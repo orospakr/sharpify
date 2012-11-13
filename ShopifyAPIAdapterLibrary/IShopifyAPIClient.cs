@@ -17,6 +17,11 @@ namespace ShopifyAPIAdapterLibrary
         ShopifyException HandleError(System.Net.Http.HttpResponseMessage response, string reason);
         Task<object> Post(string path, object data);
         Task<object> Put(string path, object data);
+        
+        [Obsolete]
         T TranslateObject<T>(string subfieldName, string content);
+
+        [Obsolete]
+        string ObjectTranslate<T>(String subfieldName, T model);
     }
 }

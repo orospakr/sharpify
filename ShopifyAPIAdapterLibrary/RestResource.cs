@@ -7,12 +7,16 @@ using System.Collections.Specialized;
 using System.Linq.Expressions;
 using System.Reflection;
 using ShopifyAPIAdapterLibrary.Models;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace ShopifyAPIAdapterLibrary
 {
     public interface ISubResource<T>
     {
         Task<T> Get(string p);
+
+        Task Create(T model);
 
         string Path();
 
@@ -88,6 +92,12 @@ namespace ShopifyAPIAdapterLibrary
         public async Task<T> Get(string id) {
             var resourceString = await Context.CallRaw(HttpMethod.Get, Context.GetRequestContentType(), InstancePath(id), parameters: FullParameters(), requestBody: null);
             return Context.TranslateObject<T>(Name, resourceString);
+        }
+
+        public async Task Create(T model) {
+            var jsonString = Context.ObjectTranslate<T>(Name, model);
+            await Context.CallRaw(HttpMethod.Post, Context.GetRequestContentType(),
+                Path(), null, jsonString);
         }
 
         public RestResource<T> Where(string field, string isEqualTo) {

@@ -265,7 +265,7 @@ namespace ShopifyAPIAdapterLibrary
             return UriPathJoin(ProductsPath(), id);
         }
 
-
+        [Obsolete]
         public async Task<ICollection<Product>> GetProducts() {
 
             var resourceString = await CallRaw(HttpMethod.Get, GetRequestContentType(), ProductsPath(), parameters: null, requestBody: null);
@@ -274,6 +274,7 @@ namespace ShopifyAPIAdapterLibrary
             return TranslateObject<List<Product>>("products", resourceString);
         }
 
+        [Obsolete]
         public T TranslateObject<T>(String subfieldName, string content)
         {
             if (Translator == null)
@@ -281,6 +282,16 @@ namespace ShopifyAPIAdapterLibrary
                 throw new NotSupportedException("ShopfiyApiClient needs a data translator (JSON, XML) before the type safe API can be used.");
             }
             return Translator.ResourceDecode<T>(subfieldName, content);
+        }
+
+        [Obsolete]
+        public string ObjectTranslate<T>(String subfieldName, T model)
+        {
+            if (Translator == null)
+            {
+                throw new NotSupportedException("ShopfiyApiClient needs a data translator (JSON, XML) before the type safe API can be used.");
+            }
+            return Translator.ResourceEncode<T>(subfieldName, model);
         }
 
         /// <summary>

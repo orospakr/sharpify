@@ -1,5 +1,6 @@
 using FakeItEasy;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using ShopifyAPIAdapterLibrary.Models;
 using System;
@@ -139,6 +140,10 @@ namespace ShopifyAPIAdapterLibrary.Tests
             return A<MediaTypeHeaderValue>.That.Matches(mt => mt.ToString() == "application/json");
         }
 
+        private String JsonContentsExpectation(Func<object, bool> predicate) {
+            return A<String>.That.Matches(json => predicate(JsonConvert.DeserializeObject(json)));
+        }
+
         private NameValueCollection EmptyQueryParametersExpectation()
         {
             return A<NameValueCollection>.That.Matches(nvc => nvc.Keys.Count == 0);
@@ -173,15 +178,32 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        [Ignore]
         public void ShouldCreateARecord()
         {
+            var partToPost = new Part() { Id = "988" };
+
+            var translationExpectation = A.CallTo(() => Shopify.ObjectTranslate<Part>("part", partToPost));
+            translationExpectation.Returns("PART 988 JSON");
+
+            var postRawExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Post,
+                JsonFormatExpectation(),
+                "/admin/robots/42/parts", null, "PART 988 JSON"));
+            postRawExpectation.Returns(TaskForResult<string>(""));
+
+            var answer = CalculonsParts.Create(partToPost);
+
+            answer.Wait();
+
+
+            translationExpectation.MustHaveHappened();
+            postRawExpectation.MustHaveHappened();
         }
 
         [Test]
         [Ignore]
         public void ShouldUpdateARecord()
         {
+            
         }
 
         [Test]

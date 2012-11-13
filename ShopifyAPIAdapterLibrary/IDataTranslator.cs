@@ -35,6 +35,13 @@ namespace ShopifyAPIAdapterLibrary
         T ResourceDecode<T>(String subfieldName, String content);
 
         /// <summary>
+        /// Analagous to ResourceDecode(), serializes a model
+        /// wrapped in an object with a single JSON field of the specified
+        /// type name.
+        /// </summary>
+        string ResourceEncode<T>(string subFieldName, T model);
+
+        /// <summary>
         /// The Content Type (Mime Type) used by this translator
         /// </summary>
         /// <returns></returns>

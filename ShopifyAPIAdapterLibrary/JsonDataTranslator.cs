@@ -46,6 +46,14 @@ namespace ShopifyAPIAdapterLibrary
             return decoded[subfieldName].ToObject<T>();
         }
 
+        public string ResourceEncode<T>(string subFieldName, T model)
+        {
+            var json = new JObject();
+            var wrappedModel = JObject.FromObject(model);
+            json.Add(subFieldName, wrappedModel);
+            return JsonConvert.SerializeObject(json);
+        }
+
         /// <summary>
         /// The content type used by JSON
         /// </summary>
