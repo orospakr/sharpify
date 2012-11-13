@@ -54,6 +54,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JsonDataTranslatorTest.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Tests.Integration\ShopifyAPIIntegrationTest.cs" />
     <Compile Include="ShopifyAuthorizerTest.cs" />
     <Compile Include="ShopifyApiClientTest.cs" />

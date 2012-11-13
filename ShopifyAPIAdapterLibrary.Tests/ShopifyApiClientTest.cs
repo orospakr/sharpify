@@ -21,8 +21,14 @@ namespace ShopifyAPIAdapterLibrary.Tests
         public void ShouldPluralize() {
             Assert.AreEqual("sandwiches", ShopifyAPIClient.Pluralize("sandwich"));
             Assert.AreEqual("kitties", ShopifyAPIClient.Pluralize("kitty"));
+            Assert.AreEqual("bricks", ShopifyAPIClient.Pluralize("brick"));
+            Assert.AreEqual("addresses", ShopifyAPIClient.Pluralize("address"));
+            Assert.AreEqual("addresses", ShopifyAPIClient.Pluralize("ADDRESS"));
             Assert.AreEqual("apples", ShopifyAPIClient.Pluralize("apple"));
-            // yes, I know about police. I don't care :)
+            Assert.AreEqual("theses", ShopifyAPIClient.Pluralize("thesis"));
+            Assert.AreEqual("bacteria", ShopifyAPIClient.Pluralize("bacterium"));
+            Assert.AreEqual("fungi", ShopifyAPIClient.Pluralize("fungus"));
+            Assert.AreEqual("viruses", ShopifyAPIClient.Pluralize("virus"));
         }
     }
 }

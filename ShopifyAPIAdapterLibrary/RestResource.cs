@@ -10,6 +10,15 @@ using ShopifyAPIAdapterLibrary.Models;
 
 namespace ShopifyAPIAdapterLibrary
 {
+    public interface ISubResource<T>
+    {
+        Task<T> Get(string p);
+
+        string Path();
+
+        string InstancePath(string p);
+    }
+
     public interface IParentableResource
     {
         IShopifyAPIClient Context { get; }
@@ -19,11 +28,19 @@ namespace ShopifyAPIAdapterLibrary
         Type GetModelType(); 
     }
 
-    public class RestResource<T> : IParentableResource {
+    public class RestResource<T> : IParentableResource where T : IResourceModel {
         public IShopifyAPIClient Context { get; protected set; }
 
         public string Name { get; protected set; }
 
+        /// <summary>
+        /// Not to be confused with the parenting of SubResources,
+        /// this relation is for chaining multiple RestResource instances
+        /// pointing to the same effective Resource path on the REST
+        /// service with separate filter/query parameters.
+        /// 
+        /// Clear as mud, right?
+        /// </summary>
         public RestResource<T> Parent { get; protected set; }
 
         public NameValueCollection QueryParameters { get; protected set; }
@@ -135,12 +152,37 @@ namespace ShopifyAPIAdapterLibrary
             // Inline subresources?  We do want it to work.
             // Does Shopify have any of these?
 
+            // TODO: inline singles (has_a): actually, this should Just Work already
+            // TODO: inline multiples (has_many)
+
+            // TODO: paging.  this should be abstracted behind, ienumerable style
+
+            // what approach should I use? if an inline is found, should
+            // I make an entirely different IAsyncCollection and set it
+            // on the field OR...
+            // ... should I have RestResource have a notion of a cached/
+            // preloaded list?
+            // OR... when deserializing, as it is, inline list models should be
+            // automatically added to a simple ICollection by json.net
+            // perhaps we should only put our proxies in *if* they come up null
+            // ... but wait, if I do that then:
+            //     -- when serializing the top-level object, the serializer will reach
+            //        down and hit a proxy, and try to fetch everything from the proxy,
+            //        reserialize it, and then pushing it to the server (actually, this can happen to any arrangement where I have proxies)
+            //        -- could use IContractResolver to filter out such proxies at serialization time
+            //     -- also, say if any proxies are skipped, it means that if a user naiively
+            //        adds an item to a subresource collection, in some cases adding it will directly
+            //        push it to the server, and in others it just modifies a local List<>.
+            // perhaps ahead of time explicit stating of what's inline and what's not is better?
+            // so, use of IInlineResource<T> (implements ICollection) for inlines and ISubResource<T> for proxied.
+
             // then go on to add Count to IAsyncResourceSet and RestResource
 
-            var resourceString = await Context.CallRaw(HttpMethod.Get, Context.GetRequestContentType(), Path(), parameters: null, requestBody: null);
+            // TODO warn developer from putting an inline resource in that itself contains a full SubResource
+
+            var resourceString = await Context.CallRaw(HttpMethod.Get, Context.GetRequestContentType(), Path(), parameters: FullParameters(), requestBody: null);
             return Context.TranslateObject<List<T>>(ShopifyAPIClient.Pluralize(Name), resourceString);
         }
-
 
         public Type GetModelType()
         {
@@ -148,7 +190,7 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
-    public class SubResource<T> : RestResource<T>
+    public class SubResource<T> : RestResource<T>, ISubResource<T> where T : IResourceModel
     {
         public IParentableResource ParentResource;
         public IResourceModel ParentInstance;

@@ -354,6 +354,11 @@ upstream service.
    authorization.  The first time you run the test suite, Shopify will
    prompt you to add the Test App you created to your test store.
 
+Testing protip: if a unit test (ie., not an integration) test hangs, the problem may be
+that a null Task being returned by a mock receiving an unexpected call.  Temporarily add
+some sane length of delay to the blocking Wait() statements used in the test, and see
+if you get an error from the mock that displays a list of unexpected calls.
+
 ## TODO
 
 * build some logic for the standard REST object pattern.

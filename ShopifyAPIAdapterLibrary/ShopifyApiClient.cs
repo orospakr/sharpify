@@ -209,13 +209,30 @@ namespace ShopifyAPIAdapterLibrary
             return Translator.GetContentType();
         }
 
+        /// <summary>
+        /// Pluralize (using standard English rules) a singular noun.  Meant
+        /// for C locale/invariant programmer-domain use.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>The pluralized form.  Note that it always returns
+        /// in lower case.</returns>
         public static string Pluralize(string input) {
-            if(input.EndsWith("h")) {
-                return input + "es";
-            } else if(input.EndsWith("y")) {
-                return input.Substring(0, input.Length - 1) + "ies";
+            // lol english
+            var lowerInput = input.ToLowerInvariant();
+            if(lowerInput.EndsWith("h")) {
+                return lowerInput + "es";
+            } else if(lowerInput.EndsWith("y")) {
+                return lowerInput.Substring(0, lowerInput.Length - 1) + "ies";
+            } else if(lowerInput.EndsWith("is")) {
+                return lowerInput.Substring(0, lowerInput.Length - 2) + "es";
+            } else if (lowerInput.EndsWith("us") && lowerInput != "virus") {
+                return lowerInput.Substring(0, lowerInput.Length - 2) + "i";
+            } else if (lowerInput.EndsWith("s")) {
+                return lowerInput + "es";
+            } else if(lowerInput.EndsWith("ium")) {
+                return lowerInput.Substring(0, lowerInput.Length - 2) + "a";
             } else {
-                return input + "s";
+                return lowerInput + "s";
             }
         }
 
@@ -257,22 +274,13 @@ namespace ShopifyAPIAdapterLibrary
             return TranslateObject<List<Product>>("products", resourceString);
         }
 
-        /// <summary>
-        /// Shopify's API returns most things wrapped in single JSON field, named by the
-        /// resource being fetched ("product", "products", and so on.)
-        /// </summary>
-        public T TranslateObject<T>(String subfieldName, String content)
+        public T TranslateObject<T>(String subfieldName, string content)
         {
             if (Translator == null)
             {
                 throw new NotSupportedException("ShopfiyApiClient needs a data translator (JSON, XML) before the type safe API can be used.");
             }
-            JObject decoded = (JObject)Translator.Decode(content);
-
-            if(decoded[subfieldName] == null) {
-                throw new ShopifyException("Response does not contain field: " + subfieldName);
-            }
-            return decoded[subfieldName].ToObject<T>();
+            return Translator.ResourceDecode<T>(subfieldName, content);
         }
 
         /// <summary>

@@ -35,6 +35,17 @@ namespace ShopifyAPIAdapterLibrary
             return JObject.Parse(encodedData);
         }
 
+        public T ResourceDecode<T>(String subfieldName, String content)
+        {
+            JObject decoded = (JObject)Decode(content);
+
+            if (decoded[subfieldName] == null)
+            {
+                throw new ShopifyException("Response does not contain field: " + subfieldName);
+            }
+            return decoded[subfieldName].ToObject<T>();
+        }
+
         /// <summary>
         /// The content type used by JSON
         /// </summary>

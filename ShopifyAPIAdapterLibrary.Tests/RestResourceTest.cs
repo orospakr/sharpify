@@ -1,4 +1,5 @@
 using FakeItEasy;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using ShopifyAPIAdapterLibrary.Models;
 using System;
@@ -10,17 +11,32 @@ using System.Threading.Tasks;
 
 namespace ShopifyAPIAdapterLibrary.Tests
 {
+    // our test top-level resource
     public class Robot : IResourceModel {
         public string Id { get; set; }
 
         public string RobotType { get; set; }
-        public string Producer { get; set; }
-        public ICollection<Part> Parts { get; set; }
+        public string Manufacturer { get; set; }
+
+        // manually JsonIgnore the subresource until we add a
+        // IContractResolver that will skip all subresources
+        [JsonIgnore]
+        public ISubResource<Part> Parts { get; set; }
+
+        public ICollection<Inspection> Inspections { get; set; }
     }
 
+    // our test subresource
     public class Part : IResourceModel
     {
         public string Id { get; set; }
+    }
+
+    // our inlined resource
+    public class Inspection
+    {
+        public DateTime InspectedAt { get; set; }
+        public String Inspector { get; set; }
     }
 
     [TestFixture]
@@ -40,7 +56,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         /// and set as "proxies" as the collections backing subresource
         /// lists on a given model object.  We make one manually here.
         /// </summary>
-        public SubResource<Part> CalculonsParts { get; set; }
+        public ISubResource<Part> CalculonsParts { get; set; }
 
         public Robot Calculon { get; set; }
 
@@ -70,10 +86,10 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var rrNexusParameters = rrNexus.FullParameters();
             Assert.AreEqual("nexus", rrNexusParameters["robot_type"]);
 
-            var rrNexusByTyrell = rrNexus.Where("producer", "tyrell");
+            var rrNexusByTyrell = rrNexus.Where("manufacturer", "tyrell");
             var rrNexusByTyrellParameters = rrNexusByTyrell.FullParameters();
             Assert.AreEqual("nexus", rrNexusByTyrellParameters["robot_type"]);
-            Assert.AreEqual("tyrell", rrNexusByTyrellParameters["producer"]);
+            Assert.AreEqual("tyrell", rrNexusByTyrellParameters["manufacturer"]);
         }
 
         [Test]
@@ -91,13 +107,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
             return tcs.Task;
         }
 
-
         [Test]
         public void ShouldFetchAListOfAllMatchedModels()
         {
             var callRawExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Get,
-                A<MediaTypeHeaderValue>.That.Matches(mt => mt.ToString() == "application/json"),
-                "/admin/robots", null, null));
+                JsonFormatExpectation(),
+                "/admin/robots", EmptyQueryParametersExpectation(), null));
             callRawExpectation.Returns(TaskForResult<string>("json text!"));
 
             var translationExpectation = A.CallTo(() => Shopify.TranslateObject<List<Robot>>("robots", "json text!"));
@@ -120,11 +135,78 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("/admin/robots/42/parts/67", CalculonsParts.InstancePath("67"));
         }
 
+        private MediaTypeHeaderValue JsonFormatExpectation() {
+            return A<MediaTypeHeaderValue>.That.Matches(mt => mt.ToString() == "application/json");
+        }
+
+        private NameValueCollection EmptyQueryParametersExpectation()
+        {
+            return A<NameValueCollection>.That.Matches(nvc => nvc.Keys.Count == 0);
+        }
+
         [Test]
         public void ShouldFetchARecord()
         {
+            var callRawExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Get,
+                JsonFormatExpectation(),
+                "/admin/robots/89", EmptyQueryParametersExpectation(), null));
+            callRawExpectation.Returns(TaskForResult<string>("robot #89's json"));
 
-            // Robots.Get("89");
+            var translationExpectation = A.CallTo(() => Shopify.TranslateObject<Robot>("robot", "robot #89's json"));
+            var translatedRobot = new Robot { Id = "89" };
+
+            //
+            // TODO: .Get will start setting
+
+            translationExpectation.Returns(translatedRobot);
+            var answer = Robots.Get("89");
+            answer.Wait();
+
+            callRawExpectation.MustHaveHappened();
+            translationExpectation.MustHaveHappened();
+        }
+
+        [Test]
+        [Ignore]
+        public void ShouldFetchARecordWithSubresourceProxiesIfNotNested()
+        {
+        }
+
+        [Test]
+        [Ignore]
+        public void ShouldCreateARecord()
+        {
+        }
+
+        [Test]
+        [Ignore]
+        public void ShouldUpdateARecord()
+        {
+        }
+
+        [Test]
+        public void ShouldFetchASubResourceRecord()
+        {
+            var callRawExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Get,
+                JsonFormatExpectation(),
+                "/admin/robots/42/parts/69", EmptyQueryParametersExpectation(), null));
+            callRawExpectation.Returns(TaskForResult<string>("robot #42's part #69 json"));
+
+            var translationExpectation = A.CallTo(() => Shopify.TranslateObject<Part>("part", "robot #42's part #69 json"));
+            var translatedPart = new Part { Id = "69" };
+            translationExpectation.Returns(translatedPart);
+
+            var answer = CalculonsParts.Get("69");
+            answer.Wait();
+
+            Assert.AreSame(translatedPart, answer.Result);
+        }
+
+        [Test]
+        [Ignore]
+        public void ShouldFetchAListOfAllMatchedModelsFromSubresource()
+        {
+
         }
     }
 }

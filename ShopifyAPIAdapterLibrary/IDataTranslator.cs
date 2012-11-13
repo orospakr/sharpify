@@ -27,6 +27,14 @@ namespace ShopifyAPIAdapterLibrary
         object Decode(string encodedData);
 
         /// <summary>
+        /// Shopify's API returns most things wrapped in single JSON field, named by the
+        /// resource being fetched ("product", "products", and so on.)
+        /// 
+        /// This will return that wrapped resource in a type-safe fashion.
+        /// </summary>
+        T ResourceDecode<T>(String subfieldName, String content);
+
+        /// <summary>
         /// The Content Type (Mime Type) used by this translator
         /// </summary>
         /// <returns></returns>
