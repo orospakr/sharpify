@@ -211,7 +211,7 @@ namespace ShopifyAPIAdapterLibrary
 
             // TODO: paging.  this should be abstracted behind, ienumerable style
 
-            // what approach should I use? if an inline is found, should
+            // what approach I should use? if an inline is found, should
             // I make an entirely different IAsyncCollection and set it
             // on the field OR...
             // ... should I have RestResource have a notion of a cached/

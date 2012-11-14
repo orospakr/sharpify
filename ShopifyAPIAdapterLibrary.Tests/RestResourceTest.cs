@@ -180,7 +180,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        public void ShouldCreateARecord()
+        public void ShouldCreateASubResourceRecord()
         {
             var partToPost = new Part() { Sku = "0xdeadbeef" };
 
@@ -202,7 +202,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        public void ShouldUpdateARecord()
+        public void ShouldUpdateASubResourceRecord()
         {
             var partToPost = new Part() { Id = "9777" };
             var translationExpectation = A.CallTo(() => Shopify.ObjectTranslate<Part>("part", partToPost));

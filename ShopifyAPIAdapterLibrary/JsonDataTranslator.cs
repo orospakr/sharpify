@@ -7,14 +7,35 @@ using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
+using Newtonsoft.Json.Serialization;
 
 namespace ShopifyAPIAdapterLibrary
 {
+    public class ShopifyRestStyleJsonResolver : DefaultContractResolver
+    {
+        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+        {
+            var properties = base.CreateProperties(type, memberSerialization);
+
+            return new List<JsonProperty>(from p in properties where !(p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(ISubResource<>)) select p);
+        }
+    }
+
     /// <summary>
     /// This class is used to translate to and from C# object and JSON strings 
     /// </summary>
     public class JsonDataTranslator : IDataTranslator
     {
+        private JsonSerializerSettings Settings { get; set; }
+
+        public JsonSerializer Serializer { get; set; }
+
+        public JsonDataTranslator()
+        {
+            Settings = new JsonSerializerSettings() { ContractResolver = new ShopifyRestStyleJsonResolver() };
+            Serializer = JsonSerializer.Create(Settings);
+        }
+
         /// <summary>
         /// Given a C# object, return a JSON string that can be used by the Shopify API
         /// </summary>
@@ -37,7 +58,7 @@ namespace ShopifyAPIAdapterLibrary
 
         public T ResourceDecode<T>(String subfieldName, String content)
         {
-            JObject decoded = (JObject)Decode(content);
+            JObject decoded = (JObject)JsonConvert.DeserializeObject(content, Settings);
 
             if (decoded[subfieldName] == null)
             {
@@ -49,9 +70,9 @@ namespace ShopifyAPIAdapterLibrary
         public string ResourceEncode<T>(string subFieldName, T model)
         {
             var json = new JObject();
-            var wrappedModel = JObject.FromObject(model);
+            var wrappedModel = JObject.FromObject(model, Serializer);
             json.Add(subFieldName, wrappedModel);
-            return JsonConvert.SerializeObject(json);
+            return JsonConvert.SerializeObject(json, Settings);
         }
 
         /// <summary>
@@ -67,5 +88,8 @@ namespace ShopifyAPIAdapterLibrary
         /// The content type used by JSON
         /// </summary>
         public static readonly MediaTypeHeaderValue ContentType = new MediaTypeHeaderValue("application/json");
+
+
+
     }
 }

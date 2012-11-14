@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FakeItEasy;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using ShopifyAPIAdapterLibrary.Models;
 using System;
@@ -69,15 +70,21 @@ namespace ShopifyAPIAdapterLibrary.Tests
                 Value = 25.60,
                 Receipient = "Jaded Pixel Technologies" };
 
-            var encoded = DataTranslator.Encode(c);
+            // this bit is for testing that the SubResource proxies
+            // don't mess with the serialization process
+            var shopify = A.Fake<IShopifyAPIClient>();
+            var transactions = new RestResource<Transaction>(shopify, "transaction");
+            c.SKUs = new SubResource<SKU>(transactions, c, "sku");
+
+            var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", c);
 
             // use late-binding to concisely test expected fields
             // in the JSON
             dynamic decoded = JsonConvert.DeserializeObject(encoded);
 
-            Assert.AreEqual("788", decoded.Id.ToString());
-            Assert.AreEqual("CAD", decoded.Currency.ToString());
-            Assert.AreEqual("Jaded Pixel Technologies", decoded.Receipient.ToString());
+            Assert.AreEqual("788", decoded.transaction.Id.ToString());
+            Assert.AreEqual("CAD", decoded.transaction.Currency.ToString());
+            Assert.AreEqual("Jaded Pixel Technologies", decoded.transaction.Receipient.ToString());
             
             DataTranslator.Decode(encoded);
         }
