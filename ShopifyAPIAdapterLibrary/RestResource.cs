@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -17,6 +18,8 @@ namespace ShopifyAPIAdapterLibrary
         Task<T> Get(string p);
 
         Task Create(T model);
+
+        Task Update(T model);
 
         string Path();
 
@@ -88,10 +91,22 @@ namespace ShopifyAPIAdapterLibrary
         public string InstancePath(string id) {
             return ShopifyAPIClient.UriPathJoin(Path(), id);
         }
+
+        class Lol : IResourceModel
+        {
+            public string Id { get; set; }
+        }
+
+
+        private T TranslateObject(string subfieldName, string resourceString) {
+            var translated = Context.TranslateObject<T>(Name, resourceString);
+
+            return PlaceResourceProxesOnModel(translated);
+        }
         
         public async Task<T> Get(string id) {
             var resourceString = await Context.CallRaw(HttpMethod.Get, Context.GetRequestContentType(), InstancePath(id), parameters: FullParameters(), requestBody: null);
-            return Context.TranslateObject<T>(Name, resourceString);
+            return TranslateObject(Name, resourceString);
         }
 
         public async Task Create(T model) {
@@ -100,8 +115,37 @@ namespace ShopifyAPIAdapterLibrary
                 Path(), null, jsonString);
         }
 
+        public async Task Update(T model)
+        {
+            if (model.Id == null || model.Id.Length == 0)
+            {
+                throw new ShopifyUsageException("Model must have an ID in order to put an update.");
+            }
+            var resourceString = Context.ObjectTranslate<T>(Name, model);
+            await Context.CallRaw(HttpMethod.Put, Context.GetRequestContentType(),
+                InstancePath(model.Id), null, resourceString);
+        }
+
         public RestResource<T> Where(string field, string isEqualTo) {
             return new RestResource<T>(this, new NameValueCollection { { field, isEqualTo } });
+        }
+
+        private T PlaceResourceProxesOnModel(T model)
+        {
+            var r = from p in typeof(T).GetProperties() where p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == (typeof(ISubResource<>)) select p;
+            foreach (var prop in r)
+            {
+                // get resource model type of the subresource field
+                var subResourceModelType = prop.PropertyType.GetGenericArguments()[0];
+                var baseSubresourceType = typeof(SubResource<>);
+                var resourceType = baseSubresourceType.MakeGenericType(new Type[] { subResourceModelType });
+
+                // I was hoping to avoid using Activator in this project, but no such luck
+                var subResourceInstance = Activator.CreateInstance(resourceType, new Object[] { this, model, subResourceModelType.Name });
+
+                prop.SetValue(model, subResourceInstance);
+            }
+            return model;
         }
 
         public RestResource<T> Where(Expression<Func<T, object>> propertyLambda, string isEqualTo)
@@ -133,7 +177,7 @@ namespace ShopifyAPIAdapterLibrary
             return default(T);
         }
 
-        public async Task<ICollection<T>> AsList() {
+        public async Task<IList<T>> AsList() {
             // TODO Need an async/streamed version.
             // ICollection is okay for now. we buffer up all the answers before returning them.
             // actually, the thing this returns needs to offer
@@ -191,7 +235,12 @@ namespace ShopifyAPIAdapterLibrary
             // TODO warn developer from putting an inline resource in that itself contains a full SubResource
 
             var resourceString = await Context.CallRaw(HttpMethod.Get, Context.GetRequestContentType(), Path(), parameters: FullParameters(), requestBody: null);
-            return Context.TranslateObject<List<T>>(ShopifyAPIClient.Pluralize(Name), resourceString);
+            var list = Context.TranslateObject<List<T>>(ShopifyAPIClient.Pluralize(Name), resourceString);
+            foreach (var model in list)
+            {
+                PlaceResourceProxesOnModel(model);
+            }
+            return list;
         }
 
         public Type GetModelType()

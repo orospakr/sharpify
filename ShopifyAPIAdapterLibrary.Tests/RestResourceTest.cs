@@ -24,13 +24,14 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [JsonIgnore]
         public ISubResource<Part> Parts { get; set; }
 
-        public ICollection<Inspection> Inspections { get; set; }
+        public IList<Inspection> Inspections { get; set; }
     }
 
     // our test subresource
     public class Part : IResourceModel
     {
         public string Id { get; set; }
+        public string Sku { get; set; }
     }
 
     // our inlined resource
@@ -127,6 +128,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
             translationExpectation.MustHaveHappened();
 
             Assert.AreEqual(1, answer.Result.Count);
+            Assert.NotNull(answer.Result[0].Parts);
+            Assert.AreEqual("/admin/robots/fdaf/parts", answer.Result[0].Parts.Path());
         }
 
         [Test]
@@ -167,20 +170,19 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var answer = Robots.Get("89");
             answer.Wait();
 
+            Assert.AreSame(answer.Result, translatedRobot);
+
+            // check for the Parts subresource object
+            Assert.AreEqual("/admin/robots/89/parts", answer.Result.Parts.Path());
+
             callRawExpectation.MustHaveHappened();
             translationExpectation.MustHaveHappened();
         }
 
         [Test]
-        [Ignore]
-        public void ShouldFetchARecordWithSubresourceProxiesIfNotNested()
-        {
-        }
-
-        [Test]
         public void ShouldCreateARecord()
         {
-            var partToPost = new Part() { Id = "988" };
+            var partToPost = new Part() { Sku = "0xdeadbeef" };
 
             var translationExpectation = A.CallTo(() => Shopify.ObjectTranslate<Part>("part", partToPost));
             translationExpectation.Returns("PART 988 JSON");
@@ -200,10 +202,23 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        [Ignore]
         public void ShouldUpdateARecord()
         {
-            
+            var partToPost = new Part() { Id = "9777" };
+            var translationExpectation = A.CallTo(() => Shopify.ObjectTranslate<Part>("part", partToPost));
+            translationExpectation.Returns("PART 988 JSON");
+
+            var putRawExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Put,
+                JsonFormatExpectation(),
+                "/admin/robots/42/parts/9777", null, "PART 988 JSON"));
+            putRawExpectation.Returns(TaskForResult<string>(""));
+
+            var answer = CalculonsParts.Update(partToPost);
+
+            answer.Wait();
+
+            translationExpectation.MustHaveHappened();
+            putRawExpectation.MustHaveHappened();
         }
 
         [Test]
@@ -222,13 +237,6 @@ namespace ShopifyAPIAdapterLibrary.Tests
             answer.Wait();
 
             Assert.AreSame(translatedPart, answer.Result);
-        }
-
-        [Test]
-        [Ignore]
-        public void ShouldFetchAListOfAllMatchedModelsFromSubresource()
-        {
-
         }
     }
 }
