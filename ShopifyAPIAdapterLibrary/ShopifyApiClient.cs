@@ -253,6 +253,19 @@ namespace ShopifyAPIAdapterLibrary
             }
         }
 
+        /// <summary>
+        /// Mangle C#-style property camel-case (first-humped or no) into Ruby-style property
+        /// underscore-style.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string Underscoreify(string input)
+        {
+            // C.O Krlos@SA http://stackoverflow.com/a/7275039
+            return System.Text.RegularExpressions.Regex.Replace(
+                input, @"([A-Z])([A-Z][a-z])|([a-z0-9])([A-Z])", "$1$3_$2$4").ToLower();
+        }
+
         public static string UriPathJoin(String basePath, String relativePath) {
             if(basePath == null || basePath.Length == 0) {
                 return String.Format("/{0}", relativePath); 

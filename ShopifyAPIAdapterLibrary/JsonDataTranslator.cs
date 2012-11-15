@@ -57,9 +57,7 @@ namespace ShopifyAPIAdapterLibrary
 
         protected override string ResolvePropertyName(string propertyName)
         {
-            // C.O Krlos@SA http://stackoverflow.com/a/7275039
-            return System.Text.RegularExpressions.Regex.Replace(
-                propertyName, @"([A-Z])([A-Z][a-z])|([a-z0-9])([A-Z])", "$1$3_$2$4").ToLower();
+            return ShopifyAPIClient.Underscoreify(propertyName);
         }
 
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
@@ -82,8 +80,7 @@ namespace ShopifyAPIAdapterLibrary
 
                 if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(IHasA<>))
                 {
-                    // TODO: proper underscoreize
-                    prop.PropertyName = prop.PropertyName.ToLowerInvariant() + "_id";
+                    prop.PropertyName = ShopifyAPIClient.Underscoreify(prop.PropertyName) + "_id";
 
                     // get type argument of IHasA
                     var hasATargetType = prop.PropertyType.GetGenericArguments();

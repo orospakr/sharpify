@@ -30,5 +30,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("fungi", ShopifyAPIClient.Pluralize("fungus"));
             Assert.AreEqual("viruses", ShopifyAPIClient.Pluralize("virus"));
         }
+
+        [Test]
+        public void ShouldUnderscorify()
+        {
+            Assert.AreEqual("ben_the_benly_benis", ShopifyAPIClient.Underscoreify("BenTheBenlyBenis"));
+            Assert.AreEqual("ben_the_benly_benis", ShopifyAPIClient.Underscoreify("benTheBenlyBenis"));
+        }
     }
 }
