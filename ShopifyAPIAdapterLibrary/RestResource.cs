@@ -13,9 +13,20 @@ using Newtonsoft.Json;
 
 namespace ShopifyAPIAdapterLibrary
 {
-    public interface ISubResource<T>
+    /// <summary>
+    /// Untyped access to a RestResource.
+    /// 
+    /// Largely intended for having a means for ShopifyApiClient
+    /// to have a list of resources by hosted IResourceModel type.
+    /// </summary>
+    public interface IUntypedResource
     {
-        Task<T> Get(string p);
+
+    }
+
+    public interface IHasMany<T>
+    {
+        Task<T> Get(string id);
 
         Task Create(T model);
 
@@ -24,6 +35,19 @@ namespace ShopifyAPIAdapterLibrary
         string Path();
 
         string InstancePath(string p);
+    }
+
+    public interface IHasA<T> where T : IResourceModel
+    {
+        // Retrieve the resource associated with the parent object.
+        Task<T> Get();
+
+        string Id { get; }
+
+        /// <summary>
+        /// TODO what should Set() do, exactly?
+        /// </summary>
+        Task<T> Set(T model);
     }
 
     public interface IParentableResource
@@ -35,7 +59,7 @@ namespace ShopifyAPIAdapterLibrary
         Type GetModelType(); 
     }
 
-    public class RestResource<T> : IParentableResource where T : IResourceModel {
+    public class RestResource<T> : IUntypedResource, IParentableResource where T : IResourceModel {
         public IShopifyAPIClient Context { get; protected set; }
 
         public string Name { get; protected set; }
@@ -60,6 +84,7 @@ namespace ShopifyAPIAdapterLibrary
         /// </param>
         public RestResource(IShopifyAPIClient context, string name) {
             Context = context;
+            context.RegisterResource<T>(this);
             Name = name;
         }
 
@@ -91,12 +116,6 @@ namespace ShopifyAPIAdapterLibrary
         public string InstancePath(string id) {
             return ShopifyAPIClient.UriPathJoin(Path(), id);
         }
-
-        class Lol : IResourceModel
-        {
-            public string Id { get; set; }
-        }
-
 
         private T TranslateObject(string subfieldName, string resourceString) {
             var translated = Context.TranslateObject<T>(Name, resourceString);
@@ -132,7 +151,7 @@ namespace ShopifyAPIAdapterLibrary
 
         private T PlaceResourceProxesOnModel(T model)
         {
-            var r = from p in typeof(T).GetProperties() where p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == (typeof(ISubResource<>)) select p;
+            var r = from p in typeof(T).GetProperties() where p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == (typeof(IHasMany<>)) select p;
             foreach (var prop in r)
             {
                 // get resource model type of the subresource field
@@ -249,7 +268,7 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
-    public class SubResource<T> : RestResource<T>, ISubResource<T> where T : IResourceModel
+    public class SubResource<T> : RestResource<T>, IHasMany<T> where T : IResourceModel
     {
         public IParentableResource ParentResource;
         public IResourceModel ParentInstance;
@@ -273,4 +292,28 @@ namespace ShopifyAPIAdapterLibrary
             return ShopifyAPIClient.UriPathJoin(ParentResource.InstancePath(ParentInstance.Id), ShopifyAPIClient.Pluralize(Name));
         }
     }
+
+    public class SingleInstanceSubResource<T> : IHasA<T> where T : IResourceModel
+    {
+        public ShopifyAPIClient Context { get; set; }
+        public string Id { get; set; }
+
+        public SingleInstanceSubResource(ShopifyAPIClient context, string id)
+        {
+            Context = context;
+            Id = id;
+        }
+
+        public async Task<T> Get()
+        {
+            return await Context.GetResource<T>().Get(Id);
+        }
+
+        public Task<T> Set(T model)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
 }

@@ -8,16 +8,147 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using Newtonsoft.Json.Serialization;
+using ShopifyAPIAdapterLibrary.Models;
+using System.ComponentModel;
 
 namespace ShopifyAPIAdapterLibrary
 {
+    public class HasAConverter<T> : JsonConverter where T: IResourceModel {
+        public string TargetProperty { get;  set; }
+
+        public HasAConverter(String targetProperty) {
+            this.TargetProperty = targetProperty;
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            // return objectType == typeof(string);
+            return true;
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            var hasAId = reader.Value.ToString();
+
+            // var prop = existingValue.GetType().GetProperty(TargetProperty);
+            var placeholder = new HasADeserializationPlaceholder<T>(hasAId);
+            return placeholder;
+            // prop.SetValue(objectType, placeholder);
+            // return existingValue;
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            // var prop = value.GetType().GetProperty(TargetProperty);
+            IHasA<T> hasa = (IHasA<T>)value;
+            writer.WriteValue(hasa.Id);
+        }
+    }
+
     public class ShopifyRestStyleJsonResolver : DefaultContractResolver
     {
+        public string ResourceName { get; private set; }
+
+        public ShopifyRestStyleJsonResolver(string resourceName)
+        {
+            ResourceName = resourceName;
+        }
+
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
-            var properties = base.CreateProperties(type, memberSerialization);
+            var properties = new List<JsonProperty>(base.CreateProperties(type, memberSerialization));
 
-            return new List<JsonProperty>(from p in properties where !(p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(ISubResource<>)) select p);
+            properties.RemoveAll((prop) => {
+                // do not attempt to serialize IHasManys
+                if(prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(IHasMany<>)) return true;
+
+                // if we're serializing the top-level Container object, perform our wrapper-object
+                // name transformation
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Container<>))
+                {
+                    // our Container type only has one property (the specially named per-resource property),
+                    // so, we just presume to match all properties in Container.
+                    prop.PropertyName = ResourceName;
+                    return false;
+                }
+
+                if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(IHasA<>))
+                {
+                    // TODO: proper underscoreize
+                    prop.PropertyName = prop.PropertyName.ToLowerInvariant() + "_id";
+
+                    // get type argument of IHasA
+                    var hasATargetType = prop.PropertyType.GetGenericArguments();
+
+                    // prop.Converter = new JsonConverter(
+                    Type hasaConverterType = typeof(HasAConverter<>).MakeGenericType(hasATargetType);
+
+                    // I was really hoping to avoid activator.createinstance... :(
+                    var converter = Activator.CreateInstance(hasaConverterType, prop.UnderlyingName);
+
+                    // for deserialization:
+                    prop.MemberConverter = (JsonConverter)converter;
+                    
+                    // for serialization:
+                    prop.Converter = (JsonConverter)converter;
+                    return false;
+                }
+
+                return false;
+            });
+            return properties;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class WrappedResourceName : Attribute
+    {
+        public WrappedResourceName()
+        {
+        }
+    }
+
+    /// <summary>
+    /// Rails-style resource representations are typically wrapped in a JSON object
+    /// with a single property with the name of the contained resource.
+    /// 
+    /// In order to use the type-safe JsonConvert API (and have our IContractResolver
+    /// get used) we have to arrange to have a (de)serializable object type getting
+    /// a dynamic name to use for that single field at runtime.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class Container<T>
+    {
+        [WrappedResourceName]
+        public T Resource { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class HasADeserializationPlaceholder<T> : IHasA<T> where T : IResourceModel
+    {
+        public string Id { get; private set; }
+
+        public HasADeserializationPlaceholder(string id)
+        {
+            Id = id;
+        }
+
+        private Exception Fail()
+        {
+            return new ShopifyConfigurationException("The second pass has not yet replaced this HasA placeholder with the real thing.");
+        }
+
+        public System.Threading.Tasks.Task<T> Get()
+        {
+            throw Fail();
+        }
+
+        public System.Threading.Tasks.Task<T> Set(T model)
+        {
+            throw Fail();
         }
     }
 
@@ -26,14 +157,18 @@ namespace ShopifyAPIAdapterLibrary
     /// </summary>
     public class JsonDataTranslator : IDataTranslator
     {
-        private JsonSerializerSettings Settings { get; set; }
-
-        public JsonSerializer Serializer { get; set; }
-
         public JsonDataTranslator()
         {
-            Settings = new JsonSerializerSettings() { ContractResolver = new ShopifyRestStyleJsonResolver() };
-            Serializer = JsonSerializer.Create(Settings);
+        }
+
+        private JsonSerializerSettings CreateSerializerSettings(string topLevelResourceName)
+        {
+            return new JsonSerializerSettings() { ContractResolver = new ShopifyRestStyleJsonResolver(topLevelResourceName) }; 
+        }
+
+        private JsonSerializer CreateSerializer(string topLevelResourceName)
+        {
+            return JsonSerializer.Create(CreateSerializerSettings(topLevelResourceName));
         }
 
         /// <summary>
@@ -56,23 +191,32 @@ namespace ShopifyAPIAdapterLibrary
             return JObject.Parse(encodedData);
         }
 
+
+
         public T ResourceDecode<T>(String subfieldName, String content)
         {
-            JObject decoded = (JObject)JsonConvert.DeserializeObject(content, Settings);
 
-            if (decoded[subfieldName] == null)
-            {
-                throw new ShopifyException("Response does not contain field: " + subfieldName);
-            }
-            return decoded[subfieldName].ToObject<T>();
+            //var typeDesc = new TypeDescriptionProvider();
+            //container.Resource.GetType().TypeDescri
+
+            //JObject decoded = (JObject)JsonConvert.DeserializeObject(content, Settings);
+
+            //if (decoded[subfieldName] == null)
+            //{
+            //    throw new ShopifyException("Response does not contain field: " + subfieldName);
+            //}
+
+            Container<T> decoded = JsonConvert.DeserializeObject<Container<T>>(content, CreateSerializerSettings(subfieldName));
+            return decoded.Resource;
         }
 
         public string ResourceEncode<T>(string subFieldName, T model)
         {
-            var json = new JObject();
-            var wrappedModel = JObject.FromObject(model, Serializer);
-            json.Add(subFieldName, wrappedModel);
-            return JsonConvert.SerializeObject(json, Settings);
+            Container<T> wrapped = new Container<T>() { Resource = model };
+            //var json = new JObject();
+            //var wrappedModel = JObject.FromObject(model, Serializer);
+            //json.Add(subFieldName, wrappedModel);
+            return JsonConvert.SerializeObject(wrapped, CreateSerializerSettings(subFieldName));
         }
 
         /// <summary>

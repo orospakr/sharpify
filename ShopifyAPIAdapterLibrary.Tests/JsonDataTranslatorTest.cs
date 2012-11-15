@@ -19,6 +19,11 @@ namespace ShopifyAPIAdapterLibrary.Tests
         public double Percentage { get; set; }
     }
 
+    public class Bank : IResourceModel
+    {
+        public string Id { get; set; }
+    }
+
     // a subresource that we won't do much with.
     // the DataTranslator is not responsible for inserting
     // subresource proxies.
@@ -36,7 +41,9 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
         public ICollection<Tax> Taxes { get; set; }
 
-        public ISubResource<SKU> SKUs { get; set; }
+        public IHasMany<SKU> SKUs { get; set; }
+
+        public IHasA<Bank> Bank { get; set; }
 
         public string Id { get; set; }
     }
@@ -119,6 +126,40 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("77", decoded.transaction.Id.ToString());
             Assert.AreEqual(1, decoded.transaction.Taxes.Count);
             Assert.AreEqual("New Zealand", decoded.transaction.Taxes[0].Region.ToString());
+        }
+
+        [Test]
+        public void ShouldInsertHasAPlaceHoldersWhenDeserializing()
+        {
+            var fixture = @"{""transaction"": {""Id"": 48, ""Currency"": ""USD"", ""bank_id"": 18, ""Taxes"": [" +
+               @"{""Region"": ""Illinois"", ""Percentage"": 6.25}]}}";
+            var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
+
+            // validate that the usual fields are still ok
+            Assert.AreEqual("48", decoded.Id);
+            Assert.AreEqual(1, decoded.Taxes.Count);
+
+            Assert.IsInstanceOf<HasADeserializationPlaceholder<Bank>>(decoded.Bank);
+            Assert.AreEqual("18", decoded.Bank.Id);
+        }
+
+        [Test]
+        public void ShouldSerializeObjectWithAHasA()
+        {
+            var t = new Transaction()
+            {
+                Id = "99",
+                Currency = "EUR",
+                Receipient = "Somewhere",
+                Bank = new HasADeserializationPlaceholder<Bank>("88")
+            };
+
+            var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", t);
+
+            dynamic decoded = JsonConvert.DeserializeObject(encoded);
+
+            Assert.AreEqual("99", decoded.transaction.Id.ToString());
+            Assert.AreEqual("88", decoded.transaction.bank_id.ToString());
         }
     }
 }

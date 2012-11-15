@@ -27,6 +27,12 @@ namespace ShopifyAPIAdapterLibrary
         public RestResource<Product> Products { get; private set; }
 
         /// <summary>
+        /// Programmatically-accessible mapping of IResourceModels to
+        /// IRestResources to service requests for them.
+        /// </summary>
+        private IDictionary<Type, IUntypedResource> Resources { get; set; }
+
+        /// <summary>
         /// Creates an instance of this class for use with making API Calls
         /// </summary>
         /// <param name="state">the authorization state required to make the API Calls</param>
@@ -48,7 +54,18 @@ namespace ShopifyAPIAdapterLibrary
             SetUpResources();
         }
 
+        public void RegisterResource<T>(IUntypedResource resource) where T : IResourceModel
+        {
+            this.Resources.Add(typeof(T), resource);
+        }
+
+        public RestResource<T> GetResource<T>() where T: IResourceModel
+        {
+            return (RestResource<T>)this.Resources[typeof(T)];
+        }
+
         private void SetUpResources() {
+            this.Resources = new Dictionary<Type, IUntypedResource>();
             Products = new RestResource<Product>(this, "product");
         }
 

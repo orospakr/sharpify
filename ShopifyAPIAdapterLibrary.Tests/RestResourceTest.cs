@@ -2,6 +2,7 @@ using FakeItEasy;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using ShopifyAPIAdapterLibrary;
 using ShopifyAPIAdapterLibrary.Models;
 using System;
 using System.Collections.Generic;
@@ -19,12 +20,17 @@ namespace ShopifyAPIAdapterLibrary.Tests
         public string RobotType { get; set; }
         public string Manufacturer { get; set; }
 
-        // manually JsonIgnore the subresource until we add a
-        // IContractResolver that will skip all subresources
-        [JsonIgnore]
-        public ISubResource<Part> Parts { get; set; }
+        public IHasMany<Part> Parts { get; set; }
 
         public IList<Inspection> Inspections { get; set; }
+
+        public IHasA<Brain> Brain { get; set; }
+    }
+
+    public class Brain : IResourceModel
+    {
+        public string Id { get; set; }
+        public int SynapseCount { get; set; }
     }
 
     // our test subresource
@@ -58,7 +64,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         /// and set as "proxies" as the collections backing subresource
         /// lists on a given model object.  We make one manually here.
         /// </summary>
-        public ISubResource<Part> CalculonsParts { get; set; }
+        public IHasMany<Part> CalculonsParts { get; set; }
 
         public Robot Calculon { get; set; }
 
@@ -237,6 +243,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
             answer.Wait();
 
             Assert.AreSame(translatedPart, answer.Result);
+        }
+
+        [Test]
+        public void ShouldCreateSingleInstanceSubResourceForHasA()
+        {
+            //
         }
     }
 }
