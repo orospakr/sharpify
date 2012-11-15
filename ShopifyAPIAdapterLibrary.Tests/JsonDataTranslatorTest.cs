@@ -39,6 +39,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
         public string Receipient { get; set; }
 
+        public string FinancialStatus { get; set; }
+
         public ICollection<Tax> Taxes { get; set; }
 
         public IHasMany<SKU> SKUs { get; set; }
@@ -62,11 +64,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [Test]
         public void ShouldDeserializeSimpleObject()
         {
-            var fixture = @"{""transaction"": {""Id"": ""56"", ""currency"": ""CAD"", ""value"": 78.45}}";
+            var fixture = @"{""transaction"": {""Id"": ""56"", ""currency"": ""CAD"", ""value"": 78.45, ""financial_status"": ""authorized""}}";
             var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
             Assert.AreEqual("56", decoded.Id);
             Assert.AreEqual("CAD", decoded.Currency);
             Assert.AreEqual(78.45, decoded.Value);
+            Assert.AreEqual("authorized", decoded.FinancialStatus);
         }
 
         [Test]
@@ -75,7 +78,9 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var c = new Transaction() { Id = "788",
                 Currency = "CAD",
                 Value = 25.60,
-                Receipient = "Jaded Pixel Technologies" };
+                Receipient = "Jaded Pixel Technologies",
+                FinancialStatus = "refunded"
+            };
 
             // this bit is for testing that the SubResource proxies
             // don't mess with the serialization process
@@ -92,6 +97,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("788", decoded.transaction.id.ToString());
             Assert.AreEqual("CAD", decoded.transaction.currency.ToString());
             Assert.AreEqual("Jaded Pixel Technologies", decoded.transaction.receipient.ToString());
+            Assert.AreEqual("refunded", decoded.transaction.financial_status.ToString());
             
             DataTranslator.Decode(encoded);
         }

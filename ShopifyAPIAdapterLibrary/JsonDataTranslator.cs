@@ -45,13 +45,21 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
-    public class ShopifyRestStyleJsonResolver : CamelCasePropertyNamesContractResolver
+    public class ShopifyRestStyleJsonResolver : DefaultContractResolver
     {
         public string ResourceName { get; private set; }
 
-        public ShopifyRestStyleJsonResolver(string resourceName)
+        public ShopifyRestStyleJsonResolver(string resourceName) :base (false)
         {
+            // sadly, it is too expensive to leave the cacher enabled, hence why I pass false.
             ResourceName = resourceName;
+        }
+
+        protected override string ResolvePropertyName(string propertyName)
+        {
+            // C.O Krlos@SA http://stackoverflow.com/a/7275039
+            return System.Text.RegularExpressions.Regex.Replace(
+                propertyName, @"([A-Z])([A-Z][a-z])|([a-z0-9])([A-Z])", "$1$3_$2$4").ToLower();
         }
 
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
