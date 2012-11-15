@@ -37,12 +37,15 @@ namespace ShopifyAPIAdapterLibrary
         string InstancePath(string p);
     }
 
-    public interface IHasA<T> where T : IResourceModel
+    public interface IHasAUntyped
+    {
+        string Id { get; }
+    }
+
+    public interface IHasA<T> : IHasAUntyped where T : IResourceModel
     {
         // Retrieve the resource associated with the parent object.
         Task<T> Get();
-
-        string Id { get; }
 
         /// <summary>
         /// TODO what should Set() do, exactly?
@@ -151,6 +154,7 @@ namespace ShopifyAPIAdapterLibrary
 
         private T PlaceResourceProxesOnModel(T model)
         {
+            // add HasMany proxies to the model instance
             var r = from p in typeof(T).GetProperties() where p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == (typeof(IHasMany<>)) select p;
             foreach (var prop in r)
             {
@@ -164,6 +168,31 @@ namespace ShopifyAPIAdapterLibrary
 
                 prop.SetValue(model, subResourceInstance);
             }
+
+            // replace the HasA placeholders (which tell us the ID that was on the _id) field
+            // with the live ones
+
+            var hasaPlaceholders = from p in typeof(T).GetProperties() where p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == (typeof(IHasA<>)) select p;
+            foreach (var placeholderProp in hasaPlaceholders)
+            {
+                // get the ID from the placeholder
+                var placeholder = (IHasAUntyped)placeholderProp.GetValue(model);
+                if (placeholder == null)
+                {
+                    continue;
+                }
+
+                // get resource model type from the has_a property
+                var subResourceModelType = placeholderProp.PropertyType.GetGenericArguments()[0];
+                var baseSubresourceType = typeof(SingleInstanceSubResource<>);
+                var resourceType = baseSubresourceType.MakeGenericType(new Type[] { subResourceModelType });
+
+                // I was hoping to avoid using Activator in this project, but no such luck
+                var subResourceInstance = Activator.CreateInstance(resourceType, this.Context, placeholder.Id);
+
+                placeholderProp.SetValue(model, subResourceInstance);
+            }
+
             return model;
         }
 
@@ -295,10 +324,10 @@ namespace ShopifyAPIAdapterLibrary
 
     public class SingleInstanceSubResource<T> : IHasA<T> where T : IResourceModel
     {
-        public ShopifyAPIClient Context { get; set; }
+        public IShopifyAPIClient Context { get; set; }
         public string Id { get; set; }
 
-        public SingleInstanceSubResource(ShopifyAPIClient context, string id)
+        public SingleInstanceSubResource(IShopifyAPIClient context, string id)
         {
             Context = context;
             Id = id;
@@ -314,6 +343,4 @@ namespace ShopifyAPIAdapterLibrary
             throw new NotImplementedException();
         }
     }
-
-
 }

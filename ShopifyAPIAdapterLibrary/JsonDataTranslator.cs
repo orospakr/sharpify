@@ -100,14 +100,6 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public class WrappedResourceName : Attribute
-    {
-        public WrappedResourceName()
-        {
-        }
-    }
-
     /// <summary>
     /// Rails-style resource representations are typically wrapped in a JSON object
     /// with a single property with the name of the contained resource.
@@ -119,7 +111,6 @@ namespace ShopifyAPIAdapterLibrary
     /// <typeparam name="T"></typeparam>
     public class Container<T>
     {
-        [WrappedResourceName]
         public T Resource { get; set; }
     }
 

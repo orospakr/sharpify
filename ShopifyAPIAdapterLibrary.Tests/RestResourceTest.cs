@@ -59,6 +59,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
         public RestResource<Robot> Robots { get; set; }
 
+        public RestResource<Brain> Brains { get; set; }
+
         /// <summary>
         /// SubResources would normally be created dynamically
         /// and set as "proxies" as the collections backing subresource
@@ -76,6 +78,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             A.CallTo(() => Shopify.GetRequestContentType()).Returns(new MediaTypeHeaderValue("application/json"));
 
             Robots = new RestResource<Robot>(Shopify, "robot");
+            Brains = new RestResource<Brain>(Shopify, "brain");
             Calculon = new Robot() { Id = "42" };
             CalculonsParts = new SubResource<Part>(Robots, Calculon, "part");
         }
@@ -248,7 +251,25 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [Test]
         public void ShouldCreateSingleInstanceSubResourceForHasA()
         {
-            //
+            var getRobotExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Get,
+                JsonFormatExpectation(),
+                "/admin/robots/420", EmptyQueryParametersExpectation(), null));
+            getRobotExpectation.Returns(TaskForResult<string>("Robot #420's json"));
+
+            // Robot #42 has Brain #56
+            var translationExpectation = A.CallTo(() => Shopify.TranslateObject<Robot>("robot", "Robot #420's json"));
+            var translatedRobot = new Robot { Id = "420",
+                Brain = new HasADeserializationPlaceholder<Brain>("56")
+            };
+            translationExpectation.Returns(translatedRobot);
+
+            var answer = Robots.Get("420");
+            answer.Wait();
+
+            getRobotExpectation.MustHaveHappened();
+            translationExpectation.MustHaveHappened();
+
+            Assert.IsInstanceOf<SingleInstanceSubResource<Brain>>(answer.Result.Brain);
         }
     }
 }
