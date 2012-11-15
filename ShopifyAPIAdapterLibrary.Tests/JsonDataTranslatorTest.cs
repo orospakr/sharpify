@@ -62,7 +62,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [Test]
         public void ShouldDeserializeSimpleObject()
         {
-            var fixture = @"{""transaction"": {""Id"": ""56"", ""Currency"": ""CAD"", ""Value"": 78.45}}";
+            var fixture = @"{""transaction"": {""Id"": ""56"", ""currency"": ""CAD"", ""value"": 78.45}}";
             var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
             Assert.AreEqual("56", decoded.Id);
             Assert.AreEqual("CAD", decoded.Currency);
@@ -89,9 +89,9 @@ namespace ShopifyAPIAdapterLibrary.Tests
             // in the JSON
             dynamic decoded = JsonConvert.DeserializeObject(encoded);
 
-            Assert.AreEqual("788", decoded.transaction.Id.ToString());
-            Assert.AreEqual("CAD", decoded.transaction.Currency.ToString());
-            Assert.AreEqual("Jaded Pixel Technologies", decoded.transaction.Receipient.ToString());
+            Assert.AreEqual("788", decoded.transaction.id.ToString());
+            Assert.AreEqual("CAD", decoded.transaction.currency.ToString());
+            Assert.AreEqual("Jaded Pixel Technologies", decoded.transaction.receipient.ToString());
             
             DataTranslator.Decode(encoded);
         }
@@ -99,8 +99,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [Test]
         public void ShouldDeserializeObjectWithInlineResource()
         {
-            var fixture = @"{""transaction"": {""Id"": 48, ""Currency"": ""USD"", ""Taxes"": [" +
-                @"{""Region"": ""Illinois"", ""Percentage"": 6.25}]}}";
+            var fixture = @"{""transaction"": {""id"": 48, ""currency"": ""USD"", ""taxes"": [" +
+                @"{""region"": ""Illinois"", ""percentage"": 6.25}]}}";
             var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
             Assert.AreEqual("48", decoded.Id);
             Assert.AreEqual(1, decoded.Taxes.Count);
@@ -123,16 +123,16 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", c);
 
             dynamic decoded = JsonConvert.DeserializeObject(encoded);
-            Assert.AreEqual("77", decoded.transaction.Id.ToString());
-            Assert.AreEqual(1, decoded.transaction.Taxes.Count);
-            Assert.AreEqual("New Zealand", decoded.transaction.Taxes[0].Region.ToString());
+            Assert.AreEqual("77", decoded.transaction.id.ToString());
+            Assert.AreEqual(1, decoded.transaction.taxes.Count);
+            Assert.AreEqual("New Zealand", decoded.transaction.taxes[0].region.ToString());
         }
 
         [Test]
         public void ShouldInsertHasAPlaceHoldersWhenDeserializing()
         {
-            var fixture = @"{""transaction"": {""Id"": 48, ""Currency"": ""USD"", ""bank_id"": 18, ""Taxes"": [" +
-               @"{""Region"": ""Illinois"", ""Percentage"": 6.25}]}}";
+            var fixture = @"{""transaction"": {""id"": 48, ""currency"": ""USD"", ""bank_id"": 18, ""taxes"": [" +
+               @"{""region"": ""Illinois"", ""percentage"": 6.25}]}}";
             var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
 
             // validate that the usual fields are still ok
@@ -158,7 +158,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             dynamic decoded = JsonConvert.DeserializeObject(encoded);
 
-            Assert.AreEqual("99", decoded.transaction.Id.ToString());
+            Assert.AreEqual("99", decoded.transaction.id.ToString());
             Assert.AreEqual("88", decoded.transaction.bank_id.ToString());
         }
     }

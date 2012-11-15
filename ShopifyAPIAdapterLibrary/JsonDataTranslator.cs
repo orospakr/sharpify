@@ -45,7 +45,7 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
-    public class ShopifyRestStyleJsonResolver : DefaultContractResolver
+    public class ShopifyRestStyleJsonResolver : CamelCasePropertyNamesContractResolver
     {
         public string ResourceName { get; private set; }
 
