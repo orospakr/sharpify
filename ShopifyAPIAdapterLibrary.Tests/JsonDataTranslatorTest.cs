@@ -22,6 +22,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
     public class Bank : IResourceModel
     {
         public string Id { get; set; }
+
+        public string Name { get; set; }
     }
 
     // a subresource that we won't do much with.
@@ -135,9 +137,35 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        [Ignore]
         public void ShouldDeserializeObjectWithAnInlineHasOne()
         {
+            var fixture = @"{""transaction"": {""id"": 48, ""currency"": ""USD"", ""bank"": {""id"": 18, ""name"": ""Mulligan Bank"" }, ""taxes"": [" +
+               @"{""region"": ""Illinois"", ""percentage"": 6.25}]}}";
+            var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
+
+            // validate that the usual fields are still ok
+            Assert.AreEqual("48", decoded.Id);
+            Assert.AreEqual(1, decoded.Taxes.Count);
+
+            // Hm, one problem with implementation:
+
+            // say I have a different IHasA for inlines.  great and all, but:
+            // the interface for saving must necessarily differ:
+            //   -- the inline version can happily reserialize into inline, but, the user will get differing behaviour:
+            //      if they save the belonged to object, it'll have different behaviour depending on which version they have
+            //      one will save the _id, and one will save the the entire contents (benefit is that it's the same as it came,
+            //      limitation is that user gets different behaviour with same interface.
+
+            // what does activeresource do?
+
+
+            // leaning towards non-inlined saving.  can't
+
+            var bankAnswer = decoded.Bank.Get();
+            bankAnswer.Wait();
+
+            Assert.AreEqual("Mulligan Bank", bankAnswer.Result.Name);
+            Assert.AreEqual("18", bankAnswer.Result.Id);
         }
 
         [Test]

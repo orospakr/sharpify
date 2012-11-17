@@ -15,6 +15,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
     /// Test the interaction with the actual, running service at api.shopify.com.
     /// </summary>
     [TestFixture]
+    [Ignore]
     public class ShopifyAPIIntegrationTest
     {
         ShopifyAuthorizationState AuthorizationState {

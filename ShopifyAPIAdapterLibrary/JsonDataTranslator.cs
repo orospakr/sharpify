@@ -14,10 +14,8 @@ using System.ComponentModel;
 namespace ShopifyAPIAdapterLibrary
 {
     public class HasOneConverter<T> : JsonConverter where T: IResourceModel {
-        public string TargetProperty { get;  set; }
 
-        public HasOneConverter(String targetProperty) {
-            this.TargetProperty = targetProperty;
+        public HasOneConverter() {
         }
 
         public override bool CanConvert(Type objectType)
@@ -48,13 +46,36 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
+    public class HasOneInlineConverter<T> : JsonConverter where T : IResourceModel
+    {
+        public HasOneInlineConverter() {
+        }
+
+        public override bool CanConvert(Type objectType) {
+            return true;
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            var model = serializer.Deserialize<T>(reader);
+            return new HasOneInline<T>(model);
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            var hasOneInline = (HasOneInline<T>)value;
+            serializer.Serialize(writer, hasOneInline.Model);
+        }
+    }
+
     public class ShopifyRestStyleJsonResolver : DefaultContractResolver
     {
         public string ResourceName { get; private set; }
 
         public ShopifyRestStyleJsonResolver(string resourceName) :base (false)
         {
-            // sadly, it is too expensive to leave the cacher enabled, hence why I pass false.
+            // sadly, can't leave the cacher enabled because different instances of the resolver
+            // generate different results, hence why I pass false.
             ResourceName = resourceName;
         }
 
@@ -66,6 +87,8 @@ namespace ShopifyAPIAdapterLibrary
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
             var properties = new List<JsonProperty>(base.CreateProperties(type, memberSerialization));
+
+            var hasOneInlineProperties = new List<JsonProperty>();
 
             properties.RemoveAll((prop) => {
                 // do not attempt to serialize IHasManys
@@ -81,29 +104,66 @@ namespace ShopifyAPIAdapterLibrary
                     return false;
                 }
 
+                // is property a HasOne?
                 if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(IHasOne<>))
                 {
-                    prop.PropertyName = ShopifyAPIClient.Underscoreify(prop.PropertyName) + "_id";
+                    
+                    var underscorized = ShopifyAPIClient.Underscoreify(prop.PropertyName);
+                    prop.PropertyName =  underscorized + "_id";
 
                     // get type argument of IHasOne
                     var hasOneTargetType = prop.PropertyType.GetGenericArguments();
 
-                    // prop.Converter = new JsonConverter(
+                    // create an additional property for the inline deserialization case
+                    JsonProperty inlineProperty = new JsonProperty() {
+                        PropertyType = prop.PropertyType,
+                        Ignored = false,
+                        PropertyName = underscorized,
+                        UnderlyingName = prop.UnderlyingName,
+                        DeclaringType = prop.DeclaringType,
+                        ValueProvider = prop.ValueProvider,
+                        Readable = true,
+                        Writable = true
+                    };
+
+                    Type hasOneInlineConverterType = typeof(HasOneInlineConverter<>).MakeGenericType(hasOneTargetType);
+
+                    // make an instance of the converter intended for deserializing inline
+                    // has one resources.
+                    var inlineConverter = Activator.CreateInstance(hasOneInlineConverterType);
+                    
+                    // deserialize inline properies using the inline converter.
+                    inlineProperty.MemberConverter = (JsonConverter)inlineConverter;
+
+                    // we add all of the created inline property descriptors after,
+                    // in order to avoid modifying the collection while RemoveAll is
+                    // running
+                    hasOneInlineProperties.Add(inlineProperty);
+
+                    // Adjust the originally populated property to handle the _id (not inline version):
+
+                    // build the type of the necessary HasOneConverter with the parameter of this has one target type
                     Type hasOneConverterType = typeof(HasOneConverter<>).MakeGenericType(hasOneTargetType);
 
                     // I was really hoping to avoid activator.createinstance... :(
-                    var converter = Activator.CreateInstance(hasOneConverterType, prop.UnderlyingName);
+                    var converter = Activator.CreateInstance(hasOneConverterType);
 
                     // for deserialization:
                     prop.MemberConverter = (JsonConverter)converter;
                     
                     // for serialization:
                     prop.Converter = (JsonConverter)converter;
+
+                    // the inlines should get the same serialization behaviour (to _id) as
+                    // the subresource version.  so, give it the same converter.
+                    inlineProperty.Converter = (JsonConverter)converter;
                     return false;
                 }
 
                 return false;
             });
+
+            properties.AddRange(hasOneInlineProperties);
             return properties;
         }
     }
@@ -123,7 +183,8 @@ namespace ShopifyAPIAdapterLibrary
     }
 
     /// <summary>
-    /// 
+    /// Object that remembers the _id of the single subresource temporarily until
+    /// code in RestResource replaces it with a live fetcher.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class HasOneDeserializationPlaceholder<T> : IHasOne<T> where T : IResourceModel
@@ -148,6 +209,34 @@ namespace ShopifyAPIAdapterLibrary
         public void Set(T model)
         {
             throw Fail();
+        }
+    }
+
+    public class HasOneInline<T> : IHasOne<T> where T : IResourceModel
+    {
+        public string Id
+        {
+            get
+            {
+                return Model.Id;
+            }
+        }
+
+        public T Model { get; private set; }
+
+        public HasOneInline(T model)
+        {
+            Model = model;
+        }
+
+        public async System.Threading.Tasks.Task<T> Get()
+        {
+            return Model;
+        }
+
+        public void Set(T model)
+        {
+            Model = model;
         }
     }
 
