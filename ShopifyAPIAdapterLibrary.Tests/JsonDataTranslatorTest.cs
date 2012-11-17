@@ -201,5 +201,47 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("99", decoded.transaction.id.ToString());
             Assert.AreEqual("88", decoded.transaction.bank_id.ToString());
         }
+
+        [Test]
+        public void ShouldSerializeWhileIgnoringHasMany()
+        {
+            // https://trello.com/card/inlined-has-many/50a1c9c990c4980e0600178b/23
+            // while the Shopify REST API does support inlining has_many,
+            // we don't support it yet.
+
+            var hasMany = A.Fake<IHasMany<SKU>>();
+
+            var t = new Transaction()
+            {
+                Id = "99",
+                Currency = "EUR",
+                SKUs = hasMany
+            };
+
+            var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", t);
+
+            dynamic decoded = JsonConvert.DeserializeObject(encoded);
+
+            Assert.AreEqual("EUR", decoded.transaction.currency.ToString());
+            Assert.AreEqual("99", decoded.transaction.id.ToString());
+            Assert.IsNull(decoded.transaction.skus);
+        }
+
+        [Test]
+        public void ShouldDeserializeWhileIgnoringHasMany()
+        {
+            // https://trello.com/card/inlined-has-many/50a1c9c990c4980e0600178b/23
+            // while the Shopify REST API does support inlining has_many,
+            // we don't support it yet.
+            var fixture = @"{""transaction"": {""id"": 9345, ""currency"": ""EUR"", ""skus"": [ ] }}";
+
+            var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
+
+            Assert.AreEqual("9345", decoded.Id);
+
+            // check that the has many instance itself is null (during normal operation,
+            // the host resource doing the decoding will replace it with a SubResource.
+            Assert.IsNull(decoded.SKUs);
+        }
     }
 }
