@@ -36,6 +36,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
         {
             Assert.AreEqual("ben_the_benly_benis", ShopifyAPIClient.Underscoreify("BenTheBenlyBenis"));
             Assert.AreEqual("ben_the_benly_benis", ShopifyAPIClient.Underscoreify("benTheBenlyBenis"));
+            Assert.AreEqual("browser_ip", ShopifyAPIClient.Underscoreify("BrowserIP"));
+            Assert.AreEqual("total_price_usd", ShopifyAPIClient.Underscoreify("TotalPriceUSD"));
         }
     }
 }
