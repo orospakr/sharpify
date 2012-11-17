@@ -45,7 +45,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
         public IHasMany<SKU> SKUs { get; set; }
 
-        public IHasA<Bank> Bank { get; set; }
+        public IHasOne<Bank> Bank { get; set; }
 
         public string Id { get; set; }
     }
@@ -103,7 +103,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        public void ShouldDeserializeObjectWithInlineResource()
+        public void ShouldDeserializeObjectWithInlineObject()
         {
             var fixture = @"{""transaction"": {""id"": 48, ""currency"": ""USD"", ""taxes"": [" +
                 @"{""region"": ""Illinois"", ""percentage"": 6.25}]}}";
@@ -114,7 +114,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        public void ShouldSerializeObjectWithInlineResource()
+        public void ShouldSerializeObjectWithInlineObject()
         {
             var c = new Transaction()
             {
@@ -135,6 +135,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
+        [Ignore]
+        public void ShouldDeserializeObjectWithAnInlineHasOne()
+        {
+        }
+
+        [Test]
         public void ShouldInsertHasAPlaceHoldersWhenDeserializing()
         {
             var fixture = @"{""transaction"": {""id"": 48, ""currency"": ""USD"", ""bank_id"": 18, ""taxes"": [" +
@@ -145,19 +151,19 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("48", decoded.Id);
             Assert.AreEqual(1, decoded.Taxes.Count);
 
-            Assert.IsInstanceOf<HasADeserializationPlaceholder<Bank>>(decoded.Bank);
+            Assert.IsInstanceOf<HasOneDeserializationPlaceholder<Bank>>(decoded.Bank);
             Assert.AreEqual("18", decoded.Bank.Id);
         }
 
         [Test]
-        public void ShouldSerializeObjectWithAHasA()
+        public void ShouldSerializeObjectWithAHasOne()
         {
             var t = new Transaction()
             {
                 Id = "99",
                 Currency = "EUR",
                 Receipient = "Somewhere",
-                Bank = new HasADeserializationPlaceholder<Bank>("88")
+                Bank = new HasOneDeserializationPlaceholder<Bank>("88")
             };
 
             var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", t);

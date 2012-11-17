@@ -24,7 +24,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
         public IList<Inspection> Inspections { get; set; }
 
-        public IHasA<Brain> Brain { get; set; }
+        public IHasOne<Brain> Brain { get; set; }
     }
 
     public class Brain : IResourceModel
@@ -259,7 +259,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             // Robot #42 has Brain #56
             var translationExpectation = A.CallTo(() => Shopify.TranslateObject<Robot>("robot", "Robot #420's json"));
             var translatedRobot = new Robot { Id = "420",
-                Brain = new HasADeserializationPlaceholder<Brain>("56")
+                Brain = new HasOneDeserializationPlaceholder<Brain>("56")
             };
             translationExpectation.Returns(translatedRobot);
 

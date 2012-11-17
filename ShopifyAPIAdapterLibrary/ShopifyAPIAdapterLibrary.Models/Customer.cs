@@ -18,7 +18,7 @@ namespace ShopifyAPIAdapterLibrary.Models
 
         public string LastName { get; set; }
 
-        public IHasA<Order> LastOrder { get; set; }
+        public IHasOne<Order> LastOrder { get; set; }
 
         // what is this?
         public string Note { get; set; }

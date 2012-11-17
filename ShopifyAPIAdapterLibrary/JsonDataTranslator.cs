@@ -13,10 +13,10 @@ using System.ComponentModel;
 
 namespace ShopifyAPIAdapterLibrary
 {
-    public class HasAConverter<T> : JsonConverter where T: IResourceModel {
+    public class HasOneConverter<T> : JsonConverter where T: IResourceModel {
         public string TargetProperty { get;  set; }
 
-        public HasAConverter(String targetProperty) {
+        public HasOneConverter(String targetProperty) {
             this.TargetProperty = targetProperty;
         }
 
@@ -34,20 +34,17 @@ namespace ShopifyAPIAdapterLibrary
                 // https://trello.com/card/make-a-test-for-incoming-has-one-id-fields-that-are-null/50a1c9c990c4980e0600178b/31
                 return null;
             }
-            var hasAId = hasAIdValue.ToString();
+            var hasOneId = hasAIdValue.ToString();
 
-            // var prop = existingValue.GetType().GetProperty(TargetProperty);
-            var placeholder = new HasADeserializationPlaceholder<T>(hasAId);
+            var placeholder = new HasOneDeserializationPlaceholder<T>(hasOneId);
             return placeholder;
-            // prop.SetValue(objectType, placeholder);
-            // return existingValue;
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             // var prop = value.GetType().GetProperty(TargetProperty);
-            IHasA<T> hasa = (IHasA<T>)value;
-            writer.WriteValue(hasa.Id);
+            IHasOne<T> hasOne = (IHasOne<T>)value;
+            writer.WriteValue(hasOne.Id);
         }
     }
 
@@ -84,18 +81,18 @@ namespace ShopifyAPIAdapterLibrary
                     return false;
                 }
 
-                if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(IHasA<>))
+                if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(IHasOne<>))
                 {
                     prop.PropertyName = ShopifyAPIClient.Underscoreify(prop.PropertyName) + "_id";
 
-                    // get type argument of IHasA
-                    var hasATargetType = prop.PropertyType.GetGenericArguments();
+                    // get type argument of IHasOne
+                    var hasOneTargetType = prop.PropertyType.GetGenericArguments();
 
                     // prop.Converter = new JsonConverter(
-                    Type hasaConverterType = typeof(HasAConverter<>).MakeGenericType(hasATargetType);
+                    Type hasOneConverterType = typeof(HasOneConverter<>).MakeGenericType(hasOneTargetType);
 
                     // I was really hoping to avoid activator.createinstance... :(
-                    var converter = Activator.CreateInstance(hasaConverterType, prop.UnderlyingName);
+                    var converter = Activator.CreateInstance(hasOneConverterType, prop.UnderlyingName);
 
                     // for deserialization:
                     prop.MemberConverter = (JsonConverter)converter;
@@ -129,18 +126,18 @@ namespace ShopifyAPIAdapterLibrary
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class HasADeserializationPlaceholder<T> : IHasA<T> where T : IResourceModel
+    public class HasOneDeserializationPlaceholder<T> : IHasOne<T> where T : IResourceModel
     {
         public string Id { get; private set; }
 
-        public HasADeserializationPlaceholder(string id)
+        public HasOneDeserializationPlaceholder(string id)
         {
             Id = id;
         }
 
         private Exception Fail()
         {
-            return new ShopifyConfigurationException("The second pass has not yet replaced this HasA placeholder with the real thing.");
+            return new ShopifyConfigurationException("The second pass has not yet replaced this HasOne placeholder with the real thing.");
         }
 
         public System.Threading.Tasks.Task<T> Get()

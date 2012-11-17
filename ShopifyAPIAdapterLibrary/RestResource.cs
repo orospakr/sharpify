@@ -37,12 +37,12 @@ namespace ShopifyAPIAdapterLibrary
         string InstancePath(string p);
     }
 
-    public interface IHasAUntyped
+    public interface IHasOneUntyped
     {
         string Id { get; }
     }
 
-    public interface IHasA<T> : IHasAUntyped where T : IResourceModel
+    public interface IHasOne<T> : IHasOneUntyped where T : IResourceModel
     {
         // Retrieve the resource associated with the parent object.
         Task<T> Get();
@@ -174,14 +174,14 @@ namespace ShopifyAPIAdapterLibrary
                 prop.SetValue(model, subResourceInstance);
             }
 
-            // replace the HasA placeholders (which tell us the ID that was on the _id) field
+            // replace the HasOne placeholders (which tell us the ID that was on the _id) field
             // with the live ones
 
-            var hasaPlaceholders = from p in typeof(T).GetProperties() where p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == (typeof(IHasA<>)) select p;
+            var hasaPlaceholders = from p in typeof(T).GetProperties() where p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == (typeof(IHasOne<>)) select p;
             foreach (var placeholderProp in hasaPlaceholders)
             {
                 // get the ID from the placeholder
-                var placeholder = (IHasAUntyped)placeholderProp.GetValue(model);
+                var placeholder = (IHasOneUntyped)placeholderProp.GetValue(model);
                 if (placeholder == null)
                 {
                     continue;
@@ -327,7 +327,7 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
-    public class SingleInstanceSubResource<T> : IHasA<T> where T : IResourceModel
+    public class SingleInstanceSubResource<T> : IHasOne<T> where T : IResourceModel
     {
         public IShopifyAPIClient Context { get; set; }
         public string Id { get; set; }
@@ -352,7 +352,7 @@ namespace ShopifyAPIAdapterLibrary
         {
             if (model.Id == null)
             {
-                throw new ShopifyUsageException(String.Format("A model (type {0}) with an existing ID must be set as an instance passed to Has A.", typeof(T).Name));
+                throw new ShopifyUsageException(String.Format("A model (type {0}) with an existing ID must be set as an instance passed to Has One.", typeof(T).Name));
             }
             Id = model.Id;
         }

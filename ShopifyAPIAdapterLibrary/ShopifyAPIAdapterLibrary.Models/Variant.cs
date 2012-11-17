@@ -26,7 +26,7 @@ namespace ShopifyAPIAdapterLibrary.Models
         public double Price { get; set; }
 
         // I hope this works okay without being nested in a IResourceModel...
-        public IHasA<Product> Product { get; set; }
+        public IHasOne<Product> Product { get; set; }
 
         public string Option1 { get; set; }
 

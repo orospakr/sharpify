@@ -95,7 +95,7 @@ namespace ShopifyAPIAdapterLibrary.Models
         public double Price { get; set; }
 
         // I hope this works okay without being nested in a IResourceModel...
-        public IHasA<Product> Product { get; set; }
+        public IHasOne<Product> Product { get; set; }
 
         public int Quantity { get; set; }
 
@@ -108,7 +108,7 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// </summary>
         public string Title { get; set; }
 
-        public IHasA<Variant> Variant { get; set; }
+        public IHasOne<Variant> Variant { get; set; }
 
         /// <summary>
         /// A copy of the title of the reference Variant, for convenience.
