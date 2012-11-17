@@ -48,9 +48,14 @@ namespace ShopifyAPIAdapterLibrary
         Task<T> Get();
 
         /// <summary>
-        /// TODO what should Set() do, exactly?
+        /// Sets the instance of the "has one" relationship to the provided model.
+        /// 
+        /// Ie., the "$model_name_id" json field will change.
+        /// 
+        /// This method does *not* directly mutate any state on the server.  Update or
+        /// Save the host model with its Resource for that.
         /// </summary>
-        Task<T> Set(T model);
+        void Set(T model);
     }
 
     public interface IParentableResource
@@ -333,14 +338,23 @@ namespace ShopifyAPIAdapterLibrary
             Id = id;
         }
 
+        public SingleInstanceSubResource(IShopifyAPIClient context, T model) {
+            Context = context;
+            Set(model);
+        }
+
         public async Task<T> Get()
         {
             return await Context.GetResource<T>().Get(Id);
         }
 
-        public Task<T> Set(T model)
+        public void Set(T model)
         {
-            throw new NotImplementedException();
+            if (model.Id == null)
+            {
+                throw new ShopifyUsageException(String.Format("A model (type {0}) with an existing ID must be set as an instance passed to Has A.", typeof(T).Name));
+            }
+            Id = model.Id;
         }
     }
 }

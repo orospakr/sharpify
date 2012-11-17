@@ -7,6 +7,7 @@ using System.Net;
 using System.IO;
 using System.Diagnostics;
 using System.Collections;
+using ShopifyAPIAdapterLibrary.Models;
 
 namespace ShopifyAPIAdapterLibrary.Tests
 {
@@ -68,7 +69,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
                 Console.WriteLine ("Attempting to authorize against store " + TestStoreName);
                 var sa = new ShopifyAPIAdapterLibrary.ShopifyAPIAuthorizer (TestStoreName, ConfigurationManager.AppSettings ["Shopify.TestAppKey"], ConfigurationManager.AppSettings ["Shopify.TestAppSecret"]);
-                var authUrl = sa.GetAuthorizationURL (new string[] { "write_content,write_themes,write_products" }, ConfigurationManager.AppSettings ["Shopify.TestHttpServerUri"]);
+                var authUrl = sa.GetAuthorizationURL (new string[] { "write_content,write_themes,write_products,write_customers,write_script_tags,write_orders" }, ConfigurationManager.AppSettings ["Shopify.TestHttpServerUri"]);
                 Console.WriteLine (authUrl);
 
 
@@ -216,9 +217,29 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        public void ShouldFetchAllBlogs ()
+        [Ignore]
+        public void ShopifyShouldReturnInlinedSubResourceAsSeparate()
         {
+            // try to get either /orders/:id/line_items
+            // or /orders/:id/fulfillments
 
+            // or /orders/:id/fulfillments/:id/line_items
+
+            // this is to confirm if inlines are guaranteed fetchable as subresources intead.
+            // NO THEY ARE NOT
+
+            var getTask = ShopifyClient.Get("/admin/orders/147593684/line_items.json", null);
+            getTask.Wait();
+
+            Console.WriteLine("done");
+        }
+
+        [Test]
+        public void ShouldFetchAllOrders() {
+            // TODO oh shit paging
+            var answer = ShopifyClient.GetResource<Order>().AsList();
+            answer.Wait();
+            Console.WriteLine("dsafdasf");
         }
     }
 }

@@ -51,7 +51,12 @@
   <ItemGroup>
     <Compile Include="IDataTranslator.cs" />
     <Compile Include="IShopifyAPIClient.cs" />
+    <Compile Include="ShopifyAPIAdapterLibrary.Models\Customer.cs" />
+    <Compile Include="ShopifyAPIAdapterLibrary.Models\Fragments.cs" />
+    <Compile Include="ShopifyAPIAdapterLibrary.Models\Fulfillment.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\IResourceModel.cs" />
+    <Compile Include="ShopifyAPIAdapterLibrary.Models\Order.cs" />
+    <Compile Include="ShopifyAPIAdapterLibrary.Models\Variant.cs" />
     <Compile Include="ShopifyAPIAuthorizer.cs" />
     <Compile Include="ShopifyApiClient.cs" />
     <Compile Include="JsonDataTranslator.cs" />

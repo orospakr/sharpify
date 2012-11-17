@@ -271,5 +271,18 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             Assert.IsInstanceOf<SingleInstanceSubResource<Brain>>(answer.Result.Brain);
         }
+
+        [Test]
+        public void ShouldSetHasOneIdOnOwnedModel()
+        {
+            // dev user stories for has_one:
+            // -- fetching from a host model object you already have
+            // -- setting a new instance on -- one that has been already saved
+            //                              -- one that has not been saved (ie., has no ID);
+            // -- setting a new
+
+            var r = new Robot() { Id = "67" };
+            r.Brain = new SingleInstanceSubResource<Brain>(Shopify, new Brain() { Id = "89" });
+        }
     }
 }

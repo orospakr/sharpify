@@ -28,7 +28,13 @@ namespace ShopifyAPIAdapterLibrary
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var hasAId = reader.Value.ToString();
+            var hasAIdValue = reader.Value;
+            if (hasAIdValue == null)
+            {
+                // https://trello.com/card/make-a-test-for-incoming-has-one-id-fields-that-are-null/50a1c9c990c4980e0600178b/31
+                return null;
+            }
+            var hasAId = hasAIdValue.ToString();
 
             // var prop = existingValue.GetType().GetProperty(TargetProperty);
             var placeholder = new HasADeserializationPlaceholder<T>(hasAId);
@@ -142,7 +148,7 @@ namespace ShopifyAPIAdapterLibrary
             throw Fail();
         }
 
-        public System.Threading.Tasks.Task<T> Set(T model)
+        public void Set(T model)
         {
             throw Fail();
         }

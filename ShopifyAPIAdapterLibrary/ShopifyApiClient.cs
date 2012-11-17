@@ -24,7 +24,12 @@ namespace ShopifyAPIAdapterLibrary
     /// <seealso cref="http://api.shopify.com/"/>
     public class ShopifyAPIClient : ShopifyAPIAdapterLibrary.IShopifyAPIClient
     {
+        // all the top-level Resources
+
         public RestResource<Product> Products { get; private set; }
+        public RestResource<Order> Orders { get; private set; }
+        public RestResource<Customer> Customers { get; private set; }
+
 
         /// <summary>
         /// Programmatically-accessible mapping of IResourceModels to
@@ -67,6 +72,8 @@ namespace ShopifyAPIAdapterLibrary
         private void SetUpResources() {
             this.Resources = new Dictionary<Type, IUntypedResource>();
             Products = new RestResource<Product>(this, "product");
+            Customers = new RestResource<Customer>(this, "customer");
+            Orders = new RestResource<Order>(this, "order");
         }
 
         private void EnsureTranslator() {
