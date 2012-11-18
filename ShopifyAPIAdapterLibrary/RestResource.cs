@@ -90,11 +90,13 @@ namespace ShopifyAPIAdapterLibrary
         /// <param name='name'>
         /// The lowercase resource name, as it would appear in URIs
         /// </param>
-        public RestResource(IShopifyAPIClient context, string name) {
+        public RestResource(IShopifyAPIClient context, string name, bool registerAsTopLevel = true) {
             Context = context;
-            context.RegisterResource<T>(this);
+            if(registerAsTopLevel) context.RegisterResource<T>(this);
             Name = name;
         }
+
+        // protected RestResource(IShopifyAPIClient context, string name, bool registerAsToplevel
 
         public RestResource(RestResource<T> parent, NameValueCollection queryParameters) {
             this.Context = parent.Context;
@@ -307,7 +309,7 @@ namespace ShopifyAPIAdapterLibrary
         public IParentableResource ParentResource;
         public IResourceModel ParentInstance;
  
-        public SubResource(IParentableResource parent, IResourceModel parentInstance, string name) : base(parent.Context, name)
+        public SubResource(IParentableResource parent, IResourceModel parentInstance, string name) : base(parent.Context, name, false)
         {
             if (!parent.GetModelType().IsAssignableFrom(parentInstance.GetType()))
             {
