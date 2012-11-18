@@ -95,7 +95,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     {
         // TODO updated_at/created_at
 
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         public bool? BuyerAcceptsMarketing { get; set; }
 

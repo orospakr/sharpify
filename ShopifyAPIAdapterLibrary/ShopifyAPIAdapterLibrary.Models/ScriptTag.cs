@@ -13,7 +13,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class ScriptTag : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Name of JS-subscrible event emitted by the Browser's Document API

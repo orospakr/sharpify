@@ -21,7 +21,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Metafield : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         public string Description { get; set; }
 

@@ -11,7 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class RecurringApplicationCharge : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         public DateTime? ActivatedOn { get; set; }
 

@@ -13,7 +13,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Variant : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         public double? CompareAtPrice { get; set; }
 

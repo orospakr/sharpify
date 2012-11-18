@@ -19,7 +19,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Event: IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Different event types have varying

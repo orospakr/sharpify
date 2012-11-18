@@ -15,7 +15,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 {
     // our test top-level resource
     public class Robot : IResourceModel {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         public string RobotType { get; set; }
         public string Manufacturer { get; set; }
@@ -29,14 +29,15 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
     public class Brain : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
         public int SynapseCount { get; set; }
     }
 
     // our test subresource
     public class Part : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
+
         public string Sku { get; set; }
     }
 
@@ -79,7 +80,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             Robots = new RestResource<Robot>(Shopify);
             Brains = new RestResource<Brain>(Shopify);
-            Calculon = new Robot() { Id = "42" };
+            Calculon = new Robot() { Id = 42 };
             CalculonsParts = new SubResource<Part>(Robots, Calculon);
         }
 
@@ -127,7 +128,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             callRawExpectation.Returns(TaskForResult<string>("json text!"));
 
             var translationExpectation = A.CallTo(() => Shopify.TranslateObject<List<Robot>>("robots", "json text!"));
-            translationExpectation.Returns(new List<Robot>() { new Robot() { Id = "fdaf" } } );
+            translationExpectation.Returns(new List<Robot>() { new Robot() { Id = 8889 } } );
 
             var answer = Robots.AsList();
 
@@ -138,7 +139,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             Assert.AreEqual(1, answer.Result.Count);
             Assert.NotNull(answer.Result[0].Parts);
-            Assert.AreEqual("/admin/robots/fdaf/parts", answer.Result[0].Parts.Path());
+            Assert.AreEqual("/admin/robots/8889/parts", answer.Result[0].Parts.Path());
         }
 
         [Test]
@@ -170,13 +171,13 @@ namespace ShopifyAPIAdapterLibrary.Tests
             callRawExpectation.Returns(TaskForResult<string>("robot #89's json"));
 
             var translationExpectation = A.CallTo(() => Shopify.TranslateObject<Robot>("robot", "robot #89's json"));
-            var translatedRobot = new Robot { Id = "89" };
+            var translatedRobot = new Robot { Id = 89 };
 
             //
             // TODO: .Get will start setting
 
             translationExpectation.Returns(translatedRobot);
-            var answer = Robots.Get("89");
+            var answer = Robots.Get(89);
             answer.Wait();
 
             Assert.AreSame(answer.Result, translatedRobot);
@@ -213,7 +214,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [Test]
         public void ShouldUpdateASubResourceRecord()
         {
-            var partToPost = new Part() { Id = "9777" };
+            var partToPost = new Part() { Id = 9777 };
             var translationExpectation = A.CallTo(() => Shopify.ObjectTranslate<Part>("part", partToPost));
             translationExpectation.Returns("PART 988 JSON");
 
@@ -239,10 +240,10 @@ namespace ShopifyAPIAdapterLibrary.Tests
             callRawExpectation.Returns(TaskForResult<string>("robot #42's part #69 json"));
 
             var translationExpectation = A.CallTo(() => Shopify.TranslateObject<Part>("part", "robot #42's part #69 json"));
-            var translatedPart = new Part { Id = "69" };
+            var translatedPart = new Part { Id = 69 };
             translationExpectation.Returns(translatedPart);
 
-            var answer = CalculonsParts.Get("69");
+            var answer = CalculonsParts.Get(69);
             answer.Wait();
 
             Assert.AreSame(translatedPart, answer.Result);
@@ -258,12 +259,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             // Robot #42 has Brain #56
             var translationExpectation = A.CallTo(() => Shopify.TranslateObject<Robot>("robot", "Robot #420's json"));
-            var translatedRobot = new Robot { Id = "420",
-                Brain = new HasOneDeserializationPlaceholder<Brain>("56")
+            var translatedRobot = new Robot { Id = 420,
+                Brain = new HasOneDeserializationPlaceholder<Brain>(56)
             };
             translationExpectation.Returns(translatedRobot);
 
-            var answer = Robots.Get("420");
+            var answer = Robots.Get(420);
             answer.Wait();
 
             getRobotExpectation.MustHaveHappened();
@@ -281,8 +282,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
             //                              -- one that has not been saved (ie., has no ID);
             // -- setting a new
 
-            var r = new Robot() { Id = "67" };
-            r.Brain = new SingleInstanceSubResource<Brain>(Shopify, new Brain() { Id = "89" });
+            var r = new Robot() { Id = 67 };
+            r.Brain = new SingleInstanceSubResource<Brain>(Shopify, new Brain() { Id = 89 });
         }
     }
 }

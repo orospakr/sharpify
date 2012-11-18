@@ -13,7 +13,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Country : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// ISO 3166-1 Alpha-2 Country Code.

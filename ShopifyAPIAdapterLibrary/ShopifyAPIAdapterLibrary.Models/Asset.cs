@@ -13,7 +13,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Asset : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         public string Key { get; set; }
 

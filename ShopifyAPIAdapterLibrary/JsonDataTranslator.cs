@@ -32,7 +32,7 @@ namespace ShopifyAPIAdapterLibrary
                 // https://trello.com/card/make-a-test-for-incoming-has-one-id-fields-that-are-null/50a1c9c990c4980e0600178b/31
                 return null;
             }
-            var hasOneId = hasAIdValue.ToString();
+            var hasOneId = Int32.Parse(hasAIdValue.ToString());
 
             var placeholder = new HasOneDeserializationPlaceholder<T>(hasOneId);
             return placeholder;
@@ -189,9 +189,9 @@ namespace ShopifyAPIAdapterLibrary
     /// <typeparam name="T"></typeparam>
     public class HasOneDeserializationPlaceholder<T> : IHasOne<T> where T : IResourceModel
     {
-        public string Id { get; private set; }
+        public int Id { get; private set; }
 
-        public HasOneDeserializationPlaceholder(string id)
+        public HasOneDeserializationPlaceholder(int id)
         {
             Id = id;
         }
@@ -214,11 +214,11 @@ namespace ShopifyAPIAdapterLibrary
 
     public class HasOneInline<T> : IHasOne<T> where T : IResourceModel
     {
-        public string Id
+        public int Id
         {
             get
             {
-                return Model.Id;
+                return Model.Id.Value;
             }
         }
 
@@ -226,6 +226,8 @@ namespace ShopifyAPIAdapterLibrary
 
         public HasOneInline(T model)
         {
+            
+            if (model.Id == null) throw new ShopifyUsageException("HasOneInline must be given a model that has a set ID.");
             Model = model;
         }
 

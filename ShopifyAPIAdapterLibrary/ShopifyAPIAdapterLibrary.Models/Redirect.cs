@@ -13,7 +13,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Redirect : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Original path to intercept.

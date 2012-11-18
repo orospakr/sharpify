@@ -7,6 +7,15 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public interface IResourceModel
     {
-        string Id { get; set; }
+        /// <summary>
+        /// The ID of the record.  Must be present on resources.
+        /// 
+        /// Is an integer for two main reasons: the ID and custom
+        /// verbs occupy the same segment in path URIs, and are
+        /// disambiguated by means of intishness, and that
+        /// ActiveRecord on the remote end is using integers
+        /// as the database PK.
+        /// </summary>
+        int? Id { get; set; }
     }
 }

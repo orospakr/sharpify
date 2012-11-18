@@ -19,7 +19,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Collect : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         public bool Featured { get; set; }
 

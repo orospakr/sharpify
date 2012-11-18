@@ -24,7 +24,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class SmartCollection : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         public string BodyHTML { get; set; }
 

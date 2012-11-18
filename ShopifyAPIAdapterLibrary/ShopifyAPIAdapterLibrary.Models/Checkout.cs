@@ -13,7 +13,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Checkout : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Presumably a copy of the BuyerAcceptsMarketing bit from

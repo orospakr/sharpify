@@ -13,7 +13,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Comment: IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         public string Body { get; set; }
 

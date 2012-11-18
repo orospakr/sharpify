@@ -13,7 +13,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Shop : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         public string Address1 { get; set; }
 

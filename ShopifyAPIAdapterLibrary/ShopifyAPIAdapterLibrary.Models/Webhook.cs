@@ -25,7 +25,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Webhook : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// URI to POST to when the specified event occurs.

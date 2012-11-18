@@ -13,7 +13,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Blog : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         // TODO: Enum, because they "yes"/"no" instead of true/false here for some reason
         public string Commentable { get; set; }

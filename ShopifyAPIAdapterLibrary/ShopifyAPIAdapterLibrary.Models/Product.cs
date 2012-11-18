@@ -16,7 +16,7 @@ namespace ShopifyAPIAdapterLibrary.Models
 
         public String Handle { get; set; }
 
-        public String Id { get; set; }
+        public int? Id { get; set; }
 
         public DateTime? PublishedAt { get; set; }
 

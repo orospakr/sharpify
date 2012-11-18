@@ -15,7 +15,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Image : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         public IHasOne<Product> Product { get; set; }
 

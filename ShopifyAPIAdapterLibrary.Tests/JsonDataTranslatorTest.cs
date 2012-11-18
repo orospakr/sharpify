@@ -21,7 +21,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
     public class Bank : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         public string Name { get; set; }
     }
@@ -31,7 +31,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
     // subresource proxies.
     public class SKU : IResourceModel
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
     }
 
     public class Transaction : IResourceModel {
@@ -49,7 +49,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
         public IHasOne<Bank> Bank { get; set; }
 
-        public string Id { get; set; }
+        public int? Id { get; set; }
     }
 
     [TestFixture]
@@ -68,7 +68,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         {
             var fixture = @"{""transaction"": {""Id"": ""56"", ""currency"": ""CAD"", ""value"": 78.45, ""financial_status"": ""authorized""}}";
             var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
-            Assert.AreEqual("56", decoded.Id);
+            Assert.AreEqual(56, decoded.Id);
             Assert.AreEqual("CAD", decoded.Currency);
             Assert.AreEqual(78.45, decoded.Value);
             Assert.AreEqual("authorized", decoded.FinancialStatus);
@@ -77,7 +77,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [Test]
         public void ShouldSerializeSimpleObject()
         {
-            var c = new Transaction() { Id = "788",
+            var c = new Transaction() { Id = 788,
                 Currency = "CAD",
                 Value = 25.60,
                 Receipient = "Jaded Pixel Technologies",
@@ -110,7 +110,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var fixture = @"{""transaction"": {""id"": 48, ""currency"": ""USD"", ""taxes"": [" +
                 @"{""region"": ""Illinois"", ""percentage"": 6.25}]}}";
             var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
-            Assert.AreEqual("48", decoded.Id);
+            Assert.AreEqual(48, decoded.Id);
             Assert.AreEqual(1, decoded.Taxes.Count);
             Assert.AreEqual(6.25, decoded.Taxes.ElementAt(0).Percentage);
         }
@@ -120,7 +120,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         {
             var c = new Transaction()
             {
-                Id = "77",
+                Id = 77,
                 Currency = "NZD",
                 Receipient = "Weta Workshop",
                 Taxes = new List<Tax> {
@@ -144,7 +144,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
 
             // validate that the usual fields are still ok
-            Assert.AreEqual("48", decoded.Id);
+            Assert.AreEqual(48, decoded.Id);
             Assert.AreEqual(1, decoded.Taxes.Count);
 
             // Hm, one problem with implementation:
@@ -165,7 +165,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             bankAnswer.Wait();
 
             Assert.AreEqual("Mulligan Bank", bankAnswer.Result.Name);
-            Assert.AreEqual("18", bankAnswer.Result.Id);
+            Assert.AreEqual(18, bankAnswer.Result.Id);
         }
 
         [Test]
@@ -176,11 +176,11 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
 
             // validate that the usual fields are still ok
-            Assert.AreEqual("48", decoded.Id);
+            Assert.AreEqual(48, decoded.Id);
             Assert.AreEqual(1, decoded.Taxes.Count);
 
             Assert.IsInstanceOf<HasOneDeserializationPlaceholder<Bank>>(decoded.Bank);
-            Assert.AreEqual("18", decoded.Bank.Id);
+            Assert.AreEqual(18, decoded.Bank.Id);
         }
 
         [Test]
@@ -188,10 +188,10 @@ namespace ShopifyAPIAdapterLibrary.Tests
         {
             var t = new Transaction()
             {
-                Id = "99",
+                Id = 99,
                 Currency = "EUR",
                 Receipient = "Somewhere",
-                Bank = new HasOneDeserializationPlaceholder<Bank>("88")
+                Bank = new HasOneDeserializationPlaceholder<Bank>(88)
             };
 
             var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", t);
@@ -213,7 +213,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             var t = new Transaction()
             {
-                Id = "99",
+                Id = 99,
                 Currency = "EUR",
                 SKUs = hasMany
             };
@@ -237,7 +237,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
 
-            Assert.AreEqual("9345", decoded.Id);
+            Assert.AreEqual(9345, decoded.Id);
 
             // check that the has many instance itself is null (during normal operation,
             // the host resource doing the decoding will replace it with a SubResource.

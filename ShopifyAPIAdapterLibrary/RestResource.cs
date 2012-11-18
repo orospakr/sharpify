@@ -26,7 +26,7 @@ namespace ShopifyAPIAdapterLibrary
 
     public interface IHasMany<T>
     {
-        Task<T> Get(string id);
+        Task<T> Get(int id);
 
         Task Create(T model);
 
@@ -39,7 +39,7 @@ namespace ShopifyAPIAdapterLibrary
 
     public interface IHasOneUntyped
     {
-        string Id { get; }
+        int Id { get; }
     }
 
     public interface IHasOne<T> : IHasOneUntyped where T : IResourceModel
@@ -136,13 +136,18 @@ namespace ShopifyAPIAdapterLibrary
             return ShopifyAPIClient.UriPathJoin(Path(), id);
         }
 
+        public string InstancePath(int id)
+        {
+            return InstancePath(id.ToString());
+        }
+
         private T TranslateObject(string subfieldName, string resourceString) {
             var translated = Context.TranslateObject<T>(Name, resourceString);
 
             return PlaceResourceProxesOnModel(translated);
         }
         
-        public async Task<T> Get(string id) {
+        public async Task<T> Get(int id) {
             var resourceString = await Context.CallRaw(HttpMethod.Get, Context.GetRequestContentType(), InstancePath(id), parameters: FullParameters(), requestBody: null);
             return TranslateObject(Name, resourceString);
         }
@@ -155,13 +160,13 @@ namespace ShopifyAPIAdapterLibrary
 
         public async Task Update(T model)
         {
-            if (model.Id == null || model.Id.Length == 0)
+            if (model.Id == null)
             {
                 throw new ShopifyUsageException("Model must have an ID in order to put an update.");
             }
             var resourceString = Context.ObjectTranslate<T>(Name, model);
             await Context.CallRaw(HttpMethod.Put, Context.GetRequestContentType(),
-                InstancePath(model.Id), null, resourceString);
+                InstancePath(model.Id.ToString()), null, resourceString);
         }
 
         public RestResource<T> Where(string field, string isEqualTo) {
@@ -314,7 +319,7 @@ namespace ShopifyAPIAdapterLibrary
             {
                 throw new ShopifyConfigurationException("Parent model instance provided to SubResource must be appropriate to the provided Parent Resource.");
             }
-            if (parentInstance.Id == null || parentInstance.Id.Length == 0)
+            if (parentInstance.Id == null)
             {
                 throw new ShopifyConfigurationException("Parent model instance provided for subresource has null id, which would lead to untenable subresource URIs.");
             }
@@ -324,16 +329,16 @@ namespace ShopifyAPIAdapterLibrary
 
         public override string Path()
         {
-            return ShopifyAPIClient.UriPathJoin(ParentResource.InstancePath(ParentInstance.Id), ShopifyAPIClient.Pluralize(Name));
+            return ShopifyAPIClient.UriPathJoin(ParentResource.InstancePath(ParentInstance.Id.ToString()), ShopifyAPIClient.Pluralize(Name));
         }
     }
 
     public class SingleInstanceSubResource<T> : IHasOne<T> where T : IResourceModel
     {
         public IShopifyAPIClient Context { get; set; }
-        public string Id { get; set; }
+        public int Id { get; set; }
 
-        public SingleInstanceSubResource(IShopifyAPIClient context, string id)
+        public SingleInstanceSubResource(IShopifyAPIClient context, int id)
         {
             Context = context;
             Id = id;
@@ -355,7 +360,7 @@ namespace ShopifyAPIAdapterLibrary
             {
                 throw new ShopifyUsageException(String.Format("A model (type {0}) with an existing ID must be set as an instance passed to Has One.", typeof(T).Name));
             }
-            Id = model.Id;
+            Id = model.Id.Value;
         }
     }
 }
