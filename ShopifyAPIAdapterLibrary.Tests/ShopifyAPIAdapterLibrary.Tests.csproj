@@ -55,7 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JsonDataTranslatorTest.cs" />
-    <Compile Include="ShopifyAPIAdapterLibrary.Tests.Integration\ShopifyAPIIntegrationTest.cs" />
+    <Compile Include="ShopifyAPIAdapterLibrary.Tests.Integration\LiveAPIServiceIntegrationTest.cs" />
     <Compile Include="ShopifyAuthorizerTest.cs" />
     <Compile Include="ShopifyApiClientTest.cs" />
     <Compile Include="RestResourceTest.cs" />

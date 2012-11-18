@@ -9,13 +9,13 @@ using System.Diagnostics;
 using System.Collections;
 using ShopifyAPIAdapterLibrary.Models;
 
-namespace ShopifyAPIAdapterLibrary.Tests
+namespace ShopifyAPIAdapterLibrary.Tests.Integration
 {
     /// <summary>
     /// Test the interaction with the actual, running service at api.shopify.com.
     /// </summary>
     [TestFixture]
-    public class ShopifyAPIIntegrationTest
+    public class LiveAPIServiceIntegrationTest
     {
         ShopifyAuthorizationState AuthorizationState {
             get;
@@ -30,7 +30,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         String TestStoreName;
         ShopifyAPIClient ShopifyClient;
 
-        public ShopifyAPIIntegrationTest ()
+        public LiveAPIServiceIntegrationTest ()
         {
             TestStoreName = ConfigurationManager.AppSettings ["Shopify.TestStoreName"];
         }
@@ -248,6 +248,9 @@ namespace ShopifyAPIAdapterLibrary.Tests
             // this test is obviously pretty naiive, and considering that
             // we can make few guarantees about the state of the store, may
             // succeed or fail quite different depending on conditions.
+
+            // all it will really do it flush out some obvious crashes lurking
+            // in fetching and translating the toplevel resources.
 
             // still, a handy thing to have to validate the behaviour of Sharpify
             // against whatever your current store contents are, and thus
