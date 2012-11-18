@@ -27,7 +27,7 @@ namespace ShopifyAPIAdapterLibrary.Models
 
         // Wheee.  As its own resource, CustomCollection is "custom_collection",
         // but as a has_one _id field, it's just "collection".
-        public IHasOne<Collection> Collection { get; set; }
+        public IHasOne<CustomCollection> Collection { get; set; }
 
         public int Position { get; set; }
 

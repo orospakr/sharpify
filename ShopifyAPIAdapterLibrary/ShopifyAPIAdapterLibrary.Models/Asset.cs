@@ -11,7 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Asset_%28API%29
     /// </summary>
-    class Asset : IResourceModel
+    public class Asset : IResourceModel
     {
         public string Id { get; set; }
 

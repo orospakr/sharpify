@@ -14,7 +14,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// A defined Customer Group, which is basically a savable filter
     /// preset for selecting customers.
     /// </summary>
-    class CustomerGroup : IResourceModel
+    public class CustomerGroup : IResourceModel
     {
         public string Id { get; set; }
 

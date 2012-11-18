@@ -15,8 +15,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     {
         public string Id { get; set; }
 
-        // TODO: do yes/no serialize properly?
-        public bool Commentable { get; set; }
+        // TODO: Enum, because they "yes"/"no" instead of true/false here for some reason
+        public string Commentable { get; set; }
 
         public string Feedburner { get; set; }
 

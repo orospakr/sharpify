@@ -21,7 +21,7 @@ namespace ShopifyAPIAdapterLibrary
     /// </summary>
     public interface IUntypedResource
     {
-
+        Type GetModelType();
     }
 
     public interface IHasMany<T>
@@ -88,12 +88,21 @@ namespace ShopifyAPIAdapterLibrary
         /// Initializes a new instance of the <see cref="ShopifyAPIAdapterLibrary.RestResource`1"/> class.
         /// </summary>
         /// <param name='name'>
-        /// The lowercase resource name, as it would appear in URIs
+        /// The lowercase resource name, as it would appear in URIs.
+        /// Default is underscorized from the model type.
         /// </param>
-        public RestResource(IShopifyAPIClient context, string name, bool registerAsTopLevel = true) {
+        // TODO: put name back as an optional
+        public RestResource(IShopifyAPIClient context, string name = null) {
             Context = context;
-            if(registerAsTopLevel) context.RegisterResource<T>(this);
-            Name = name;
+
+            if (name == null)
+            {
+                Name = ShopifyAPIClient.Underscoreify(typeof(T).Name);
+            }
+            else
+            {
+                Name = name;
+            }
         }
 
         // protected RestResource(IShopifyAPIClient context, string name, bool registerAsToplevel
@@ -299,7 +308,7 @@ namespace ShopifyAPIAdapterLibrary
         public IParentableResource ParentResource;
         public IResourceModel ParentInstance;
  
-        public SubResource(IParentableResource parent, IResourceModel parentInstance, string name) : base(parent.Context, name, false)
+        public SubResource(IParentableResource parent, IResourceModel parentInstance, String name = null) : base(parent.Context, name : name)
         {
             if (!parent.GetModelType().IsAssignableFrom(parentInstance.GetType()))
             {

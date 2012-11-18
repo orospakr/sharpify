@@ -11,7 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Customer_%28API%29
     /// </summary>
-    class Checkout : IResourceModel
+    public class Checkout : IResourceModel
     {
         public string Id { get; set; }
 

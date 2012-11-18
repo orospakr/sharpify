@@ -51,12 +51,13 @@
   <ItemGroup>
     <Compile Include="IDataTranslator.cs" />
     <Compile Include="IShopifyAPIClient.cs" />
+    <Compile Include="ShopifyAPIAdapterLibrary.Models\ApplicationCharge.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Article.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Asset.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Blog.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Checkout.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Collect.cs" />
-    <Compile Include="ShopifyAPIAdapterLibrary.Models\Collection.cs" />
+    <Compile Include="ShopifyAPIAdapterLibrary.Models\CustomCollection.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Comment.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Country.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Customer.cs" />

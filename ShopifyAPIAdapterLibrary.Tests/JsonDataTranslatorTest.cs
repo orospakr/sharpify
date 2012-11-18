@@ -43,7 +43,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
         public string FinancialStatus { get; set; }
 
-        public ICollection<Tax> Taxes { get; set; }
+        public IList<Tax> Taxes { get; set; }
 
         public IHasMany<SKU> SKUs { get; set; }
 
@@ -87,8 +87,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
             // this bit is for testing that the SubResource proxies
             // don't mess with the serialization process
             var shopify = A.Fake<IShopifyAPIClient>();
-            var transactions = new RestResource<Transaction>(shopify, "transaction");
-            c.SKUs = new SubResource<SKU>(transactions, c, "sku");
+            var transactions = new RestResource<Transaction>(shopify);
+            c.SKUs = new SubResource<SKU>(transactions, c);
 
             var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", c);
 

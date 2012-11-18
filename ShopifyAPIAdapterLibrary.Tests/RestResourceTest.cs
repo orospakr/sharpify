@@ -77,10 +77,10 @@ namespace ShopifyAPIAdapterLibrary.Tests
             A.CallTo(() => Shopify.AdminPath()).Returns("/admin");
             A.CallTo(() => Shopify.GetRequestContentType()).Returns(new MediaTypeHeaderValue("application/json"));
 
-            Robots = new RestResource<Robot>(Shopify, "robot");
-            Brains = new RestResource<Brain>(Shopify, "brain");
+            Robots = new RestResource<Robot>(Shopify);
+            Brains = new RestResource<Brain>(Shopify);
             Calculon = new Robot() { Id = "42" };
-            CalculonsParts = new SubResource<Part>(Robots, Calculon, "part");
+            CalculonsParts = new SubResource<Part>(Robots, Calculon);
         }
 
         [Test]

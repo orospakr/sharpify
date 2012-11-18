@@ -11,7 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// Aka "CustomCollection", annoyingly.
     /// </summary>
-    public class Collection : IResourceModel
+    public class CustomCollection : IResourceModel
     {
         public string Id { get; set; }
 
@@ -28,7 +28,7 @@ namespace ShopifyAPIAdapterLibrary.Models
 
         public IHasMany<Metafield> Metafields { get; set; }
 
-        public Collection()
+        public CustomCollection()
         {
         }
     }

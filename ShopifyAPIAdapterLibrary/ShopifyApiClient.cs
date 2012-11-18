@@ -24,13 +24,6 @@ namespace ShopifyAPIAdapterLibrary
     /// <seealso cref="http://api.shopify.com/"/>
     public class ShopifyAPIClient : ShopifyAPIAdapterLibrary.IShopifyAPIClient
     {
-        // all the top-level Resources
-
-        public RestResource<Product> Products { get; private set; }
-        public RestResource<Order> Orders { get; private set; }
-        public RestResource<Customer> Customers { get; private set; }
-
-
         /// <summary>
         /// Programmatically-accessible mapping of IResourceModels to
         /// IRestResources to service requests for them.
@@ -59,9 +52,14 @@ namespace ShopifyAPIAdapterLibrary
             SetUpResources();
         }
 
-        public void RegisterResource<T>(IUntypedResource resource) where T : IResourceModel
+        private void RegisterResource<T>(IUntypedResource resource) where T : IResourceModel
         {
             this.Resources.Add(typeof(T), resource);
+        }
+
+        private void RegisterResource(IUntypedResource resource)
+        {
+            this.Resources.Add(resource.GetModelType(), resource);
         }
 
         public RestResource<T> GetResource<T>() where T: IResourceModel
@@ -74,9 +72,37 @@ namespace ShopifyAPIAdapterLibrary
 
         private void SetUpResources() {
             this.Resources = new Dictionary<Type, IUntypedResource>();
-            Products = new RestResource<Product>(this, "product");
-            Customers = new RestResource<Customer>(this, "customer");
-            Orders = new RestResource<Order>(this, "order");
+
+            RegisterResource(new RestResource<Asset>(this));
+            RegisterResource(new RestResource<ApplicationCharge>(this));
+            RegisterResource(new RestResource<Article>(this));
+            RegisterResource(new RestResource<Blog>(this));
+            RegisterResource(new RestResource<Checkout>(this));
+            RegisterResource(new RestResource<Collect>(this));
+            RegisterResource(new RestResource<CustomCollection>(this));
+            RegisterResource(new RestResource<Comment>(this));
+            RegisterResource(new RestResource<Country>(this));
+            RegisterResource(new RestResource<Customer>(this));
+            RegisterResource(new RestResource<CustomerGroup>(this));
+            RegisterResource(new RestResource<Event>(this));
+            RegisterResource(new RestResource<Order>(this));
+            RegisterResource(new RestResource<Page>(this));
+            RegisterResource(new RestResource<Product>(this));
+            RegisterResource(new RestResource<ProductSearchEngine>(this));
+            RegisterResource(new RestResource<RecurringApplicationCharge>(this));
+            RegisterResource(new RestResource<Redirect>(this));
+            RegisterResource(new RestResource<ScriptTag>(this));
+            RegisterResource(new RestResource<SmartCollection>(this));
+            RegisterResource(new RestResource<Theme>(this));
+            RegisterResource(new RestResource<Webhook>(this));
+
+            //var resourceTypes = new List<Type>(typeof(ApplicationCharge),
+            //    typeof(Article),
+            //    typeof(Blog))
+            //    typeof(Blog), typeof(Theme), typeof
+            //Products = new RestResource<Product>(this, "product");
+            //Customers = new RestResource<Customer>(this, "customer");
+            //Orders = new RestResource<Order>(this, "order");
         }
 
         private void EnsureTranslator() {

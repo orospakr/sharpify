@@ -188,7 +188,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("Rearden Metal", (string)getResult.product.title);
 
             // and with the typesafe api:
-            var getTypeTask = ShopifyClient.Products.Get(newId);
+            var getTypeTask = ShopifyClient.GetResource<Product>().Get(newId);
             getTypeTask.Wait();
             Assert.AreEqual("Rearden Metal", getTypeTask.Result.Title);
         }
@@ -228,7 +228,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             // NO THEY ARE NOT
 
             //var getTask = ShopifyClient.Get("/admin/orders/147593684/line_items.json", null);
-            var getTask = ShopifyClient.Get("/admin/collects.json", null);
+            var getTask = ShopifyClient.Get("/admin/assets.json", null);
             getTask.Wait();
 
             Console.WriteLine("done");
@@ -243,9 +243,31 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        public void ShouldFetchCurrentShop()
+        public void ShouldFetchAllTopLevelResources()
         {
-            var answer = ShopifyClient.GetShop();
+            ShopifyClient.GetResource<Asset>().AsList().Wait();
+            ShopifyClient.GetResource<Asset>().AsList().Wait();
+            ShopifyClient.GetResource<ApplicationCharge>().AsList().Wait();
+            ShopifyClient.GetResource<Article>().AsList().Wait();
+            ShopifyClient.GetResource<Blog>().AsList().Wait();
+            ShopifyClient.GetResource<Checkout>().AsList().Wait();
+            ShopifyClient.GetResource<Collect>().AsList().Wait();
+            ShopifyClient.GetResource<CustomCollection>().AsList().Wait();
+            ShopifyClient.GetResource<Comment>().AsList().Wait();
+            ShopifyClient.GetResource<Country>().AsList().Wait();
+            ShopifyClient.GetResource<Customer>().AsList().Wait();
+            ShopifyClient.GetResource<CustomerGroup>().AsList().Wait();
+            ShopifyClient.GetResource<Event>().AsList().Wait();
+            ShopifyClient.GetResource<Order>().AsList().Wait();
+            ShopifyClient.GetResource<Page>().AsList().Wait();
+            ShopifyClient.GetResource<Product>().AsList().Wait();
+            ShopifyClient.GetResource<ProductSearchEngine>().AsList().Wait();
+            ShopifyClient.GetResource<RecurringApplicationCharge>().AsList().Wait();
+            ShopifyClient.GetResource<Redirect>().AsList().Wait();
+            ShopifyClient.GetResource<ScriptTag>().AsList().Wait();
+            ShopifyClient.GetResource<SmartCollection>().AsList().Wait();
+            ShopifyClient.GetResource<Theme>().AsList().Wait();
+            ShopifyClient.GetResource<Webhook>().AsList().Wait();
         }
     }
 }
