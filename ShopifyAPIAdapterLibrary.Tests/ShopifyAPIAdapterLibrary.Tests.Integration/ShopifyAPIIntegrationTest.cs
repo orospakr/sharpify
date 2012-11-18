@@ -15,7 +15,6 @@ namespace ShopifyAPIAdapterLibrary.Tests
     /// Test the interaction with the actual, running service at api.shopify.com.
     /// </summary>
     [TestFixture]
-    [Ignore]
     public class ShopifyAPIIntegrationTest
     {
         ShopifyAuthorizationState AuthorizationState {
@@ -218,7 +217,6 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        [Ignore]
         public void ShopifyShouldReturnInlinedSubResourceAsSeparate()
         {
             // try to get either /orders/:id/line_items
@@ -229,7 +227,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
             // this is to confirm if inlines are guaranteed fetchable as subresources intead.
             // NO THEY ARE NOT
 
-            var getTask = ShopifyClient.Get("/admin/orders/147593684/line_items.json", null);
+            //var getTask = ShopifyClient.Get("/admin/orders/147593684/line_items.json", null);
+            var getTask = ShopifyClient.Get("/admin/collects.json", null);
             getTask.Wait();
 
             Console.WriteLine("done");

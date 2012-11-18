@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace ShopifyAPIAdapterLibrary.Models
 {
+    /// <summary>
+    /// http://api.shopify.com/product_variant.html
+    /// 
+    /// http://wiki.shopify.com/Product_Variant_%28API%29
+    /// </summary>
     public class Variant : IResourceModel
     {
         public string Id { get; set; }
@@ -43,6 +48,8 @@ namespace ShopifyAPIAdapterLibrary.Models
         public bool Taxable { get; set; }
 
         public int InventoryQuantity { get; set; }
+
+        public IHasMany<Metafield> Metafields { get; set; }
 
         public Variant()
         {

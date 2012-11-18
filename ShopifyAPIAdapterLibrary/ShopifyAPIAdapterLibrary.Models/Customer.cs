@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace ShopifyAPIAdapterLibrary.Models
 {
+    /// <summary>
+    /// http://api.shopify.com/customer.html
+    /// 
+    /// http://wiki.shopify.com/Customer_%28API%29
+    /// </summary>
     public class Customer : IResourceModel
     {
         public string Id { get; set; }
@@ -40,6 +45,8 @@ namespace ShopifyAPIAdapterLibrary.Models
         public string LastOrderName { get; set; }
 
         public IList<Address> Addresses { get; set; }
+
+        public IHasMany<Metafield> Metafields { get; set; }
 
         public Customer()
         {

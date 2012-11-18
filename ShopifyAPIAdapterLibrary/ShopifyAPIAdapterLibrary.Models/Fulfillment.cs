@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace ShopifyAPIAdapterLibrary.Models
 {
+    /// <summary>
+    /// http://api.shopify.com/fulfillment.html
+    /// 
+    /// http://wiki.shopify.com/Fulfillment_%28API%29
+    /// </summary>
     public class Fulfillment : IResourceModel
     {
         // TODO updated_at/created_at

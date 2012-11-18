@@ -64,16 +64,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     }
 
 
-    public class Receipt
-    {
-        public bool? Testcase { get; set; }
 
-        public string Authorization { get; set; }
-
-        public Receipt()
-        {
-        }
-    }
 
 
 
@@ -97,6 +88,8 @@ namespace ShopifyAPIAdapterLibrary.Models
 
     /// <summary>
     /// http://api.shopify.com/order.html
+    /// 
+    /// http://wiki.shopify.com/Order_%28API%29
     /// </summary>
     public class Order : IResourceModel
     {
@@ -182,6 +175,10 @@ namespace ShopifyAPIAdapterLibrary.Models
 
         // crap, this is actually inline, but should be a IHasOne<> because /admin/customers exists
         public Customer Customer { get; set; }
+
+        public IHasMany<Event> Events { get; set; }
+
+        public IHasMany<Metafield> Metafields { get; set; }
 
         public Order()
         {

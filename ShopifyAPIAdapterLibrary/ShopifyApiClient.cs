@@ -66,6 +66,9 @@ namespace ShopifyAPIAdapterLibrary
 
         public RestResource<T> GetResource<T>() where T: IResourceModel
         {
+            if(!this.Resources.ContainsKey(typeof(T))) {
+                throw new ShopifyConfigurationException(String.Format("Model type {0} is not registered through a top-level RestResource.  Consider adding it to the Shopify API client context.", typeof(T).Name));
+            }
             return (RestResource<T>)this.Resources[typeof(T)];
         }
 

@@ -13,6 +13,17 @@ namespace ShopifyAPIAdapterLibrary.Models
         public string Value { get; set; }
     }
 
+    public class Receipt
+    {
+        public bool? Testcase { get; set; }
+
+        public string Authorization { get; set; }
+
+        public Receipt()
+        {
+        }
+    }
+
     /// <summary>
     /// Address (used as either billing or shipping addresses), suitable
     /// for placement on a shipping label for international routing to the
