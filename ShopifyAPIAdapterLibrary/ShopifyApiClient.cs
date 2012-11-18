@@ -305,6 +305,20 @@ namespace ShopifyAPIAdapterLibrary
             return UriPathJoin(ProductsPath(), id);
         }
 
+        /// <summary>
+        /// Because the singular Shop is a special case and is not itself a
+        /// RestResource, just fetch it directly here.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Shop> GetShop()
+        {
+            var shopString = await CallRaw(HttpMethod.Get,
+                GetRequestContentType(),
+                UriPathJoin(AdminPath(), "shop"),
+                null, null);
+            return TranslateObject<Shop>("shop", shopString);
+        }
+
         [Obsolete]
         public async Task<ICollection<Product>> GetProducts() {
 

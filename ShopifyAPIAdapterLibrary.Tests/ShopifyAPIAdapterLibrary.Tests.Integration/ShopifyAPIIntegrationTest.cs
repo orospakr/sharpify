@@ -241,5 +241,11 @@ namespace ShopifyAPIAdapterLibrary.Tests
             answer.Wait();
             Console.WriteLine("dsafdasf");
         }
+
+        [Test]
+        public void ShouldFetchCurrentShop()
+        {
+            var answer = ShopifyClient.GetShop();
+        }
     }
 }

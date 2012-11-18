@@ -222,16 +222,6 @@ namespace ShopifyAPIAdapterLibrary
             return Where(prop.Name, isEqualTo);
         }
 
-        private T SetSubResourceProxies(T modelInstance)
-        {
-            // TODO
-            // what will the proxies be?
-            // they're pretty much just RestResource, except that instead of using a new query filter addition,
-            // they'll use a new addition to the path
-            // how about a RestResource where the parent passed to the constructor is the model POCO?
-            return default(T);
-        }
-
         public async Task<IList<T>> AsList() {
             // TODO Need an async/streamed version.
             // ICollection is okay for now. we buffer up all the answers before returning them.
