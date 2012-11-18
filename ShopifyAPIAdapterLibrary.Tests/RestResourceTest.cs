@@ -146,7 +146,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         public void ShouldBuildSubResourcePaths()
         {
             Assert.AreEqual("/admin/robots/42/parts", CalculonsParts.Path());
-            Assert.AreEqual("/admin/robots/42/parts/67", CalculonsParts.InstancePath("67"));
+            Assert.AreEqual("/admin/robots/42/parts/67", CalculonsParts.InstancePath(67));
         }
 
         private MediaTypeHeaderValue JsonFormatExpectation() {
@@ -284,6 +284,22 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             var r = new Robot() { Id = 67 };
             r.Brain = new SingleInstanceSubResource<Brain>(Shopify, new Brain() { Id = 89 });
+        }
+
+        [Test]
+        public void ShouldFetchCount()
+        {
+            var getRobotCountExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Get,
+                JsonFormatExpectation(),
+                "/admin/robots/count", EmptyQueryParametersExpectation(), null));
+            getRobotCountExpectation.Returns(TaskForResult<string>("robots count json"));
+
+            var translationExpectation = A.CallTo(() => Shopify.TranslateObject<int>("count", "robots count json"));
+            translationExpectation.Returns(34969);
+            var answer = Robots.Count();
+            answer.Wait();
+
+            Assert.AreEqual(34969, answer.Result);
         }
     }
 }

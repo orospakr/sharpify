@@ -253,7 +253,10 @@ namespace ShopifyAPIAdapterLibrary.Tests
             // against whatever your current store contents are, and thus
             // worth keeping around in this harness even if it horribly breaks
             // testing methodology.
-            ShopifyClient.GetResource<Asset>().AsList().Wait();
+
+            var productsCount = ShopifyClient.GetResource<Product>().Count();
+            productsCount.Wait();
+
             ShopifyClient.GetResource<Asset>().AsList().Wait();
             ShopifyClient.GetResource<ApplicationCharge>().AsList().Wait();
             ShopifyClient.GetResource<Article>().AsList().Wait();

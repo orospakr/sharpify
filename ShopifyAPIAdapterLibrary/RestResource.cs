@@ -22,19 +22,21 @@ namespace ShopifyAPIAdapterLibrary
     public interface IUntypedResource
     {
         Type GetModelType();
+
+        Task<int> Count();
+
+        string Path();
+
+        string InstancePath(int p);
     }
 
-    public interface IHasMany<T>
+    public interface IHasMany<T> : IUntypedResource
     {
         Task<T> Get(int id);
 
         Task Create(T model);
 
         Task Update(T model);
-
-        string Path();
-
-        string InstancePath(string p);
     }
 
     public interface IHasOneUntyped
@@ -62,9 +64,9 @@ namespace ShopifyAPIAdapterLibrary
     {
         IShopifyAPIClient Context { get; }
 
-        string InstancePath(string id);
+        string InstanceOrVerbPath(string id);
 
-        Type GetModelType(); 
+        Type GetModelType();
     }
 
     public class RestResource<T> : IUntypedResource, IParentableResource where T : IResourceModel {
@@ -132,19 +134,27 @@ namespace ShopifyAPIAdapterLibrary
             return ShopifyAPIClient.UriPathJoin(Context.AdminPath(), ShopifyAPIClient.Pluralize(Name));
         }
         
-        public string InstancePath(string id) {
+        public string InstanceOrVerbPath(string id) {
             return ShopifyAPIClient.UriPathJoin(Path(), id);
         }
 
         public string InstancePath(int id)
         {
-            return InstancePath(id.ToString());
+            return InstanceOrVerbPath(id.ToString());
         }
 
         private T TranslateObject(string subfieldName, string resourceString) {
             var translated = Context.TranslateObject<T>(Name, resourceString);
 
             return PlaceResourceProxesOnModel(translated);
+        }
+
+        public async Task<int> Count()
+        {
+            var countString = await Context.CallRaw(HttpMethod.Get,
+                Context.GetRequestContentType(),
+                InstanceOrVerbPath("count"), FullParameters(), null);
+            return Context.TranslateObject<int>("count", countString);
         }
         
         public async Task<T> Get(int id) {
@@ -166,7 +176,7 @@ namespace ShopifyAPIAdapterLibrary
             }
             var resourceString = Context.ObjectTranslate<T>(Name, model);
             await Context.CallRaw(HttpMethod.Put, Context.GetRequestContentType(),
-                InstancePath(model.Id.ToString()), null, resourceString);
+                InstanceOrVerbPath(model.Id.ToString()), null, resourceString);
         }
 
         public RestResource<T> Where(string field, string isEqualTo) {
@@ -329,7 +339,7 @@ namespace ShopifyAPIAdapterLibrary
 
         public override string Path()
         {
-            return ShopifyAPIClient.UriPathJoin(ParentResource.InstancePath(ParentInstance.Id.ToString()), ShopifyAPIClient.Pluralize(Name));
+            return ShopifyAPIClient.UriPathJoin(ParentResource.InstanceOrVerbPath(ParentInstance.Id.ToString()), ShopifyAPIClient.Pluralize(Name));
         }
     }
 
