@@ -245,6 +245,14 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [Test]
         public void ShouldFetchAllTopLevelResources()
         {
+            // this test is obviously pretty naiive, and considering that
+            // we can make few guarantees about the state of the store, may
+            // succeed or fail quite different depending on conditions.
+
+            // still, a handy thing to have to validate the behaviour of Sharpify
+            // against whatever your current store contents are, and thus
+            // worth keeping around in this harness even if it horribly breaks
+            // testing methodology.
             ShopifyClient.GetResource<Asset>().AsList().Wait();
             ShopifyClient.GetResource<Asset>().AsList().Wait();
             ShopifyClient.GetResource<ApplicationCharge>().AsList().Wait();

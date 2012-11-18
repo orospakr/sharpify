@@ -243,5 +243,24 @@ namespace ShopifyAPIAdapterLibrary.Tests
             // the host resource doing the decoding will replace it with a SubResource.
             Assert.IsNull(decoded.SKUs);
         }
+
+        [Test]
+        public void ShouldDeserializeShopifyDateFormat()
+        {
+            var fixture = @"""2009-01-31T20:00:00-04:00""";
+            // the above time is midnight UTC written in atlantic time in ISO 8601
+            var decoded = JsonConvert.DeserializeObject<DateTime>(fixture);
+            Assert.AreEqual(2009, decoded.ToUniversalTime().Year);
+            Assert.AreEqual(2, decoded.ToUniversalTime().Month);
+            Assert.AreEqual(0, decoded.ToUniversalTime().Hour);
+        }
+
+        [Test]
+        public void ShouldSerializeShopifyDateFormat()
+        {
+            var dt = new DateTime(2009, 7, 29, 14, 13, 45, 0, new System.Globalization.GregorianCalendar(), DateTimeKind.Utc);
+            var encoded = JsonConvert.SerializeObject(dt);
+            Assert.AreEqual(@"""2009-07-29T14:13:45Z""", encoded);
+        }
     }
 }
