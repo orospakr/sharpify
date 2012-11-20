@@ -9,3 +9,6 @@ build/
 _ReSharper.*/
 *.user
 Web.config
+App.config
+*~
+

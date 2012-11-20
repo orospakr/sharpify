@@ -1,0 +1,5 @@
+* -text
+
+*.cs eol=lf
+*.md eol=lf
+
