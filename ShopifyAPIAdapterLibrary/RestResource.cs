@@ -69,7 +69,12 @@ namespace ShopifyAPIAdapterLibrary
         Type GetModelType();
     }
 
-    public class RestResource<T> : IUntypedResource, IParentableResource where T : IResourceModel {
+    public interface IResource<T> : IUntypedResource where T : IResourceModel
+    {
+    }
+
+    public class RestResource<T> : IResource<T>, IParentableResource where T : IResourceModel
+    {
         public IShopifyAPIClient Context { get; protected set; }
 
         public string Name { get; protected set; }
