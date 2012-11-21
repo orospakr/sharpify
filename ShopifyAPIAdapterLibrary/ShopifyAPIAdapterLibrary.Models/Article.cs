@@ -11,6 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Article_%28API%29
     /// </summary>
+    [Paginated]
     public class Article : IResourceModel
     {
         public int? Id { get; set; }

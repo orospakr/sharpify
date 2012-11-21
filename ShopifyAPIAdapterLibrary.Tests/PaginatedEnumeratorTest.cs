@@ -94,6 +94,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
             {
                 throw new NotImplementedException();
             }
+
+
+            public Task<IList<Customer>> AsList()
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public class PaginatedResourceMock : IResourceView<Customer>
@@ -117,7 +123,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             public IResourceView<Customer> Page(int p)
             {
-                if (p < PageToReturnEmptyAt)
+                if (p <= PageToReturnEmptyAt)
                 {
                     return new ResourcePageMock(p, 5);
                 }
@@ -158,6 +164,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
             }
 
             public string InstancePath(int p)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            public Task<IList<Customer>> AsList()
             {
                 throw new NotImplementedException();
             }

@@ -11,6 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Comment_%28API%29
     /// </summary>
+    [Paginated]
     public class Comment: IResourceModel
     {
         public int? Id { get; set; }

@@ -8,6 +8,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Product_%28API%29
     /// </summary>
+    [Paginated]
     public class Product : IResourceModel
     {
         public string BodyHtml { get; set; }

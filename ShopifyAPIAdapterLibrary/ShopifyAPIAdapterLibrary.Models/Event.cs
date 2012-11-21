@@ -17,6 +17,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// Use the IHasMany:Event relations on Orders, and Events.
     /// </summary>
+    [Paginated]
     public class Event: IResourceModel
     {
         public int? Id { get; set; }

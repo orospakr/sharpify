@@ -22,6 +22,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// A persistent filter of Products.
     /// </summary>
+    [Paginated]
     public class SmartCollection : IResourceModel
     {
         public int? Id { get; set; }

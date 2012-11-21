@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="IDataTranslator.cs" />
     <Compile Include="IShopifyAPIClient.cs" />
+    <Compile Include="ModelAttributes.cs" />
     <Compile Include="PaginatedEnumerator.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\ApplicationCharge.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Article.cs" />

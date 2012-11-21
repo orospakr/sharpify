@@ -16,7 +16,6 @@ namespace ShopifyAPIAdapterLibrary.Tests.Integration
     /// Test the interaction with the actual, running service at :shop.myshopify.com.
     /// </summary>
     [TestFixture]
-    [Ignore]
     public class LiveAPIServiceIntegrationTest
     {
         ShopifyAuthorizationState AuthorizationState {
@@ -243,7 +242,7 @@ namespace ShopifyAPIAdapterLibrary.Tests.Integration
             var query = new NameValueCollection();
             query.Add("page", "2");
 
-            var getTask = ShopifyClient.GetResource<Product>().Where("page", "2").AsListUnpaginated();
+            var getTask = ShopifyClient.GetResource<Product>().Where("page", "2").AsList();
             getTask.Wait();
 
             Assert.NotNull(getTask.Result);
@@ -252,7 +251,7 @@ namespace ShopifyAPIAdapterLibrary.Tests.Integration
         [Test]
         public void ShouldFetchAllOrders() {
             // TODO oh shit paging
-            var answer = ShopifyClient.GetResource<Order>().AsListUnpaginated();
+            var answer = ShopifyClient.GetResource<Order>().AsList();
             answer.Wait();
             Console.WriteLine("dsafdasf");
         }
@@ -275,28 +274,28 @@ namespace ShopifyAPIAdapterLibrary.Tests.Integration
             var productsCount = ShopifyClient.GetResource<Product>().Count();
             productsCount.Wait();
 
-            ShopifyClient.GetResource<Asset>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<ApplicationCharge>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Article>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Blog>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Checkout>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Collect>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<CustomCollection>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Comment>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Country>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Customer>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<CustomerGroup>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Event>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Order>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Page>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Product>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<ProductSearchEngine>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<RecurringApplicationCharge>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Redirect>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<ScriptTag>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<SmartCollection>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Theme>().AsListUnpaginated().Wait();
-            ShopifyClient.GetResource<Webhook>().AsListUnpaginated().Wait();
+            ShopifyClient.GetResource<Asset>().AsList().Wait();
+            ShopifyClient.GetResource<ApplicationCharge>().AsList().Wait();
+            ShopifyClient.GetResource<Article>().AsList().Wait();
+            ShopifyClient.GetResource<Blog>().AsList().Wait();
+            ShopifyClient.GetResource<Checkout>().AsList().Wait();
+            ShopifyClient.GetResource<Collect>().AsList().Wait();
+            ShopifyClient.GetResource<CustomCollection>().AsList().Wait();
+            ShopifyClient.GetResource<Comment>().AsList().Wait();
+            ShopifyClient.GetResource<Country>().AsList().Wait();
+            ShopifyClient.GetResource<Customer>().AsList().Wait();
+            ShopifyClient.GetResource<CustomerGroup>().AsList().Wait();
+            ShopifyClient.GetResource<Event>().AsList().Wait();
+            ShopifyClient.GetResource<Order>().AsList().Wait();
+            ShopifyClient.GetResource<Page>().AsList().Wait();
+            ShopifyClient.GetResource<Product>().AsList().Wait();
+            ShopifyClient.GetResource<ProductSearchEngine>().AsList().Wait();
+            ShopifyClient.GetResource<RecurringApplicationCharge>().AsList().Wait();
+            ShopifyClient.GetResource<Redirect>().AsList().Wait();
+            ShopifyClient.GetResource<ScriptTag>().AsList().Wait();
+            ShopifyClient.GetResource<SmartCollection>().AsList().Wait();
+            ShopifyClient.GetResource<Theme>().AsList().Wait();
+            ShopifyClient.GetResource<Webhook>().AsList().Wait();
         }
     }
 }

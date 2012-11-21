@@ -11,6 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Script_Tag_%28API%29
     /// </summary>
+    [Paginated]
     public class ScriptTag : IResourceModel
     {
         public int? Id { get; set; }

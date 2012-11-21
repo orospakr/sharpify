@@ -25,7 +25,7 @@ namespace ShopifyAPIAdapterLibrary
         }
 
         public async Task Each(Action<T> cb) {
-            var p = 0;
+            var p = 1;
             IList<T> batch;
             do
             {

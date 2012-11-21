@@ -91,6 +91,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Order_%28API%29
     /// </summary>
+    [Paginated]
     public class Order : IResourceModel
     {
         // TODO updated_at/created_at

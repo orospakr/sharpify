@@ -11,6 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// Aka "CustomCollection", annoyingly.
     /// </summary>
+    [Paginated]
     public class CustomCollection : IResourceModel
     {
         public int? Id { get; set; }

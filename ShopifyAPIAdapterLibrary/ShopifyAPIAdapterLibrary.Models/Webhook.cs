@@ -23,6 +23,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// objects using JsonDataTranslator: T where T is the
     /// IResourceModel you're expecting back.
     /// </summary>
+    [Paginated]
     public class Webhook : IResourceModel
     {
         public int? Id { get; set; }

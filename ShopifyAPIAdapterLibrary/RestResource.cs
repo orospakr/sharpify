@@ -87,6 +87,8 @@ namespace ShopifyAPIAdapterLibrary
         /// <returns></returns>
         Task<IList<T>> AsListUnpaginated();
 
+        Task<IList<T>> AsList();
+
         /// <summary>
         /// Returns a new view of this resource filtered to a specific page (for
         /// paginated resources).
@@ -356,10 +358,28 @@ namespace ShopifyAPIAdapterLibrary
             return typeof(T);
         }
 
+        public bool IsPaginated()
+        {
+            return (GetModelType().GetCustomAttribute<Paginated>() != null);
+        }
+
         public Task Each(Action<T> cb)
         {
             var enumerator = new PaginatedEnumerator<T>(this);
             return enumerator.Each(cb);
+        }
+
+        public Task<IList<T>> AsList()
+        {
+            if (IsPaginated())
+            {
+                var enumerator = new PaginatedEnumerator<T>(this);
+                return enumerator.AsList();
+            }
+            else
+            {
+                return AsListUnpaginated();
+            }
         }
     }
 
