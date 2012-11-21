@@ -62,7 +62,7 @@ namespace ShopifyAPIAdapterLibrary
             this.Resources.Add(resource.GetModelType(), resource);
         }
 
-        public RestResource<T> GetResource<T>() where T: IResourceModel
+        public RestResource<T> GetResource<T>() where T: IResourceModel, new()
         {
             if(!this.Resources.ContainsKey(typeof(T))) {
                 throw new ShopifyConfigurationException(String.Format("Model type {0} is not registered through a top-level RestResource.  Consider adding it to the Shopify API client context.", typeof(T).Name));
@@ -162,6 +162,7 @@ namespace ShopifyAPIAdapterLibrary
 
             UriBuilder url = ShopUri();
             url.Path = path;
+            url.Query = queryString.ToString();
             
             var http = new HttpClient();
             
@@ -170,8 +171,6 @@ namespace ShopifyAPIAdapterLibrary
             request.Headers.Add("X-Shopify-Access-Token", this.State.AccessToken);
             request.Headers.Add("Accept", acceptType.ToString());
             request.Method = method;
-
-            url.Query = queryString.ToString();
 
             if (method == HttpMethod.Post || method == HttpMethod.Put)
             {

@@ -7,7 +7,7 @@ namespace ShopifyAPIAdapterLibrary
 {
     public interface IShopifyAPIClient
     {
-        RestResource<T> GetResource<T>() where T : IResourceModel;
+        RestResource<T> GetResource<T>() where T : IResourceModel, new();
         string AdminPath();
         Task<object> Call(System.Net.Http.HttpMethod method, string path, System.Collections.Specialized.NameValueCollection parameters = null, object data = null);
         Task<string> CallRaw(System.Net.Http.HttpMethod method, System.Net.Http.Headers.MediaTypeHeaderValue acceptType, string path, System.Collections.Specialized.NameValueCollection parameters, string requestBody);

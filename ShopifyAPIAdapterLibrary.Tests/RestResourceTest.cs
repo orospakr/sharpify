@@ -1,4 +1,5 @@
 using FakeItEasy;
+using FakeItEasy.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -112,7 +113,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("nexus", rrNexusParameters["RobotType"]);
         }
 
-        private Task<T> TaskForResult<T>(T input)
+        public static Task<T> TaskForResult<T>(T input)
         {
             var tcs = new TaskCompletionSource<T>();
             tcs.SetResult(input);
@@ -130,7 +131,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var translationExpectation = A.CallTo(() => Shopify.TranslateObject<List<Robot>>("robots", "json text!"));
             translationExpectation.Returns(new List<Robot>() { new Robot() { Id = 8889 } } );
 
-            var answer = Robots.AsList();
+            var answer = Robots.AsListUnpaginated();
 
             answer.Wait();
 
@@ -160,6 +161,11 @@ namespace ShopifyAPIAdapterLibrary.Tests
         private NameValueCollection EmptyQueryParametersExpectation()
         {
             return A<NameValueCollection>.That.Matches(nvc => nvc.Keys.Count == 0);
+        }
+
+        private NameValueCollection PageNumberQueryParameterExpectation(int pageNumber)
+        {
+            return A<NameValueCollection>.That.Matches(nvc => nvc.Get("page") == pageNumber.ToString());
         }
 
         [Test]

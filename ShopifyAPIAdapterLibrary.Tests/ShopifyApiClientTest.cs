@@ -17,6 +17,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("/admin/products/67", sapi.ProductPath("67"));
         }
 
+       
         [Test]
         public void ShouldPluralize() {
             Assert.AreEqual("sandwiches", ShopifyAPIClient.Pluralize("sandwich"));

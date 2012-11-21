@@ -69,11 +69,40 @@ namespace ShopifyAPIAdapterLibrary
         Type GetModelType();
     }
 
-    public interface IResource<T> : IUntypedResource where T : IResourceModel
+    public interface IResourceView<T> : IUntypedResource
+        where T : IResourceModel, new() 
     {
+        /// <summary>
+        /// Fetch all the records matched by this resource, and asynchronously call
+        /// the provided callback with each.
+        /// </summary>
+        /// <param name="cb"></param>
+        /// <returns></returns>
+        Task Each(Action<T> cb);
+
+        /// <summary>
+        /// Fetch and buffer the entire set of records matched by this resource,
+        /// and return them all together.
+        /// </summary>
+        /// <returns></returns>
+        Task<IList<T>> AsListUnpaginated();
+
+        /// <summary>
+        /// Returns a new view of this resource filtered to a specific page (for
+        /// paginated resources).
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        IResourceView<T> Page(int p);
+
+        IResourceView<T> Where(Expression<Func<T, object>> propertyLambda, string isEqualTo);
+
+        IResourceView<T> Where(string field, string isEqualTo);
+
+        NameValueCollection FullParameters();
     }
 
-    public class RestResource<T> : IResource<T>, IParentableResource where T : IResourceModel
+    public class RestResource<T> : IResourceView<T>, IParentableResource where T : IResourceModel, new()
     {
         public IShopifyAPIClient Context { get; protected set; }
 
@@ -184,8 +213,13 @@ namespace ShopifyAPIAdapterLibrary
                 InstanceOrVerbPath(model.Id.ToString()), null, resourceString);
         }
 
-        public RestResource<T> Where(string field, string isEqualTo) {
+        public IResourceView<T> Where(string field, string isEqualTo) {
             return new RestResource<T>(this, new NameValueCollection { { field, isEqualTo } });
+        }
+
+        public IResourceView<T> Page(int page)
+        {
+            return this.Where("page", page.ToString());
         }
 
         private T PlaceResourceProxesOnModel(T model)
@@ -232,7 +266,7 @@ namespace ShopifyAPIAdapterLibrary
             return model;
         }
 
-        public RestResource<T> Where(Expression<Func<T, object>> propertyLambda, string isEqualTo)
+        public IResourceView<T> Where(Expression<Func<T, object>> propertyLambda, string isEqualTo)
         {
             // http://merrickchaffer.blogspot.ca/2012/03/accessing-properties-in-c-using-lambda.html
             var memberExpression = propertyLambda.Body as MemberExpression;
@@ -251,7 +285,7 @@ namespace ShopifyAPIAdapterLibrary
             return Where(prop.Name, isEqualTo);
         }
 
-        public async Task<IList<T>> AsList() {
+        public async Task<IList<T>> AsListUnpaginated() {
             // TODO Need an async/streamed version.
             // ICollection is okay for now. we buffer up all the answers before returning them.
             // actually, the thing this returns needs to offer
@@ -321,9 +355,15 @@ namespace ShopifyAPIAdapterLibrary
         {
             return typeof(T);
         }
+
+        public Task Each(Action<T> cb)
+        {
+            var enumerator = new PaginatedEnumerator<T>(this);
+            return enumerator.Each(cb);
+        }
     }
 
-    public class SubResource<T> : RestResource<T>, IHasMany<T> where T : IResourceModel
+    public class SubResource<T> : RestResource<T>, IHasMany<T> where T : IResourceModel, new()
     {
         public IParentableResource ParentResource;
         public IResourceModel ParentInstance;
@@ -348,7 +388,7 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
-    public class SingleInstanceSubResource<T> : IHasOne<T> where T : IResourceModel
+    public class SingleInstanceSubResource<T> : IHasOne<T> where T : IResourceModel, new()
     {
         public IShopifyAPIClient Context { get; set; }
         public int Id { get; set; }
