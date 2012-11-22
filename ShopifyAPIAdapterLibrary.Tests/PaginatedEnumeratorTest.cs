@@ -5,6 +5,7 @@ using ShopifyAPIAdapterLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -100,6 +101,15 @@ namespace ShopifyAPIAdapterLibrary.Tests
             {
                 throw new NotImplementedException();
             }
+
+            public Task CallAction(Customer instance, string action) {
+                throw new NotImplementedException();
+            }
+
+            public Task CallAction(Customer instance, Expression<Func<Customer, SpecialAction>> actionPropertyLambda)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public class PaginatedResourceMock : IResourceView<Customer>
@@ -170,6 +180,16 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
 
             public Task<IList<Customer>> AsList()
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task CallAction(Customer instance, string action)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task CallAction(Customer instance, Expression<Func<Customer, SpecialAction>> actionPropertyLambda)
             {
                 throw new NotImplementedException();
             }

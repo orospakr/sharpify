@@ -26,6 +26,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
         public IList<Inspection> Inspections { get; set; }
 
         public IHasOne<Brain> Brain { get; set; }
+
+        public SpecialAction Explode { get; set; }
     }
 
     public class Brain : IResourceModel
@@ -306,6 +308,16 @@ namespace ShopifyAPIAdapterLibrary.Tests
             answer.Wait();
 
             Assert.AreEqual(34969, answer.Result);
+        }
+
+        [Test]
+        public void ShouldCallActionsByProperty()
+        {
+            Robots.CallAction(Calculon, (robot) => robot.Explode);
+             A.CallTo(() => Shopify.CallRaw(HttpMethod.Post,
+                JsonFormatExpectation(),
+                "/admin/robots/42/explode", EmptyQueryParametersExpectation(),
+                null)).MustHaveHappened();
         }
     }
 }

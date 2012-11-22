@@ -91,6 +91,7 @@
     <Compile Include="ShopifyException.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Product.cs" />
     <Compile Include="RestResource.cs" />
+    <Compile Include="SpecialAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

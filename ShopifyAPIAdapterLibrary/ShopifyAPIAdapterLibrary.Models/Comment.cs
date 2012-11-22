@@ -41,6 +41,16 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// </summary>
         public string UserAgent { get; set; }
 
+        /// <summary>
+        /// Mark this comment as spam.
+        /// </summary>
+        public SpecialAction Spam { get; set; }
+
+        /// <summary>
+        /// Mark this comment as not spam.
+        /// </summary>
+        public SpecialAction NotSpam { get; set; }
+
         public Comment()
         {
         }

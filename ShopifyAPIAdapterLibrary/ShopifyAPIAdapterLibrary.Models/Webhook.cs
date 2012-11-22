@@ -16,8 +16,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// Have Shopify POST back to an HTTP server you run
     /// with a copy of a changed resource.
     /// 
-    /// Naturally, you'll have to implement the receiver in your
-    /// own HTTP service.
+    /// Naturally, you'll have to implement the webhook callback
+    /// receiver in your own HTTP service.
     /// 
     /// However, you can have Sharpify parse the JSON into Sharpify
     /// objects using JsonDataTranslator: T where T is the

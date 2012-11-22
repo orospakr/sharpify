@@ -101,6 +101,10 @@ namespace ShopifyAPIAdapterLibrary
 
         IResourceView<T> Where(string field, string isEqualTo);
 
+        Task CallAction(T instance, string action);
+
+        Task CallAction(T instance, Expression<Func<T, SpecialAction>> actionPropertyLambda);
+
         NameValueCollection FullParameters();
     }
 
@@ -380,6 +384,38 @@ namespace ShopifyAPIAdapterLibrary
             {
                 return AsListUnpaginated();
             }
+        }
+
+        public async Task CallAction(T instance, string action)
+        {
+            await Context.CallRaw(HttpMethod.Post,
+                Context.GetRequestContentType(),
+                ShopifyAPIClient.UriPathJoin(InstancePath(instance.Id.Value), action), FullParameters(), null);
+        }
+
+        public Task CallAction(T instance, Expression<Func<T, SpecialAction>> actionPropertyLambda)
+        {
+            var memberExpression = actionPropertyLambda.Body as MemberExpression;
+            if (memberExpression == null)
+            {
+                throw new ShopifyConfigurationException("Please specify a flat expression specifying a SpecialAction property on the IResourceModel.");
+            }
+            var prop = memberExpression.Member as PropertyInfo;
+            if (prop == null)
+            {
+                throw new ShopifyConfigurationException("Expression specified to CallAction?() did not specify a property.  This probably can't happen (because of type parameter to Func<>)?");
+            }
+            var type = typeof(T);
+            if (type != prop.ReflectedType && !type.IsSubclassOf(prop.ReflectedType))
+            {
+                throw new ShopifyConfigurationException("Expression specified to CallAction() specified a property on a different class than the IResourceModel type of this RestResource.");
+            }
+            if (instance.Id == null)
+            {
+                throw new ShopifyUsageException("Actions can only be called on models with an ID.");
+            }
+            var action = ShopifyAPIClient.Underscoreify(prop.Name);
+            return CallAction(instance, action);
         }
     }
 

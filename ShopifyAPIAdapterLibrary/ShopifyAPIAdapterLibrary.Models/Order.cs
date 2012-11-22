@@ -181,6 +181,21 @@ namespace ShopifyAPIAdapterLibrary.Models
 
         public IHasMany<Metafield> Metafields { get; set; }
 
+        /// <summary>
+        /// Cancel the order.
+        /// </summary>
+        public SpecialAction Cancel { get; set; }
+
+        /// <summary>
+        /// Reopen the order.
+        /// </summary>
+        public SpecialAction Open { get; set; }
+
+        /// <summary>
+        /// Close the order.
+        /// </summary>
+        public SpecialAction Close { get; set; }
+
         public Order()
         {
         }
