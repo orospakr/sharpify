@@ -15,10 +15,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// preset for selecting customers.
     /// </summary>
     [Paginated]
-    public class CustomerGroup : IResourceModel
+    public class CustomerGroup : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public string Name { get; set; }
 
         public string Query { get; set; }

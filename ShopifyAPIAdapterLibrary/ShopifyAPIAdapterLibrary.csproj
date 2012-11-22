@@ -78,6 +78,7 @@
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Redirect.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\ScriptTag.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Shop.cs" />
+    <Compile Include="ShopifyAPIAdapterLibrary.Models\ShopifyResourceModel.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\SmartCollection.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Theme.cs" />
     <Compile Include="ShopifyAPIAdapterLibrary.Models\Transaction.cs" />

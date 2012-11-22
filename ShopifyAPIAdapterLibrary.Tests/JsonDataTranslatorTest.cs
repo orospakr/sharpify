@@ -19,22 +19,20 @@ namespace ShopifyAPIAdapterLibrary.Tests
         public double Percentage { get; set; }
     }
 
-    public class Bank : IResourceModel
+    public class Bank : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public string Name { get; set; }
     }
 
     // a subresource that we won't do much with.
     // the DataTranslator is not responsible for inserting
     // subresource proxies.
-    public class SKU : IResourceModel
+    public class SKU : ShopifyResourceModel
     {
-        public int? Id { get; set; }
     }
 
-    public class Transaction : IResourceModel {
+    public class Transaction : ShopifyResourceModel
+    {
         public string Currency { get; set; }
 
         public double Value { get; set; }
@@ -48,8 +46,6 @@ namespace ShopifyAPIAdapterLibrary.Tests
         public IHasMany<SKU> SKUs { get; set; }
 
         public IHasOne<Bank> Bank { get; set; }
-
-        public int? Id { get; set; }
     }
 
     [TestFixture]

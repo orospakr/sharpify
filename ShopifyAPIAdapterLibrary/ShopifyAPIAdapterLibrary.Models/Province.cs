@@ -11,10 +11,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Province_%28API%29
     /// </summary>
-    public class Province: IResourceModel
+    public class Province: ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         /// <summary>
         /// ISO 3166-2 Alpha 2 Subdivision Code.
         /// </summary>

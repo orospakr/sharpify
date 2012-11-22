@@ -11,10 +11,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Transaction_%28API%29
     /// </summary>
-    public class Transaction : IResourceModel
+    public class Transaction : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public Double Amount { get; set; }
 
         // TODO: Enum?

@@ -12,10 +12,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Product_Search_Engine_%28API%29
     /// List of enabled search engines.
     /// </summary>
-    public class ProductSearchEngine : IResourceModel
+    public class ProductSearchEngine : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public string Name { get; set; }
 
         public ProductSearchEngine()

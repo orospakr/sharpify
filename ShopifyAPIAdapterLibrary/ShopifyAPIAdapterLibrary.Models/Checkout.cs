@@ -12,10 +12,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Customer_%28API%29
     /// </summary>
     [Paginated]
-    public class Checkout : IResourceModel
+    public class Checkout : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         /// <summary>
         /// Presumably a copy of the BuyerAcceptsMarketing bit from
         /// the Customer.

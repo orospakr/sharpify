@@ -11,10 +11,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Shop_%28API%29
     /// </summary>
-    public class Shop : IResourceModel
+    public class Shop : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public string Address1 { get; set; }
 
         public string City { get; set; }

@@ -12,10 +12,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// Aka "CustomCollection", annoyingly.
     /// </summary>
     [Paginated]
-    public class CustomCollection : IResourceModel
+    public class CustomCollection : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public string BodyHTML { get; set; }
 
         public string Handle { get; set; }

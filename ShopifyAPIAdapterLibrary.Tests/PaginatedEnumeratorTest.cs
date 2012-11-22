@@ -15,10 +15,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
     [TestFixture]
     class PaginatedEnumeratorTest
     {
-        public class Customer : IResourceModel
+        public class Customer : ShopifyResourceModel
         {
-            public int? Id { get; set; }
-
             public Customer()
             {
             }

@@ -12,10 +12,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Customer_%28API%29
     /// </summary>
     [Paginated]
-    public class Customer : IResourceModel
+    public class Customer : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public bool AcceptsMarketing { get; set; }
 
         public string Email { get; set; }

@@ -11,10 +11,9 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// 
     /// </summary>
-    public class ApplicationCharge : IResourceModel
+    public class ApplicationCharge : ShopifyResourceModel
     {
         // TODO: this particular class is probably sensitive to unnecessary fields in updates.
-        public int? Id { get; set; }
 
         public string Name { get; set; }
 

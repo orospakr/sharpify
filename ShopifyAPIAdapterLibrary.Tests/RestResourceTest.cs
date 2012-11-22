@@ -15,8 +15,7 @@ using System.Threading.Tasks;
 namespace ShopifyAPIAdapterLibrary.Tests
 {
     // our test top-level resource
-    public class Robot : IResourceModel {
-        public int? Id { get; set; }
+    public class Robot : ShopifyResourceModel {
 
         public string RobotType { get; set; }
         public string Manufacturer { get; set; }
@@ -30,16 +29,14 @@ namespace ShopifyAPIAdapterLibrary.Tests
         public SpecialAction Explode { get; set; }
     }
 
-    public class Brain : IResourceModel
+    public class Brain : ShopifyResourceModel
     {
-        public int? Id { get; set; }
         public int SynapseCount { get; set; }
     }
 
     // our test subresource
-    public class Part : IResourceModel
+    public class Part : ShopifyResourceModel
     {
-        public int? Id { get; set; }
 
         public string Sku { get; set; }
     }

@@ -63,11 +63,6 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
     }
 
-
-
-
-
-
     public class ClientDetails
     {
         /// <summary>
@@ -92,12 +87,9 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Order_%28API%29
     /// </summary>
     [Paginated]
-    public class Order : IResourceModel
+    public class Order : ShopifyResourceModel
     {
         // TODO updated_at/created_at
-
-        public int? Id { get; set; }
-
         public bool? BuyerAcceptsMarketing { get; set; }
 
         public string CancelReason { get; set; }

@@ -9,15 +9,13 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Product_%28API%29
     /// </summary>
     [Paginated]
-    public class Product : IResourceModel
+    public class Product : ShopifyResourceModel
     {
         public string BodyHtml { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
         public String Handle { get; set; }
-
-        public int? Id { get; set; }
 
         public DateTime? PublishedAt { get; set; }
 

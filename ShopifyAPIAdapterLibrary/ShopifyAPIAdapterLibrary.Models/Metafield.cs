@@ -19,10 +19,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// way to do it.  They have the benefit of being accessible through
     /// Liquid templates on Shopify itself, too.
     /// </summary>
-    public class Metafield : IResourceModel
+    public class Metafield : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public string Description { get; set; }
 
         public string Key { get; set; }

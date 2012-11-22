@@ -11,10 +11,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Theme_%28API%29
     /// </summary>
-    public class Theme : IResourceModel
+    public class Theme : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public string Name { get; set; }
 
         // TODO: Enum

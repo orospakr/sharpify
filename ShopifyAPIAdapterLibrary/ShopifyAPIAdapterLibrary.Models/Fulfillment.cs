@@ -12,11 +12,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Fulfillment_%28API%29
     /// </summary>
     [Paginated]
-    public class Fulfillment : IResourceModel
+    public class Fulfillment : ShopifyResourceModel
     {
-        // TODO updated_at/created_at
-
-        public int? Id { get; set; }
 
         // TODO Second-half of HasMany<> that must be implemented
         public string OrderId { get; set; }

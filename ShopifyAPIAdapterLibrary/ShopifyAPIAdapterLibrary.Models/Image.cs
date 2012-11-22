@@ -13,10 +13,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// Aka ProductImage.
     /// </summary>
-    public class Image : IResourceModel
+    public class Image : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public IHasOne<Product> Product { get; set; }
 
         public int Position { get; set; }

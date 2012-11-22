@@ -17,10 +17,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// to follow the relation).
     /// https://trello.com/card/has-many-through-collects-product-custom-collection/50a1c9c990c4980e0600178b/39
     /// </summary>
-    public class Collect : IResourceModel
+    public class Collect : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public bool Featured { get; set; }
 
         public IHasOne<Product> Product { get; set; }

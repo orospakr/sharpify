@@ -12,10 +12,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Page_%28API%29
     /// </summary>
     [Paginated]
-    public class Page : IResourceModel
+    public class Page : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public string Author { get; set; }
 
         public string BodyHTML { get; set; }

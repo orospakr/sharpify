@@ -11,10 +11,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Product_Variant_%28API%29
     /// </summary>
-    public class Variant : IResourceModel
+    public class Variant : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         public double? CompareAtPrice { get; set; }
 
         // TODO: Enum (or, again, do we?  what is story with fulfillment services list?)

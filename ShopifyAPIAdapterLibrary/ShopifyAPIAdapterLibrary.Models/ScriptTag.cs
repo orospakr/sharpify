@@ -12,10 +12,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Script_Tag_%28API%29
     /// </summary>
     [Paginated]
-    public class ScriptTag : IResourceModel
+    public class ScriptTag : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         /// <summary>
         /// Name of JS-subscrible event emitted by the Browser's Document API
         /// that should invoke the provided script contents.

@@ -11,10 +11,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Countries_%28API%29
     /// </summary>
-    public class Country : IResourceModel
+    public class Country : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         /// <summary>
         /// ISO 3166-1 Alpha-2 Country Code.
         /// </summary>

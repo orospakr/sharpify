@@ -11,10 +11,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Blog_%28API%29
     /// </summary>
-    public class Blog : IResourceModel
+    public class Blog : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         // TODO: Enum, because they "yes"/"no" instead of true/false here for some reason
         public string Commentable { get; set; }
 

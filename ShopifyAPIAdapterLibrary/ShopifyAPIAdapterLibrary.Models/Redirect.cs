@@ -12,10 +12,8 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Redirect_%28API%29
     /// </summary>
     [Paginated]
-    public class Redirect : IResourceModel
+    public class Redirect : ShopifyResourceModel
     {
-        public int? Id { get; set; }
-
         /// <summary>
         /// Original path to intercept.
         /// </summary>
