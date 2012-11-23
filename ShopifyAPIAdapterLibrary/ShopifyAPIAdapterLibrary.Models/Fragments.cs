@@ -24,6 +24,91 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
     }
 
+    public class DiscountCode
+    {
+        public string Code { get; set; }
+        public double? Amount { get; set; }
+
+        public DiscountCode()
+        {
+        }
+    }
+
+    public class Rule
+    {
+        public string Column { get; set; }
+
+        // TODO: Enum
+        public string Relation { get; set; }
+
+        public string Condition { get; set; }
+    }
+
+    public class ShippingLine
+    {
+        public string Code { get; set; }
+
+        public double? Price { get; set; }
+
+        public string Source { get; set; }
+
+        public string Title { get; set; }
+
+        public ShippingLine()
+        {
+        }
+    }
+
+    // Da, Comrade Mulroney.
+    public class TaxLine
+    {
+        public string Price { get; set; }
+
+        public double? Rate { get; set; }
+
+        public string Title { get; set; }
+
+        public TaxLine()
+        {
+        }
+    }
+
+    public class PaymentDetails
+    {
+        public string AvsResultCode { get; set; }
+
+        public string CreditCardBin { get; set; }
+
+        public string CvvResultCode { get; set; }
+
+        public string CreditCardNumber { get; set; }
+
+        public string CreditCardCompany { get; set; }
+
+        public PaymentDetails()
+        {
+        }
+    }
+
+    public class ClientDetails
+    {
+        /// <summary>
+        /// Presumably in ISO 639-2?
+        /// </summary>
+        public string AcceptLanguage { get; set; }
+
+        public string BrowserIP { get; set; }
+
+        public string SessionHash { get; set; }
+
+        public string UserAgent { get; set; }
+
+        public ClientDetails()
+        {
+        }
+    }
+
+
     /// <summary>
     /// Address (used as either billing or shipping addresses), suitable
     /// for placement on a shipping label for international routing to the

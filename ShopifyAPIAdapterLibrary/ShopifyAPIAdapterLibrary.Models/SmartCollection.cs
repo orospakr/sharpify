@@ -6,15 +6,6 @@ using System.Threading.Tasks;
 
 namespace ShopifyAPIAdapterLibrary.Models
 {
-    public class Rule {
-        public string Column { get; set; }
-
-        // TODO: Enum
-        public string Relation { get; set; }
-
-        public string Condition { get; set; }
-    }
-
     /// <summary>
     /// http://api.shopify.com/smartcollection.html
     /// 

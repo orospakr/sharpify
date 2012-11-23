@@ -31,6 +31,12 @@ cs_glob = File.join(models_path, "*.cs")
 
 Dir.glob(cs_glob) do |cs_file|
   puts "... #{cs_file}"
+
+  if cs_file =~ /Fragments\.cs/i
+    puts "... skipping fragments."
+    next
+  end
+
   cs_file_path = File.join(models_path, cs_file)
 
   cs_file_contents = ""
