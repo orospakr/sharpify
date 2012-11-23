@@ -25,12 +25,28 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// 
         /// 
         /// </summary>
-        public IList<string> Arguments { get; set; }
+        private IList<string> _Arguments;
+        public IList<string> Arguments
+        {
+            get { return _Arguments; }
+            set {
+                SetProperty(ref _Arguments, value);
+            }
+        }
+
 
         /// <summary>
         /// belongs_to :polymorphic target ID.
         /// </summary>
-        public int SubjectId { get; set; }
+        private int _SubjectId;
+        public int SubjectId
+        {
+            get { return _SubjectId; }
+            set {
+                SetProperty(ref _SubjectId, value);
+            }
+        }
+
 
         /// <summary>
         /// belongs_to :polymorphic target type.
@@ -39,12 +55,28 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// 
         /// In CamelCase format.
         /// </summary>
-        public string SubjectType { get; set; }
+        private string _SubjectType;
+        public string SubjectType
+        {
+            get { return _SubjectType; }
+            set {
+                SetProperty(ref _SubjectType, value);
+            }
+        }
+
 
         /// <summary>
         /// The action of the event.  Probably subject-specific.
         /// </summary>
-        public string Verb { get; set; }
+        private string _Verb;
+        public string Verb
+        {
+            get { return _Verb; }
+            set {
+                SetProperty(ref _Verb, value);
+            }
+        }
+
 
         public Event()
         {

@@ -14,40 +14,128 @@ namespace ShopifyAPIAdapterLibrary.Models
     [Paginated]
     public class Comment: ShopifyResourceModel
     {
-        public string Body { get; set; }
+        private string _Body;
+        public string Body
+        {
+            get { return _Body; }
+            set {
+                SetProperty(ref _Body, value);
+            }
+        }
 
-        public IHasOne<Article> Article { get; set; }
 
-        public string Author { get; set; }
+        private IHasOne<Article> _Article;
+        public IHasOne<Article> Article
+        {
+            get { return _Article; }
+            set {
+                SetProperty(ref _Article, value);
+            }
+        }
 
-        public string BodyHTML { get; set; }
 
-        public string Email { get; set; }
+        private string _Author;
+        public string Author
+        {
+            get { return _Author; }
+            set {
+                SetProperty(ref _Author, value);
+            }
+        }
+
+
+        private string _BodyHTML;
+        public string BodyHTML
+        {
+            get { return _BodyHTML; }
+            set {
+                SetProperty(ref _BodyHTML, value);
+            }
+        }
+
+
+        private string _Email;
+        public string Email
+        {
+            get { return _Email; }
+            set {
+                SetProperty(ref _Email, value);
+            }
+        }
+
 
         /// <summary>
         ///  IP address of the poster.
         /// </summary>
-        public string IP { get; set; }
+        private string _IP;
+        public string IP
+        {
+            get { return _IP; }
+            set {
+                SetProperty(ref _IP, value);
+            }
+        }
 
-        public DateTime? PublishedAt { get; set; }
+
+        private DateTime? _PublishedAt;
+        public DateTime? PublishedAt
+        {
+            get { return _PublishedAt; }
+            set {
+                SetProperty(ref _PublishedAt, value);
+            }
+        }
+
 
         // TODO: Enum
-        public string Status { get; set; }
+        private string _Status;
+        public string Status
+        {
+            get { return _Status; }
+            set {
+                SetProperty(ref _Status, value);
+            }
+        }
+
 
         /// <summary>
         /// Browser User-Agent of the poster.
         /// </summary>
-        public string UserAgent { get; set; }
+        private string _UserAgent;
+        public string UserAgent
+        {
+            get { return _UserAgent; }
+            set {
+                SetProperty(ref _UserAgent, value);
+            }
+        }
+
 
         /// <summary>
         /// Mark this comment as spam.
         /// </summary>
-        public SpecialAction Spam { get; set; }
+        private SpecialAction _Spam;
+        public SpecialAction Spam
+        {
+            get { return _Spam; }
+            set {
+                SetProperty(ref _Spam, value);
+            }
+        }
+
 
         /// <summary>
         /// Mark this comment as not spam.
         /// </summary>
-        public SpecialAction NotSpam { get; set; }
+        private SpecialAction _NotSpam;
+        public SpecialAction NotSpam
+        {
+            get { return _NotSpam; }
+            set {
+                SetProperty(ref _NotSpam, value);
+            }
+        }
+
 
         public Comment()
         {

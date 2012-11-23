@@ -16,26 +16,90 @@ namespace ShopifyAPIAdapterLibrary.Models
     [Paginated]
     public class SmartCollection : ShopifyResourceModel
     {
-        public string BodyHTML { get; set; }
+        private string _BodyHTML;
+        public string BodyHTML
+        {
+            get { return _BodyHTML; }
+            set {
+                SetProperty(ref _BodyHTML, value);
+            }
+        }
+
 
         /// <summary>
         /// Short name appropriate for URI fragment.
         /// </summary>
-        public string Handle { get; set; }
+        private string _Handle;
+        public string Handle
+        {
+            get { return _Handle; }
+            set {
+                SetProperty(ref _Handle, value);
+            }
+        }
 
-        public DateTime? PublishedAt { get; set; }
+
+        private DateTime? _PublishedAt;
+        public DateTime? PublishedAt
+        {
+            get { return _PublishedAt; }
+            set {
+                SetProperty(ref _PublishedAt, value);
+            }
+        }
+
 
         // TODO: Enum
-        public string SortOrder { get; set; }
+        private string _SortOrder;
+        public string SortOrder
+        {
+            get { return _SortOrder; }
+            set {
+                SetProperty(ref _SortOrder, value);
+            }
+        }
 
-        public string TemplateSuffix { get; set; }
 
-        public string Title { get; set; }
+        private string _TemplateSuffix;
+        public string TemplateSuffix
+        {
+            get { return _TemplateSuffix; }
+            set {
+                SetProperty(ref _TemplateSuffix, value);
+            }
+        }
 
-        public IList<Rule> Rules { get; set; }
+
+        private string _Title;
+        public string Title
+        {
+            get { return _Title; }
+            set {
+                SetProperty(ref _Title, value);
+            }
+        }
+
+
+        private IList<Rule> _Rules;
+        public IList<Rule> Rules
+        {
+            get { return _Rules; }
+            set {
+                SetProperty(ref _Rules, value);
+            }
+        }
+
 
         // TODO is this actually the same record as ProductImage?
         // Just leaving it directly inline.
-        public Image Image { get; set; }
+        private Image _Image;
+        public Image Image
+        {
+            get { return _Image; }
+            set {
+                SetProperty(ref _Image, value);
+            }
+        }
+
     }
 }

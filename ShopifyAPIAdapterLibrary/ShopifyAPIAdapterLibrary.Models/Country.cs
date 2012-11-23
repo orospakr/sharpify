@@ -16,19 +16,51 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// <summary>
         /// ISO 3166-1 Alpha-2 Country Code.
         /// </summary>
-        public string Code { get; set; }
+        private string _Code;
+        public string Code
+        {
+            get { return _Code; }
+            set {
+                SetProperty(ref _Code, value);
+            }
+        }
+
 
         /// <summary>
         /// Federal-level sales tax rate.
         /// </summary>
-        public double Tax { get; set; }
+        private double _Tax;
+        public double Tax
+        {
+            get { return _Tax; }
+            set {
+                SetProperty(ref _Tax, value);
+            }
+        }
+
 
         /// <summary>
         /// Name, as whatever the shop owner entered.  Locale unspecified.
         /// </summary>
-        public string Name { get; set; }
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set {
+                SetProperty(ref _Name, value);
+            }
+        }
 
-        public IHasMany<Province> Provinces { get; set; }
+
+        private IHasMany<Province> _Provinces;
+        public IHasMany<Province> Provinces
+        {
+            get { return _Provinces; }
+            set {
+                SetProperty(ref _Provinces, value);
+            }
+        }
+
 
         public Country()
         {

@@ -14,7 +14,15 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class ProductSearchEngine : ShopifyResourceModel
     {
-        public string Name { get; set; }
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set {
+                SetProperty(ref _Name, value);
+            }
+        }
+
 
         public ProductSearchEngine()
         {

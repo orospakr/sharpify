@@ -15,78 +15,270 @@ namespace ShopifyAPIAdapterLibrary.Models
     {
         public string Address1 { get; set; }
 
-        public string City { get; set; }
+        private string _City;
+        public string City
+        {
+            get { return _City; }
+            set {
+                SetProperty(ref _City, value);
+            }
+        }
 
-        public string CustomerEmail { get; set; }
+
+        private string _CustomerEmail;
+        public string CustomerEmail
+        {
+            get { return _CustomerEmail; }
+            set {
+                SetProperty(ref _CustomerEmail, value);
+            }
+        }
+
 
         /// <summary>
         /// Shop-owner entered human-readable name of country.
         /// </summary>
-        public string Country { get; set; }
+        private string _Country;
+        public string Country
+        {
+            get { return _Country; }
+            set {
+                SetProperty(ref _Country, value);
+            }
+        }
 
-        public string Domain { get; set; }
 
-        public string Email { get; set; }
+        private string _Domain;
+        public string Domain
+        {
+            get { return _Domain; }
+            set {
+                SetProperty(ref _Domain, value);
+            }
+        }
 
-        public double? Latitude { get; set; }
 
-        public double? Longitude { get; set; }
+        private string _Email;
+        public string Email
+        {
+            get { return _Email; }
+            set {
+                SetProperty(ref _Email, value);
+            }
+        }
+
+
+        private double? _Latitude;
+        public double? Latitude
+        {
+            get { return _Latitude; }
+            set {
+                SetProperty(ref _Latitude, value);
+            }
+        }
+
+
+        private double? _Longitude;
+        public double? Longitude
+        {
+            get { return _Longitude; }
+            set {
+                SetProperty(ref _Longitude, value);
+            }
+        }
+
 
         /// <summary>
         /// Human-readable (not URI name) of the Shop.
         /// </summary>
-        public string Name { get; set; }
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set {
+                SetProperty(ref _Name, value);
+            }
+        }
 
-        public string Phone { get; set; }
+
+        private string _Phone;
+        public string Phone
+        {
+            get { return _Phone; }
+            set {
+                SetProperty(ref _Phone, value);
+            }
+        }
+
 
         /// <summary>
         /// Shop-owner entered human-readable name of province.
         /// </summary>
-        public string Provice { get; set; }
+        private string _Provice;
+        public string Provice
+        {
+            get { return _Provice; }
+            set {
+                SetProperty(ref _Provice, value);
+            }
+        }
+
 
         // UNKNOWN
-        public string Public { get; set; }
+        private string _Public;
+        public string Public
+        {
+            get { return _Public; }
+            set {
+                SetProperty(ref _Public, value);
+            }
+        }
+
 
         // UNKNOWN
-        public string Source { get; set; }
+        private string _Source;
+        public string Source
+        {
+            get { return _Source; }
+            set {
+                SetProperty(ref _Source, value);
+            }
+        }
 
-        public string Zip { get; set; }
 
-        public string Currency { get; set; }
+        private string _Zip;
+        public string Zip
+        {
+            get { return _Zip; }
+            set {
+                SetProperty(ref _Zip, value);
+            }
+        }
 
-        public string Timezone { get; set; }
+
+        private string _Currency;
+        public string Currency
+        {
+            get { return _Currency; }
+            set {
+                SetProperty(ref _Currency, value);
+            }
+        }
+
+
+        private string _Timezone;
+        public string Timezone
+        {
+            get { return _Timezone; }
+            set {
+                SetProperty(ref _Timezone, value);
+            }
+        }
+
 
         /// <summary>
         /// Full name of the shop owner.
         /// </summary>
-        public string ShopOwner { get; set; }
+        private string _ShopOwner;
+        public string ShopOwner
+        {
+            get { return _ShopOwner; }
+            set {
+                SetProperty(ref _ShopOwner, value);
+            }
+        }
+
 
         /// <summary>
         /// Some sort of Liquid snippet for formatting the money type
         /// in views.
         /// </summary>
-        public string MoneyFormat { get; set; }
+        private string _MoneyFormat;
+        public string MoneyFormat
+        {
+            get { return _MoneyFormat; }
+            set {
+                SetProperty(ref _MoneyFormat, value);
+            }
+        }
+
 
         /// <summary>
         /// Liquid snippet for formatting the money type, but additionally
         /// including the currency name.
         /// </summary>
-        public string MoneyWithCurrencyFormat { get; set; }
+        private string _MoneyWithCurrencyFormat;
+        public string MoneyWithCurrencyFormat
+        {
+            get { return _MoneyWithCurrencyFormat; }
+            set {
+                SetProperty(ref _MoneyWithCurrencyFormat, value);
+            }
+        }
+
 
         // UNKNOWN
-        public string TaxesIncluded { get; set; }
+        private string _TaxesIncluded;
+        public string TaxesIncluded
+        {
+            get { return _TaxesIncluded; }
+            set {
+                SetProperty(ref _TaxesIncluded, value);
+            }
+        }
+
 
         // UNKNOWN
-        public string TaxShipping { get; set; }
+        private string _TaxShipping;
+        public string TaxShipping
+        {
+            get { return _TaxShipping; }
+            set {
+                SetProperty(ref _TaxShipping, value);
+            }
+        }
+
 
         // TODO: Enum?
-        public string PlanName { get; set; }
+        private string _PlanName;
+        public string PlanName
+        {
+            get { return _PlanName; }
+            set {
+                SetProperty(ref _PlanName, value);
+            }
+        }
 
-        public string MyshopifyDomain { get; set; }
 
-        public string GoogleAppsDomain { get; set; }
+        private string _MyshopifyDomain;
+        public string MyshopifyDomain
+        {
+            get { return _MyshopifyDomain; }
+            set {
+                SetProperty(ref _MyshopifyDomain, value);
+            }
+        }
 
-        public bool? GooleAppsLoginEnabled { get; set; }
+
+        private string _GoogleAppsDomain;
+        public string GoogleAppsDomain
+        {
+            get { return _GoogleAppsDomain; }
+            set {
+                SetProperty(ref _GoogleAppsDomain, value);
+            }
+        }
+
+
+        private bool? _GooleAppsLoginEnabled;
+        public bool? GooleAppsLoginEnabled
+        {
+            get { return _GooleAppsLoginEnabled; }
+            set {
+                SetProperty(ref _GooleAppsLoginEnabled, value);
+            }
+        }
+
 
         public Shop()
         {

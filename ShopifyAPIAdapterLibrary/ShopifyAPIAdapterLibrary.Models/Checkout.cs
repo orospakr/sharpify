@@ -20,13 +20,45 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// </summary>
         public bool BuyerAcceptsMarketing  { get; set; }
 
-        public string CartToken { get; set; }
+        private string _CartToken;
+        public string CartToken
+        {
+            get { return _CartToken; }
+            set {
+                SetProperty(ref _CartToken, value);
+            }
+        }
 
-        public string Email { get; set; }
 
-        public string Token { get; set; }
+        private string _Email;
+        public string Email
+        {
+            get { return _Email; }
+            set {
+                SetProperty(ref _Email, value);
+            }
+        }
 
-        public Address BillingAddress { get; set; }
+
+        private string _Token;
+        public string Token
+        {
+            get { return _Token; }
+            set {
+                SetProperty(ref _Token, value);
+            }
+        }
+
+
+        private Address _BillingAddress;
+        public Address BillingAddress
+        {
+            get { return _BillingAddress; }
+            set {
+                SetProperty(ref _BillingAddress, value);
+            }
+        }
+
 
         public Address ShippingAddress  { get; set; }
 

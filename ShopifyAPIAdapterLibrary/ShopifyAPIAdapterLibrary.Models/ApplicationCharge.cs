@@ -15,15 +15,55 @@ namespace ShopifyAPIAdapterLibrary.Models
     {
         // TODO: this particular class is probably sensitive to unnecessary fields in updates.
 
-        public string Name { get; set; }
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set {
+                SetProperty(ref _Name, value);
+            }
+        }
 
-        public bool Price { get; set; }
 
-        public string Status { get; set; }
+        private bool _Price;
+        public bool Price
+        {
+            get { return _Price; }
+            set {
+                SetProperty(ref _Price, value);
+            }
+        }
 
-        public string ConfirmationURL { get; set; }
 
-        public string ReturnURL { get; set; }
+        private string _Status;
+        public string Status
+        {
+            get { return _Status; }
+            set {
+                SetProperty(ref _Status, value);
+            }
+        }
+
+
+        private string _ConfirmationURL;
+        public string ConfirmationURL
+        {
+            get { return _ConfirmationURL; }
+            set {
+                SetProperty(ref _ConfirmationURL, value);
+            }
+        }
+
+
+        private string _ReturnURL;
+        public string ReturnURL
+        {
+            get { return _ReturnURL; }
+            set {
+                SetProperty(ref _ReturnURL, value);
+            }
+        }
+
 
         public ApplicationCharge()
         {

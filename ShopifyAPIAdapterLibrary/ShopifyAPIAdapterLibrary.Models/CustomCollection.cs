@@ -14,18 +14,66 @@ namespace ShopifyAPIAdapterLibrary.Models
     [Paginated]
     public class CustomCollection : ShopifyResourceModel
     {
-        public string BodyHTML { get; set; }
+        private string _BodyHTML;
+        public string BodyHTML
+        {
+            get { return _BodyHTML; }
+            set {
+                SetProperty(ref _BodyHTML, value);
+            }
+        }
 
-        public string Handle { get; set; }
+
+        private string _Handle;
+        public string Handle
+        {
+            get { return _Handle; }
+            set {
+                SetProperty(ref _Handle, value);
+            }
+        }
+
 
         // TODO: Enum
-        public string SortOrder { get; set; }
+        private string _SortOrder;
+        public string SortOrder
+        {
+            get { return _SortOrder; }
+            set {
+                SetProperty(ref _SortOrder, value);
+            }
+        }
 
-        public string TemplateSuffix { get; set; }
 
-        public string Title { get; set; }
+        private string _TemplateSuffix;
+        public string TemplateSuffix
+        {
+            get { return _TemplateSuffix; }
+            set {
+                SetProperty(ref _TemplateSuffix, value);
+            }
+        }
 
-        public IHasMany<Metafield> Metafields { get; set; }
+
+        private string _Title;
+        public string Title
+        {
+            get { return _Title; }
+            set {
+                SetProperty(ref _Title, value);
+            }
+        }
+
+
+        private IHasMany<Metafield> _Metafields;
+        public IHasMany<Metafield> Metafields
+        {
+            get { return _Metafields; }
+            set {
+                SetProperty(ref _Metafields, value);
+            }
+        }
+
 
         public CustomCollection()
         {

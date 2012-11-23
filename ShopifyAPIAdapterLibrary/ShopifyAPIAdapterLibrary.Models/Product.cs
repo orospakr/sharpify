@@ -11,26 +11,106 @@ namespace ShopifyAPIAdapterLibrary.Models
     [Paginated]
     public class Product : ShopifyResourceModel
     {
-        public string BodyHtml { get; set; }
+        private string _BodyHtml;
+        public string BodyHtml
+        {
+            get { return _BodyHtml; }
+            set {
+                SetProperty(ref _BodyHtml, value);
+            }
+        }
 
-        public DateTime CreatedAt { get; set; }
 
-        public String Handle { get; set; }
+        private DateTime _CreatedAt;
+        public DateTime CreatedAt
+        {
+            get { return _CreatedAt; }
+            set {
+                SetProperty(ref _CreatedAt, value);
+            }
+        }
 
-        public DateTime? PublishedAt { get; set; }
 
-        public string TemplateSuffix { get; set; }
+        private String _Handle;
+        public String Handle
+        {
+            get { return _Handle; }
+            set {
+                SetProperty(ref _Handle, value);
+            }
+        }
 
-        public string Title { get; set; } 
 
-        public string Vendor { get; set; }
+        private DateTime? _PublishedAt;
+        public DateTime? PublishedAt
+        {
+            get { return _PublishedAt; }
+            set {
+                SetProperty(ref _PublishedAt, value);
+            }
+        }
+
+
+        private string _TemplateSuffix;
+        public string TemplateSuffix
+        {
+            get { return _TemplateSuffix; }
+            set {
+                SetProperty(ref _TemplateSuffix, value);
+            }
+        }
+
+
+        private string _Title;
+        public string Title
+        {
+            get { return _Title; }
+            set {
+                SetProperty(ref _Title, value);
+            }
+        }
+ 
+
+        private string _Vendor;
+        public string Vendor
+        {
+            get { return _Vendor; }
+            set {
+                SetProperty(ref _Vendor, value);
+            }
+        }
+
 
         // TODO should be munged into a collection, it arrives as comma separated
-        public String Tags { get; set; }
+        private String _Tags;
+        public String Tags
+        {
+            get { return _Tags; }
+            set {
+                SetProperty(ref _Tags, value);
+            }
+        }
 
-        public IHasMany<Event> Events { get; set; }
 
-        public IHasMany<Image> Images { get; set; }
+        private IHasMany<Event> _Events;
+        public IHasMany<Event> Events
+        {
+            get { return _Events; }
+            set {
+                SetProperty(ref _Events, value);
+            }
+        }
+
+
+        private IHasMany<Image> _Images;
+        public IHasMany<Image> Images
+        {
+            get { return _Images; }
+            set {
+                SetProperty(ref _Images, value);
+            }
+        }
+
 
         public Product()
         {

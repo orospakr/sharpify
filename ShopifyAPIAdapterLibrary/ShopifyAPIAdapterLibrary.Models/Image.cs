@@ -15,14 +15,38 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Image : ShopifyResourceModel
     {
-        public IHasOne<Product> Product { get; set; }
+        private IHasOne<Product> _Product;
+        public IHasOne<Product> Product
+        {
+            get { return _Product; }
+            set {
+                SetProperty(ref _Product, value);
+            }
+        }
 
-        public int Position { get; set; }
+
+        private int _Position;
+        public int Position
+        {
+            get { return _Position; }
+            set {
+                SetProperty(ref _Position, value);
+            }
+        }
+
 
         /// <summary>
         /// URI of the Image to fetch.
         /// </summary>
-        public string Src { get; set; }
+        private string _Src;
+        public string Src
+        {
+            get { return _Src; }
+            set {
+                SetProperty(ref _Src, value);
+            }
+        }
+
 
         public Image()
         {

@@ -17,12 +17,28 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// <summary>
         /// Original path to intercept.
         /// </summary>
-        public string Path { get; set; }
+        private string _Path;
+        public string Path
+        {
+            get { return _Path; }
+            set {
+                SetProperty(ref _Path, value);
+            }
+        }
+
 
         /// <summary>
         /// New path to redirect to.
         /// </summary>
-        public string Target { get; set; }
+        private string _Target;
+        public string Target
+        {
+            get { return _Target; }
+            set {
+                SetProperty(ref _Target, value);
+            }
+        }
+
 
         public Redirect()
         {

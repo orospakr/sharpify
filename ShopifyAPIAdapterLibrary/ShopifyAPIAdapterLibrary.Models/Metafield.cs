@@ -21,17 +21,49 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Metafield : ShopifyResourceModel
     {
-        public string Description { get; set; }
+        private string _Description;
+        public string Description
+        {
+            get { return _Description; }
+            set {
+                SetProperty(ref _Description, value);
+            }
+        }
 
-        public string Key { get; set; }
+
+        private string _Key;
+        public string Key
+        {
+            get { return _Key; }
+            set {
+                SetProperty(ref _Key, value);
+            }
+        }
+
 
         /// <summary>
         /// To avoid collisions, you can set a namespace named by
         /// your application for your metafields.
         /// </summary>
-        public string Namespace { get; set; }
+        private string _Namespace;
+        public string Namespace
+        {
+            get { return _Namespace; }
+            set {
+                SetProperty(ref _Namespace, value);
+            }
+        }
 
-        public string Value { get; set; }
+
+        private string _Value;
+        public string Value
+        {
+            get { return _Value; }
+            set {
+                SetProperty(ref _Value, value);
+            }
+        }
+
 
         /// <summary>
         /// Type of the field, ie., string, integer.
@@ -43,14 +75,30 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// Foreign key the record this metafield has been associated
         /// with.
         /// </summary>
-        public int OwnerID { get; set; }
+        private int _OwnerID;
+        public int OwnerID
+        {
+            get { return _OwnerID; }
+            set {
+                SetProperty(ref _OwnerID, value);
+            }
+        }
+
 
         /// <summary>
         /// Type of the record this metafield is associated with.
         /// 
         /// Underscorized/lowercased.
         /// </summary>
-        public string OwnerResource { get; set; }
+        private string _OwnerResource;
+        public string OwnerResource
+        {
+            get { return _OwnerResource; }
+            set {
+                SetProperty(ref _OwnerResource, value);
+            }
+        }
+
 
         public Metafield()
         {

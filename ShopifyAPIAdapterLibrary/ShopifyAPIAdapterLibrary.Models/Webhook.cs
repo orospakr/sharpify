@@ -29,7 +29,15 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// <summary>
         /// URI to POST to when the specified event occurs.
         /// </summary>
-        public string Address { get; set; }
+        private string _Address;
+        public string Address
+        {
+            get { return _Address; }
+            set {
+                SetProperty(ref _Address, value);
+            }
+        }
+
 
         // TODO: Enum
         /// <summary>
@@ -37,12 +45,28 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// 
         /// One of "json" or "xml".  
         /// </summary>
-        public string Format { get; set; }
+        private string _Format;
+        public string Format
+        {
+            get { return _Format; }
+            set {
+                SetProperty(ref _Format, value);
+            }
+        }
+
 
         /// <summary>
         /// Shopify event to capture, form of "orders/partially_fulfilled".
         /// </summary>
-        public string Topic { get; set; }
+        private string _Topic;
+        public string Topic
+        {
+            get { return _Topic; }
+            set {
+                SetProperty(ref _Topic, value);
+            }
+        }
+
 
         public Webhook()
         {

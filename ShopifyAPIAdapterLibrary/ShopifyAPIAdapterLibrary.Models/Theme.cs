@@ -13,13 +13,29 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Theme : ShopifyResourceModel
     {
-        public string Name { get; set; }
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set {
+                SetProperty(ref _Name, value);
+            }
+        }
+
 
         // TODO: Enum
         /// <summary>
         /// One of main, mobile, or unpublished.
         /// </summary>
-        public string Role { get; set; }
+        private string _Role;
+        public string Role
+        {
+            get { return _Role; }
+            set {
+                SetProperty(ref _Role, value);
+            }
+        }
+
 
         IHasMany<Asset> Assets { get; set; }
 

@@ -18,12 +18,28 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// Name of JS-subscrible event emitted by the Browser's Document API
         /// that should invoke the provided script contents.
         /// </summary>
-        public string Event { get; set; }
+        private string _Event;
+        public string Event
+        {
+            get { return _Event; }
+            set {
+                SetProperty(ref _Event, value);
+            }
+        }
+
 
         /// <summary>
         /// URI of JavaScript that should be executed.
         /// </summary>
-        public string Src { get; set; }
+        private string _Src;
+        public string Src
+        {
+            get { return _Src; }
+            set {
+                SetProperty(ref _Src, value);
+            }
+        }
+
 
         public ScriptTag()
         {

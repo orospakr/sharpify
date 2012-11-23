@@ -16,23 +16,87 @@ namespace ShopifyAPIAdapterLibrary.Models
     {
 
         // TODO Second-half of HasMany<> that must be implemented
-        public string OrderId { get; set; }
+        private string _OrderId;
+        public string OrderId
+        {
+            get { return _OrderId; }
+            set {
+                SetProperty(ref _OrderId, value);
+            }
+        }
+
 
         // TODO: Enum
-        public string Service { get; set; }
+        private string _Service;
+        public string Service
+        {
+            get { return _Service; }
+            set {
+                SetProperty(ref _Service, value);
+            }
+        }
+
 
         // TODO: Enum
-        public string Status { get; set; }
+        private string _Status;
+        public string Status
+        {
+            get { return _Status; }
+            set {
+                SetProperty(ref _Status, value);
+            }
+        }
 
-        public string TrackingCompany { get; set; }
 
-        public string TrackingNumber { get; set; }
+        private string _TrackingCompany;
+        public string TrackingCompany
+        {
+            get { return _TrackingCompany; }
+            set {
+                SetProperty(ref _TrackingCompany, value);
+            }
+        }
 
-        public string TrackingUrl { get; set; }
 
-        public Receipt Receipt { get; set; }
+        private string _TrackingNumber;
+        public string TrackingNumber
+        {
+            get { return _TrackingNumber; }
+            set {
+                SetProperty(ref _TrackingNumber, value);
+            }
+        }
 
-        public IList<LineItem> LineItems { get; set; }
+
+        private string _TrackingUrl;
+        public string TrackingUrl
+        {
+            get { return _TrackingUrl; }
+            set {
+                SetProperty(ref _TrackingUrl, value);
+            }
+        }
+
+
+        private Receipt _Receipt;
+        public Receipt Receipt
+        {
+            get { return _Receipt; }
+            set {
+                SetProperty(ref _Receipt, value);
+            }
+        }
+
+
+        private IList<LineItem> _LineItems;
+        public IList<LineItem> LineItems
+        {
+            get { return _LineItems; }
+            set {
+                SetProperty(ref _LineItems, value);
+            }
+        }
+
 
         public Fulfillment()
         {

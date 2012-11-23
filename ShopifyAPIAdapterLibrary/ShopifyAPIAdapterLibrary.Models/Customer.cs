@@ -14,38 +14,142 @@ namespace ShopifyAPIAdapterLibrary.Models
     [Paginated]
     public class Customer : ShopifyResourceModel
     {
-        public bool AcceptsMarketing { get; set; }
+        private bool _AcceptsMarketing;
+        public bool AcceptsMarketing
+        {
+            get { return _AcceptsMarketing; }
+            set {
+                SetProperty(ref _AcceptsMarketing, value);
+            }
+        }
 
-        public string Email { get; set; }
 
-        public string FirstName { get; set; }
+        private string _Email;
+        public string Email
+        {
+            get { return _Email; }
+            set {
+                SetProperty(ref _Email, value);
+            }
+        }
 
-        public string LastName { get; set; }
 
-        public IHasOne<Order> LastOrder { get; set; }
+        private string _FirstName;
+        public string FirstName
+        {
+            get { return _FirstName; }
+            set {
+                SetProperty(ref _FirstName, value);
+            }
+        }
+
+
+        private string _LastName;
+        public string LastName
+        {
+            get { return _LastName; }
+            set {
+                SetProperty(ref _LastName, value);
+            }
+        }
+
+
+        private IHasOne<Order> _LastOrder;
+        public IHasOne<Order> LastOrder
+        {
+            get { return _LastOrder; }
+            set {
+                SetProperty(ref _LastOrder, value);
+            }
+        }
+
 
         // what is this?
-        public string Note { get; set; }
+        private string _Note;
+        public string Note
+        {
+            get { return _Note; }
+            set {
+                SetProperty(ref _Note, value);
+            }
+        }
 
-        public int OrdersCount { get; set; }
 
-        public string State { get; set; }
+        private int _OrdersCount;
+        public int OrdersCount
+        {
+            get { return _OrdersCount; }
+            set {
+                SetProperty(ref _OrdersCount, value);
+            }
+        }
 
-        public double TotalSpent { get; set; }
+
+        private string _State;
+        public string State
+        {
+            get { return _State; }
+            set {
+                SetProperty(ref _State, value);
+            }
+        }
+
+
+        private double _TotalSpent;
+        public double TotalSpent
+        {
+            get { return _TotalSpent; }
+            set {
+                SetProperty(ref _TotalSpent, value);
+            }
+        }
+
 
         /// <summary>
         /// Tags, presumably comma-separated?
         /// </summary>
-        public string Tags { get; set; }
+        private string _Tags;
+        public string Tags
+        {
+            get { return _Tags; }
+            set {
+                SetProperty(ref _Tags, value);
+            }
+        }
+
 
         /// <summary>
         /// Name of the last order, for convenience.
         /// </summary>
-        public string LastOrderName { get; set; }
+        private string _LastOrderName;
+        public string LastOrderName
+        {
+            get { return _LastOrderName; }
+            set {
+                SetProperty(ref _LastOrderName, value);
+            }
+        }
 
-        public IList<Address> Addresses { get; set; }
 
-        public IHasMany<Metafield> Metafields { get; set; }
+        private IList<Address> _Addresses;
+        public IList<Address> Addresses
+        {
+            get { return _Addresses; }
+            set {
+                SetProperty(ref _Addresses, value);
+            }
+        }
+
+
+        private IHasMany<Metafield> _Metafields;
+        public IHasMany<Metafield> Metafields
+        {
+            get { return _Metafields; }
+            set {
+                SetProperty(ref _Metafields, value);
+            }
+        }
+
 
         public Customer()
         {

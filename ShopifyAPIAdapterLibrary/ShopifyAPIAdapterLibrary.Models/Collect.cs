@@ -19,17 +19,57 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// </summary>
     public class Collect : ShopifyResourceModel
     {
-        public bool Featured { get; set; }
+        private bool _Featured;
+        public bool Featured
+        {
+            get { return _Featured; }
+            set {
+                SetProperty(ref _Featured, value);
+            }
+        }
 
-        public IHasOne<Product> Product { get; set; }
+
+        private IHasOne<Product> _Product;
+        public IHasOne<Product> Product
+        {
+            get { return _Product; }
+            set {
+                SetProperty(ref _Product, value);
+            }
+        }
+
 
         // Wheee.  As its own resource, CustomCollection is "custom_collection",
         // but as a has_one _id field, it's just "collection".
-        public IHasOne<CustomCollection> Collection { get; set; }
+        private IHasOne<CustomCollection> _Collection;
+        public IHasOne<CustomCollection> Collection
+        {
+            get { return _Collection; }
+            set {
+                SetProperty(ref _Collection, value);
+            }
+        }
 
-        public int Position { get; set; }
 
-        public String SortValue { get; set; }
+        private int _Position;
+        public int Position
+        {
+            get { return _Position; }
+            set {
+                SetProperty(ref _Position, value);
+            }
+        }
+
+
+        private String _SortValue;
+        public String SortValue
+        {
+            get { return _SortValue; }
+            set {
+                SetProperty(ref _SortValue, value);
+            }
+        }
+
 
         public Collect()
         {
