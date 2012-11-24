@@ -48,6 +48,7 @@ namespace ShopifyAPIAdapterLibrary
 
     public class HasOneInlineConverter<T> : JsonConverter where T : IResourceModel
     {
+
         public HasOneInlineConverter() {
         }
 
@@ -91,10 +92,10 @@ namespace ShopifyAPIAdapterLibrary
             var hasOneInlineProperties = new List<JsonProperty>();
 
             properties.RemoveAll((prop) => {
-                // do not attempt to serialize IHasManys
+                // do not attempt to (de)serialize IHasManys
                 if(prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(IHasMany<>)) return true;
 
-                // if we're serializing the top-level Container object, perform our wrapper-object
+                // if we're (de)serializing the top-level Container object, perform our wrapper-object
                 // name transformation
                 if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Container<>))
                 {
@@ -243,7 +244,7 @@ namespace ShopifyAPIAdapterLibrary
     }
 
     /// <summary>
-    /// This class is used to translate to and from C# object and JSON strings 
+    /// This class is used to translate to and from C# objects and JSON strings 
     /// </summary>
     public class JsonDataTranslator : IDataTranslator
     {
@@ -254,11 +255,6 @@ namespace ShopifyAPIAdapterLibrary
         private JsonSerializerSettings CreateSerializerSettings(string topLevelResourceName)
         {
             return new JsonSerializerSettings() { ContractResolver = new ShopifyRestStyleJsonResolver(topLevelResourceName) }; 
-        }
-
-        private JsonSerializer CreateSerializer(string topLevelResourceName)
-        {
-            return JsonSerializer.Create(CreateSerializerSettings(topLevelResourceName));
         }
 
         /// <summary>
@@ -285,17 +281,6 @@ namespace ShopifyAPIAdapterLibrary
 
         public T ResourceDecode<T>(String subfieldName, String content)
         {
-
-            //var typeDesc = new TypeDescriptionProvider();
-            //container.Resource.GetType().TypeDescri
-
-            //JObject decoded = (JObject)JsonConvert.DeserializeObject(content, Settings);
-
-            //if (decoded[subfieldName] == null)
-            //{
-            //    throw new ShopifyException("Response does not contain field: " + subfieldName);
-            //}
-
             Container<T> decoded = JsonConvert.DeserializeObject<Container<T>>(content, CreateSerializerSettings(subfieldName));
             return decoded.Resource;
         }
@@ -303,9 +288,7 @@ namespace ShopifyAPIAdapterLibrary
         public string ResourceEncode<T>(string subFieldName, T model)
         {
             Container<T> wrapped = new Container<T>() { Resource = model };
-            //var json = new JObject();
-            //var wrappedModel = JObject.FromObject(model, Serializer);
-            //json.Add(subFieldName, wrappedModel);
+
             return JsonConvert.SerializeObject(wrapped, CreateSerializerSettings(subFieldName));
         }
 

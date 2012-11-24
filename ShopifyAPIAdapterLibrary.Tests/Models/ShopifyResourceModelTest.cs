@@ -28,11 +28,11 @@ namespace ShopifyAPIAdapterLibrary.Tests.Models
         public void ShouldMarkModifiedFieldsAsChanged()
         {
             var mob = new Mob();
-            Assert.IsTrue(mob.Clean());
+            Assert.IsTrue(mob.IsClean());
             Assert.IsFalse(mob.IsFieldDirty("Level"));
             mob.Level = 34;
             Assert.IsTrue(mob.IsFieldDirty("Level"));
-            Assert.IsFalse(mob.Clean());
+            Assert.IsFalse(mob.IsClean());
             mob.Reset();
             Assert.IsFalse(mob.IsFieldDirty("Level"));
         }

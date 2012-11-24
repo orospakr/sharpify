@@ -269,6 +269,8 @@ namespace ShopifyAPIAdapterLibrary
                 placeholderProp.SetValue(model, subResourceInstance);
             }
 
+            model.Reset();
+
             return model;
         }
 

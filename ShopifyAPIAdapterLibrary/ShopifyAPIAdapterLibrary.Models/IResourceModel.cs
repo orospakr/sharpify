@@ -18,5 +18,11 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// as the database PK.
         /// </summary>
         int? Id { get; set; }
+
+        void Reset();
+
+        bool IsFieldDirty(string field);
+
+        bool IsClean();
     }
 }

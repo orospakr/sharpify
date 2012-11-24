@@ -37,7 +37,7 @@ namespace ShopifyAPIAdapterLibrary.Models
             return Dirty.Contains(field);
         }
 
-        public bool Clean()
+        public bool IsClean()
         {
             return Dirty.Count == 0;
         }
