@@ -12,17 +12,34 @@ namespace ShopifyAPIAdapterLibrary.Models
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private HashSet<string> Dirty;
+
         public void SetProperty<T>(ref T field, T value, [CallerMemberName] string name = "")
         {
             // thanks to http://danrigby.com/2012/03/01/inotifypropertychanged-the-net-4-5-way/
             if (!EqualityComparer<T>.Default.Equals(field, value))
             {
-                field = value;
-                if (PropertyChanged != null)
-                {
+                if (PropertyChanged != null) {
                     PropertyChanged(this, new PropertyChangedEventArgs(name));
                 }
+                field = value;
+                Dirty.Add(name);
             }
+        }
+
+        public void Reset()
+        {
+            Dirty.Clear();
+        }
+
+        public bool IsFieldDirty(string field)
+        {
+            return Dirty.Contains(field);
+        }
+
+        public bool Clean()
+        {
+            return Dirty.Count == 0;
         }
 
         private int? id;
@@ -33,6 +50,11 @@ namespace ShopifyAPIAdapterLibrary.Models
             {
                 SetProperty(ref id, value);
             }
+        }
+
+        public ShopifyResourceModel()
+        {
+            Dirty = new HashSet<string>();
         }
     }
 }

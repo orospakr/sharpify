@@ -1,13 +1,11 @@
 #!/usr/bin/env ruby
 
-# Replace simple { get; set; } flat properties with
-# explicitly generated (and sadly boilerplatey) prop
-# getter and setters that call SetProperty() in order
-# to make our IPropertyChangedRegime work.
+# Replace simple { get; set; } flat properties with explicitly
+# generated (and sadly boilerplatey) prop getter and setters that call
+# SetProperty() in order to make our IPropertyChanged regime work.
 
-# Obviously a bit naiively and regexy, but it works.
-# I didn't want to use Fody or a Weaver because of lack
-# of MonoDevelop/xbuild support.
+# Obviously a bit naiive and regexy, but it works.  I didn't want to
+# use Fody or a Weaver because of lack of MonoDevelop/xbuild support.
 
 models_path = File.dirname(__FILE__)
 
@@ -32,6 +30,10 @@ cs_glob = File.join(models_path, "*.cs")
 Dir.glob(cs_glob) do |cs_file|
   puts "... #{cs_file}"
 
+  # we put all of our inlined complex types thare are not full
+  # ShopifyResourceModels in their own separate file to avoid them
+  # getting modified (matching the class derivation type from the
+  # regex would be a total nuisance).
   if cs_file =~ /Fragments\.cs/i
     puts "... skipping fragments."
     next
