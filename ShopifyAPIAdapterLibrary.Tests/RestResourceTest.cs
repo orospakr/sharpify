@@ -17,28 +17,92 @@ namespace ShopifyAPIAdapterLibrary.Tests
     // our test top-level resource
     public class Robot : ShopifyResourceModel {
 
-        public string RobotType { get; set; }
-        public string Manufacturer { get; set; }
+        private string _RobotType;
+        public string RobotType
+        {
+            get { return _RobotType; }
+            set {
+                SetProperty(ref _RobotType, value);
+            }
+        }
 
-        public IHasMany<Part> Parts { get; set; }
+        private string _Manufacturer;
+        public string Manufacturer
+        {
+            get { return _Manufacturer; }
+            set {
+                SetProperty(ref _Manufacturer, value);
+            }
+        }
 
-        public IList<Inspection> Inspections { get; set; }
 
-        public IHasOne<Brain> Brain { get; set; }
+        private IHasMany<Part> _Parts;
+        public IHasMany<Part> Parts
+        {
+            get { return _Parts; }
+            set {
+                SetProperty(ref _Parts, value);
+            }
+        }
 
-        public SpecialAction Explode { get; set; }
+
+        private IList<Inspection> _Inspections;
+        public IList<Inspection> Inspections
+        {
+            get { return _Inspections; }
+            set {
+                SetProperty(ref _Inspections, value);
+            }
+        }
+
+
+        private IHasOne<Brain> _Brain;
+        public IHasOne<Brain> Brain
+        {
+            get { return _Brain; }
+            set {
+                SetProperty(ref _Brain, value);
+            }
+        }
+
+
+        private SpecialAction _Explode;
+        public SpecialAction Explode
+        {
+            get { return _Explode; }
+            set {
+                SetProperty(ref _Explode, value);
+            }
+        }
+
     }
 
     public class Brain : ShopifyResourceModel
     {
-        public int SynapseCount { get; set; }
+        private int _SynapseCount;
+        public int SynapseCount
+        {
+            get { return _SynapseCount; }
+            set {
+                SetProperty(ref _SynapseCount, value);
+            }
+        }
+
     }
 
     // our test subresource
     public class Part : ShopifyResourceModel
     {
 
-        public string Sku { get; set; }
+        private string _Sku;
+        public string Sku
+        {
+            get { return _Sku; }
+            set {
+                SetProperty(ref _Sku, value);
+            }
+        }
+
     }
 
     // our inlined resource

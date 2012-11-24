@@ -19,9 +19,18 @@ namespace ShopifyAPIAdapterLibrary.Tests
         public double Percentage { get; set; }
     }
 
+
     public class Bank : ShopifyResourceModel
     {
-        public string Name { get; set; }
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set {
+                SetProperty(ref _Name, value);
+            }
+        }
+
     }
 
     // a subresource that we won't do much with.
@@ -33,25 +42,82 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
     public class Transaction : ShopifyResourceModel
     {
-        public string Currency { get; set; }
+        private string _Currency;
+        public string Currency
+        {
+            get { return _Currency; }
+            set {
+                SetProperty(ref _Currency, value);
+            }
+        }
 
-        public double Value { get; set; }
 
-        public string Receipient { get; set; }
+        private double _Value;
+        public double Value
+        {
+            get { return _Value; }
+            set {
+                SetProperty(ref _Value, value);
+            }
+        }
 
-        public string FinancialStatus { get; set; }
 
-        public IList<Tax> Taxes { get; set; }
+        private string _Receipient;
+        public string Receipient
+        {
+            get { return _Receipient; }
+            set {
+                SetProperty(ref _Receipient, value);
+            }
+        }
 
-        public IHasMany<SKU> SKUs { get; set; }
 
-        public IHasOne<Bank> Bank { get; set; }
+        private string _FinancialStatus;
+        public string FinancialStatus
+        {
+            get { return _FinancialStatus; }
+            set {
+                SetProperty(ref _FinancialStatus, value);
+            }
+        }
+
+
+        private IList<Tax> _Taxes;
+        public IList<Tax> Taxes
+        {
+            get { return _Taxes; }
+            set {
+                SetProperty(ref _Taxes, value);
+            }
+        }
+
+
+        private IHasMany<SKU> _SKUs;
+        public IHasMany<SKU> SKUs
+        {
+            get { return _SKUs; }
+            set {
+                SetProperty(ref _SKUs, value);
+            }
+        }
+
+
+        private IHasOne<Bank> _Bank;
+        public IHasOne<Bank> Bank
+        {
+            get { return _Bank; }
+            set {
+                SetProperty(ref _Bank, value);
+            }
+        }
+
     }
 
     [TestFixture]
     class JsonDataTranslatorTest
     {
         public JsonDataTranslator DataTranslator { get; set; }
+
 
         [SetUp]
         public void BeforeEach()
