@@ -46,6 +46,31 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
+    public class ResourceConverter<T> : JsonConverter where T: IResourceModel
+    {
+        public ResourceConverter()
+        {
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            // TODO: really should be checking the type...
+            return true;
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            var model = serializer.Deserialize<T>(reader);
+            model.Reset();
+            return model;
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            serializer.Serialize(writer, value);
+        }
+    }
+
     public class HasOneInlineConverter<T> : JsonConverter where T : IResourceModel
     {
 
@@ -53,12 +78,15 @@ namespace ShopifyAPIAdapterLibrary
         }
 
         public override bool CanConvert(Type objectType) {
+            // TODO: really should be checking the type...
             return true;
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var model = serializer.Deserialize<T>(reader);
+            // TODO: this is the second place that models are directly serialized at.
+            // we have to use the same arrangement here as in the ResourceConverter.
             return new HasOneInline<T>(model);
         }
 
@@ -94,6 +122,18 @@ namespace ShopifyAPIAdapterLibrary
             properties.RemoveAll((prop) => {
                 // do not attempt to (de)serialize IHasManys
                 if(prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(IHasMany<>)) return true;
+
+                // is property a IResourceModel? If so, add a converter
+                // that takes the default behaviour and Cleans the IResourceModel afterwards
+                // (this includes the top-level resource object getting deserialized)
+
+                if (typeof(IResourceModel).IsAssignableFrom(prop.PropertyType))
+                {
+                    Type resourceConverterType = typeof(ResourceConverter<>).MakeGenericType(prop.PropertyType);
+
+                    // for deserialization, use ResourceConverter.
+                    prop.MemberConverter = (JsonConverter)Activator.CreateInstance(resourceConverterType);
+                }
 
                 // if we're (de)serializing the top-level Container object, perform our wrapper-object
                 // name transformation
@@ -159,6 +199,23 @@ namespace ShopifyAPIAdapterLibrary
                     // the subresource version.  so, give it the same converter.
                     inlineProperty.Converter = (JsonConverter)converter;
                     return false;
+                }
+
+                // TODO ignore non-modified fields
+                // *on serialization* only.
+
+                if (typeof(IResourceModel).IsAssignableFrom(type))
+                {
+                    // only ignore unchanged fields if they're "primitive" types, like ints, int?s, strings,
+                    // and not the main ID
+                    if((prop.PropertyType.IsPrimitive || prop.PropertyType.IsAssignableFrom(typeof(string))) && prop.PropertyName != "id")
+                    {
+                        prop.ShouldSerialize = (obj) =>
+                        {
+                            IResourceModel model = (IResourceModel)obj;
+                            return (model.IsFieldDirty(prop.UnderlyingName));
+                        };
+                    }
                 }
 
                 return false;

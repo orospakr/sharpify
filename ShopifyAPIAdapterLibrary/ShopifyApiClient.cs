@@ -345,15 +345,6 @@ namespace ShopifyAPIAdapterLibrary
         }
 
         [Obsolete]
-        public async Task<ICollection<Product>> GetProducts() {
-
-            var resourceString = await CallRaw(HttpMethod.Get, GetRequestContentType(), ProductsPath(), parameters: null, requestBody: null);
-            Console.WriteLine(resourceString);
-
-            return TranslateObject<List<Product>>("products", resourceString);
-        }
-
-        [Obsolete]
         public T TranslateObject<T>(String subfieldName, string content)
         {
             if (Translator == null)

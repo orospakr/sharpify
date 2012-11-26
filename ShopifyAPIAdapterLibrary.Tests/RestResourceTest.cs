@@ -319,7 +319,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        public void ShouldCreateSingleInstanceSubResourceForHasA()
+        public void ShouldCreateSingleInstanceSubResourceForHasOne()
         {
             var getRobotExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Get,
                 JsonFormatExpectation(),
@@ -341,6 +341,9 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             Assert.IsInstanceOf<SingleInstanceSubResource<Brain>>(answer.Result.Brain);
         }
+
+        // inlined has ones are directly handled by JsonDataTranslator, and thus are not mediated by
+        // by RestResource.
 
         [Test]
         public void ShouldSetHasOneIdOnOwnedModel()

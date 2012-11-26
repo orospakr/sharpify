@@ -14,7 +14,6 @@ namespace ShopifyAPIAdapterLibrary
         Task<object> Delete(string path);
         Task<object> Get(string path);
         Task<object> Get(string path, System.Collections.Specialized.NameValueCollection callParams);
-        Task<System.Collections.Generic.ICollection<ShopifyAPIAdapterLibrary.Models.Product>> GetProducts();
         MediaTypeHeaderValue GetRequestContentType();
         ShopifyException HandleError(System.Net.Http.HttpResponseMessage response, string reason);
         Task<object> Post(string path, object data);

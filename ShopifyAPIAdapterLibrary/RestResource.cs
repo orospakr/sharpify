@@ -457,7 +457,8 @@ namespace ShopifyAPIAdapterLibrary
             Id = id;
         }
 
-        public SingleInstanceSubResource(IShopifyAPIClient context, T model) {
+        public SingleInstanceSubResource(IShopifyAPIClient context, T model)
+        {
             Context = context;
             Set(model);
         }

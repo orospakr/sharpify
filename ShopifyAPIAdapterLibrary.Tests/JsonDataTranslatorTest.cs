@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using ShopifyAPIAdapterLibrary.Models;
 using System;
@@ -81,6 +82,15 @@ namespace ShopifyAPIAdapterLibrary.Tests
             }
         }
 
+        private string _Note;
+        public string Note
+        {
+            get { return _Note; }
+            set {
+                SetProperty(ref _Note, value);
+            }
+        }
+
 
         private IList<Tax> _Taxes;
         public IList<Tax> Taxes
@@ -111,7 +121,19 @@ namespace ShopifyAPIAdapterLibrary.Tests
             }
         }
 
+        private Tax _SingleTax;
+        public Tax SingleTax {
+            get { return _SingleTax; }
+            set {
+                SetProperty(ref _SingleTax, value);
+            }
+        }
     }
+
+    // TODO: there is a certain argument for mocking IResourceModel instead of using real ones.
+    // however, for now it's convenient to conflate testing both JsonDataTranslator and
+    // integration with ShopifyResourceModel, and having Json.net operate correctly with
+    // mocks would likely prove unhelpfully difficult.
 
     [TestFixture]
     class JsonDataTranslatorTest
@@ -130,10 +152,15 @@ namespace ShopifyAPIAdapterLibrary.Tests
         {
             var fixture = @"{""transaction"": {""Id"": ""56"", ""currency"": ""CAD"", ""value"": 78.45, ""financial_status"": ""authorized""}}";
             var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
+            Assert.IsTrue(decoded.IsClean());
             Assert.AreEqual(56, decoded.Id);
             Assert.AreEqual("CAD", decoded.Currency);
             Assert.AreEqual(78.45, decoded.Value);
             Assert.AreEqual("authorized", decoded.FinancialStatus);
+        }
+
+        private bool ContainsField(IEnumerable<JProperty> props, string fieldName) {
+            return (from p in props where p.Name == fieldName select p).Count() > 0;
         }
 
         [Test]
@@ -162,16 +189,66 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("CAD", decoded.transaction.currency.ToString());
             Assert.AreEqual("Jaded Pixel Technologies", decoded.transaction.receipient.ToString());
             Assert.AreEqual("refunded", decoded.transaction.financial_status.ToString());
+            IEnumerable<JProperty> props = decoded.transaction.Properties();
             
+            Assert.IsFalse(ContainsField(props, "note"), "There should be no note field in the produced json.");
             DataTranslator.Decode(encoded);
         }
 
         [Test]
-        public void ShouldDeserializeObjectWithInlineObject()
+        public void ShouldSerializeOnlyChangedFields()
         {
+            var c = new Transaction()
+            {
+                Id = 88,
+                Currency = "BTC",
+                Value = 0.10,
+                Receipient = "Sanders Aircraft",
+                FinancialStatus = "new",
+                Taxes = new List<Tax>{new Tax() { Name = "GST" }},
+                SingleTax = new Tax() {Name = "Inline single flat object" }
+            };
+
+            c.Reset();
+
+            // the only field that should appear in the JSON, since we've
+            // changed it.
+            c.FinancialStatus = "completed";
+
+            var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", c);
+
+            // use late-binding to concisely test expected fields
+            // in the JSON
+            dynamic decoded = JsonConvert.DeserializeObject(encoded);
+
+            IEnumerable<JProperty> props = decoded.transaction.Properties();
+
+            // Id should always go through
+            Assert.AreEqual("88", decoded.transaction.id.ToString());
+
+            Assert.IsFalse(ContainsField(props, "currency"));
+            Assert.IsFalse(ContainsField(props, "value"));
+            Assert.IsFalse(ContainsField(props, "receipient"));
+
+            Assert.AreEqual("completed", decoded.transaction.financial_status.ToString(), "changed field should turn up in JSON");
+
+            // inlined flat objects (not has ones!) for now have no update tracking.
+            // they must always be included inline, for now, since we can't
+            // know if their innards have changed
+            Assert.AreEqual("Inline single flat object", decoded.transaction.single_tax.name.ToString());
+
+            // lists of inline flats also must also always go through
+            Assert.AreEqual("GST", decoded.transaction.taxes[0].name.ToString());
+        }
+
+        [Test]
+        public void ShouldDeserializeObjectWithInlineArbitraryObject()
+        {
+            // not to be confused with an inline HasOne
             var fixture = @"{""transaction"": {""id"": 48, ""currency"": ""USD"", ""taxes"": [" +
                 @"{""region"": ""Illinois"", ""percentage"": 6.25}]}}";
             var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
+            Assert.IsTrue(decoded.IsClean());
             Assert.AreEqual(48, decoded.Id);
             Assert.AreEqual(1, decoded.Taxes.Count);
             Assert.AreEqual(6.25, decoded.Taxes.ElementAt(0).Percentage);
@@ -208,24 +285,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
             // validate that the usual fields are still ok
             Assert.AreEqual(48, decoded.Id);
             Assert.AreEqual(1, decoded.Taxes.Count);
-
-            // Hm, one problem with implementation:
-
-            // say I have a different IHasA for inlines.  great and all, but:
-            // the interface for saving must necessarily differ:
-            //   -- the inline version can happily reserialize into inline, but, the user will get differing behaviour:
-            //      if they save the belonged to object, it'll have different behaviour depending on which version they have
-            //      one will save the _id, and one will save the the entire contents (benefit is that it's the same as it came,
-            //      limitation is that user gets different behaviour with same interface.
-
-            // what does activeresource do?
-
-
-            // leaning towards non-inlined saving.  can't
+            Assert.IsTrue(decoded.IsClean());
 
             var bankAnswer = decoded.Bank.Get();
             bankAnswer.Wait();
 
+            Assert.IsTrue(bankAnswer.Result.IsClean());
             Assert.AreEqual("Mulligan Bank", bankAnswer.Result.Name);
             Assert.AreEqual(18, bankAnswer.Result.Id);
         }
@@ -239,6 +304,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             // validate that the usual fields are still ok
             Assert.AreEqual(48, decoded.Id);
+            Assert.IsTrue(decoded.IsClean());
             Assert.AreEqual(1, decoded.Taxes.Count);
 
             Assert.IsInstanceOf<HasOneDeserializationPlaceholder<Bank>>(decoded.Bank);
