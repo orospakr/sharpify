@@ -55,10 +55,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Integration\LiveAPIServiceIntegrationTest.cs" />
     <Compile Include="JsonDataTranslatorTest.cs" />
     <Compile Include="Models\ShopifyResourceModelTest.cs" />
     <Compile Include="PaginatedEnumeratorTest.cs" />
-    <Compile Include="ShopifyAPIAdapterLibrary.Tests.Integration\LiveAPIServiceIntegrationTest.cs" />
     <Compile Include="ShopifyAuthorizerTest.cs" />
     <Compile Include="ShopifyApiClientTest.cs" />
     <Compile Include="RestResourceTest.cs" />
