@@ -46,28 +46,63 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
-    public class ResourceConverter<T> : JsonConverter where T: IResourceModel
+    /// <summary>
+    /// NOT THREAD SAFE
+    /// 
+    /// should be reinstantiated for every new deserialization task.
+    /// </summary>
+    public class ResourceConverter : JsonConverter
     {
+        private bool RecursionAvoidance;
+
         public ResourceConverter()
         {
         }
 
+        /// <summary>
+        /// In order to work around an interesting deficiency in json.net,
+        /// we need to have ResourceConverter refuse to deserialize the
+        /// content of this IResourceModel, otherwise, the ResourceConverter
+        /// will persistently invoke itself inadverdently forever.
+        /// </summary>
         public override bool CanConvert(Type objectType)
         {
-            // TODO: really should be checking the type...
-            return true;
+            if(typeof(IResourceModel).IsAssignableFrom(objectType)) {
+                // hooray for side effects :(
+                if (RecursionAvoidance)
+                {
+                    RecursionAvoidance = false;
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var model = serializer.Deserialize<T>(reader);
+            if (RecursionAvoidance)
+            {
+                throw new Exception("Crap.  Collision Avoidance should never be true here.");
+            }
+            RecursionAvoidance = true;
+            IResourceModel model = (IResourceModel) serializer.Deserialize(reader, objectType);
+            RecursionAvoidance = false;
+
             model.Reset();
             return model;
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
+            if (RecursionAvoidance)
+            {
+                throw new Exception("Crap.  Collision Avoidance should never be true here.");
+            }
+            RecursionAvoidance = true;
             serializer.Serialize(writer, value);
+            RecursionAvoidance = false;
         }
     }
 
@@ -122,18 +157,6 @@ namespace ShopifyAPIAdapterLibrary
             properties.RemoveAll((prop) => {
                 // do not attempt to (de)serialize IHasManys
                 if(prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(IHasMany<>)) return true;
-
-                // is property a IResourceModel? If so, add a converter
-                // that takes the default behaviour and Cleans the IResourceModel afterwards
-                // (this includes the top-level resource object getting deserialized)
-
-                if (typeof(IResourceModel).IsAssignableFrom(prop.PropertyType))
-                {
-                    Type resourceConverterType = typeof(ResourceConverter<>).MakeGenericType(prop.PropertyType);
-
-                    // for deserialization, use ResourceConverter.
-                    prop.MemberConverter = (JsonConverter)Activator.CreateInstance(resourceConverterType);
-                }
 
                 // if we're (de)serializing the top-level Container object, perform our wrapper-object
                 // name transformation
@@ -309,9 +332,16 @@ namespace ShopifyAPIAdapterLibrary
         {
         }
 
+        /// <summary>
+        /// This should be created for every invocation of use.  ResourceConverter
+        /// in particular must do things that compromise thread safety, in order
+        /// to avoid an infinite recursion loop.
+        /// </summary>
         private JsonSerializerSettings CreateSerializerSettings(string topLevelResourceName)
         {
-            return new JsonSerializerSettings() { ContractResolver = new ShopifyRestStyleJsonResolver(topLevelResourceName) }; 
+            var settings = new JsonSerializerSettings() { ContractResolver = new ShopifyRestStyleJsonResolver(topLevelResourceName) };
+            settings.Converters.Add(new ResourceConverter());
+            return settings;
         }
 
         /// <summary>
