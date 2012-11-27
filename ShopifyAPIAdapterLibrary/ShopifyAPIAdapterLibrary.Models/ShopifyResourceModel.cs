@@ -57,5 +57,7 @@ namespace ShopifyAPIAdapterLibrary.Models
         {
             Dirty = new HashSet<string>();
         }
+
+
     }
 }

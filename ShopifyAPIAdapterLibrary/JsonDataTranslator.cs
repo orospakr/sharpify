@@ -53,6 +53,18 @@ namespace ShopifyAPIAdapterLibrary
     /// </summary>
     public class ResourceConverter : JsonConverter
     {
+        /// <summary>
+        /// We are currently in the midst of asking the stock JsonConverter
+        /// to deserialize (using the default approach) the resource model.
+        /// 
+        /// Of course, default policy is to invoke ResourceConverter again,
+        /// so, we break for that initial re-entering by temporarily claiming
+        /// that we cannot handle deserializing RestResources, thus allowing
+        /// json.net to continue has normal.
+        /// 
+        /// Ideally, JsonConverter should add some affordance for having
+        /// a JsonConverter call serializer.(De)serialize() and 
+        /// </summary>
         private bool RecursionAvoidance;
 
         public ResourceConverter()
@@ -64,6 +76,10 @@ namespace ShopifyAPIAdapterLibrary
         /// we need to have ResourceConverter refuse to deserialize the
         /// content of this IResourceModel, otherwise, the ResourceConverter
         /// will persistently invoke itself inadverdently forever.
+        /// 
+        /// It appears, from my cursory investigation, that json.net
+        /// does not (yet!) cache this information.  As soon as it does,
+        /// the assumption I make in this workaround code.
         /// </summary>
         public override bool CanConvert(Type objectType)
         {
@@ -278,7 +294,7 @@ namespace ShopifyAPIAdapterLibrary
     /// code in RestResource replaces it with a live fetcher.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class HasOneDeserializationPlaceholder<T> : IHasOne<T> where T : IResourceModel
+    public class HasOneDeserializationPlaceholder<T> : IHasOnePlaceholderUntyped, IHasOne<T> where T : IResourceModel
     {
         public int Id { get; private set; }
 
@@ -298,7 +314,12 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
-    public class HasOneInline<T> : IHasOne<T> where T : IResourceModel
+    public interface IHasOneInlineUntyped
+    {
+        IResourceModel GetUntypedInlineModel();
+    }
+
+    public class HasOneInline<T> : IHasOneInlineUntyped, IHasOne<T> where T : IResourceModel
     {
         public int Id
         {
@@ -319,6 +340,10 @@ namespace ShopifyAPIAdapterLibrary
 
         public async System.Threading.Tasks.Task<T> Get()
         {
+            return Model;
+        }
+
+        public IResourceModel GetUntypedInlineModel() {
             return Model;
         }
     }
@@ -363,8 +388,6 @@ namespace ShopifyAPIAdapterLibrary
         {
             return JObject.Parse(encodedData);
         }
-
-
 
         public T ResourceDecode<T>(String subfieldName, String content)
         {
