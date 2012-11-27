@@ -173,6 +173,10 @@ namespace ShopifyAPIAdapterLibrary
                 {
                     
                     var underscorized = ShopifyAPIClient.Underscoreify(prop.PropertyName);
+
+                    // we will mutate the original property (automatically created by the default
+                    // json.net resolver) such that it handles the task of an addressed has_one
+                    // ("thinger_id").
                     prop.PropertyName =  underscorized + "_id";
 
                     // get type argument of IHasOne
@@ -186,7 +190,7 @@ namespace ShopifyAPIAdapterLibrary
                         UnderlyingName = prop.UnderlyingName,
                         DeclaringType = prop.DeclaringType,
                         ValueProvider = prop.ValueProvider,
-                        Readable = true,
+                        Readable = false,  // the inline property descriptor should not be used for serialization.
                         Writable = true
                     };
 
@@ -218,9 +222,15 @@ namespace ShopifyAPIAdapterLibrary
                     // for serialization:
                     prop.Converter = (JsonConverter)converter;
 
+                    prop.ShouldSerialize = (obj) =>
+                    {
+                        IResourceModel model = (IResourceModel)obj;
+                        return (model.IsFieldDirty(prop.UnderlyingName));
+                    };
+
                     // the inlines should get the same serialization behaviour (to _id) as
                     // the subresource version.  so, give it the same converter.
-                    inlineProperty.Converter = (JsonConverter)converter;
+                    // inlineProperty.Converter = (JsonConverter)converter;
                     return false;
                 }
 
@@ -286,11 +296,6 @@ namespace ShopifyAPIAdapterLibrary
         {
             throw Fail();
         }
-
-        public void Set(T model)
-        {
-            throw Fail();
-        }
     }
 
     public class HasOneInline<T> : IHasOne<T> where T : IResourceModel
@@ -315,11 +320,6 @@ namespace ShopifyAPIAdapterLibrary
         public async System.Threading.Tasks.Task<T> Get()
         {
             return Model;
-        }
-
-        public void Set(T model)
-        {
-            Model = model;
         }
     }
 

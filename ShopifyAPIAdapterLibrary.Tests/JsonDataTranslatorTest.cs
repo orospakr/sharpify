@@ -121,6 +121,16 @@ namespace ShopifyAPIAdapterLibrary.Tests
             }
         }
 
+        private IHasOne<Bank> _OriginatingInstitution;
+        public IHasOne<Bank> OriginatingInstitution
+        {
+            get { return _OriginatingInstitution; }
+            set
+            {
+                SetProperty(ref _OriginatingInstitution, value);
+            }
+        }
+
         private Tax _SingleTax;
         public Tax SingleTax {
             get { return _SingleTax; }
@@ -206,14 +216,18 @@ namespace ShopifyAPIAdapterLibrary.Tests
                 Receipient = "Sanders Aircraft",
                 FinancialStatus = "new",
                 Taxes = new List<Tax>{new Tax() { Name = "GST" }},
-                SingleTax = new Tax() {Name = "Inline single flat object" }
+                SingleTax = new Tax() {Name = "Inline single flat object" },
+                Bank = new HasOneDeserializationPlaceholder<Bank>(999),
+                OriginatingInstitution = new HasOneDeserializationPlaceholder<Bank>(1000)
             };
 
             c.Reset();
 
-            // the only field that should appear in the JSON, since we've
-            // changed it.
+            // reset FinancialStatus, so it should appear in the JSON.
             c.FinancialStatus = "completed";
+
+            // reset the originating institution, so it should appear in the JSON
+            c.OriginatingInstitution = new HasOneDeserializationPlaceholder<Bank>(1001);
 
             var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", c);
 
@@ -229,8 +243,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.IsFalse(ContainsField(props, "currency"));
             Assert.IsFalse(ContainsField(props, "value"));
             Assert.IsFalse(ContainsField(props, "receipient"));
+            Assert.IsFalse(ContainsField(props, "bank"));
+            Assert.IsFalse(ContainsField(props, "bank_id"));
 
             Assert.AreEqual("completed", decoded.transaction.financial_status.ToString(), "changed field should turn up in JSON");
+
+            Assert.AreEqual("1001", decoded.transaction.originating_institution_id.ToString(), "changed has_one should turn up in JSON");
 
             // inlined flat objects (not has ones!) for now have no update tracking.
             // they must always be included inline, for now, since we can't
@@ -255,7 +273,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        public void ShouldSerializeObjectWithInlineObject()
+        public void ShouldSerializeObjectWithInlineFlatObject()
         {
             var c = new Transaction()
             {
@@ -329,6 +347,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("99", decoded.transaction.id.ToString());
             Assert.AreEqual("88", decoded.transaction.bank_id.ToString());
         }
+
+
 
         [Test]
         public void ShouldSerializeWhileIgnoringHasMany()

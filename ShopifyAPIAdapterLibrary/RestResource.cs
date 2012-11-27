@@ -48,16 +48,6 @@ namespace ShopifyAPIAdapterLibrary
     {
         // Retrieve the resource associated with the parent object.
         Task<T> Get();
-
-        /// <summary>
-        /// Sets the instance of the "has one" relationship to the provided model.
-        /// 
-        /// Ie., the "$model_name_id" json field will change.
-        /// 
-        /// This method does *not* directly mutate any state on the server.  Update or
-        /// Save the host model with its Resource for that.
-        /// </summary>
-        void Set(T model);
     }
 
     public interface IParentableResource
@@ -468,7 +458,7 @@ namespace ShopifyAPIAdapterLibrary
             return await Context.GetResource<T>().Get(Id);
         }
 
-        public void Set(T model)
+        private void Set(T model)
         {
             if (model.Id == null)
             {
