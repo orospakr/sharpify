@@ -15,21 +15,11 @@ namespace ShopifyAPIAdapterLibrary.Models
         public string BodyHtml
         {
             get { return _BodyHtml; }
-            set {
+            set
+            {
                 SetProperty(ref _BodyHtml, value);
             }
         }
-
-
-        private DateTime _CreatedAt;
-        public DateTime CreatedAt
-        {
-            get { return _CreatedAt; }
-            set {
-                SetProperty(ref _CreatedAt, value);
-            }
-        }
-
 
         private String _Handle;
         public String Handle

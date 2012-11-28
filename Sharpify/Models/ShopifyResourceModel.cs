@@ -58,6 +58,26 @@ namespace ShopifyAPIAdapterLibrary.Models
             }
         }
 
+        private DateTime _CreatedAt;
+        public DateTime CreatedAt
+        {
+            get { return _CreatedAt; }
+            set
+            {
+                SetProperty(ref _CreatedAt, value);
+            }
+        }
+
+        private DateTime _UpdatedAt;
+        public DateTime UpdatedAt
+        {
+            get { return _UpdatedAt; }
+            set
+            {
+                SetProperty(ref _UpdatedAt, value);
+            }
+        }
+
         public ShopifyResourceModel()
         {
             Dirty = new HashSet<string>();
