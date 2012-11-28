@@ -220,12 +220,6 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ShopifyAPIAdapterLibrary\ShopifyAPIAdapterLibrary.csproj">
-      <Project>{6ff5a961-591a-47fc-ba85-00b8f44750d0}</Project>
-      <Name>ShopifyAPIAdapterLibrary</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Blogs\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -236,6 +230,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Blogs\Delete.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sharpify\Sharpify.csproj">
+      <Project>{6ff5a961-591a-47fc-ba85-00b8f44750d0}</Project>
+      <Name>Sharpify</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -135,16 +135,6 @@ namespace ShopifyAPIAdapterLibrary.Tests.Integration
         }
 
         [Test]
-        public void ShouldFetchAllProductsTypesafe ()
-        {
-            var productsTask = ShopifyClient.GetProducts();
-            productsTask.Wait();
-
-            // HACK: making silly assumptions about the content of the test store, and because we have no fixtures we can't check contents
-            Assert.Greater(productsTask.Result.Count, 4);
-        }
-
-        [Test]
         public void ShouldThrowErrorWhenFetchingNonexistentResource ()
         {
             var getTask = ShopifyClient.Get ("/admin/products/doesnotexist");

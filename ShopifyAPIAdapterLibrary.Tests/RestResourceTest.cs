@@ -77,6 +77,10 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
     }
 
+    public class DeepNestedHasAInline : ShopifyResourceModel
+    {
+    }
+
     public class Brain : ShopifyResourceModel
     {
         private int _SynapseCount;
@@ -85,6 +89,16 @@ namespace ShopifyAPIAdapterLibrary.Tests
             get { return _SynapseCount; }
             set {
                 SetProperty(ref _SynapseCount, value);
+            }
+        }
+
+        private IHasOne<DeepNestedHasAInline> _DeepNested;
+        public IHasOne<DeepNestedHasAInline> DeepNested
+        {
+            get { return _DeepNested; }
+            set
+            {
+                SetProperty(ref _DeepNested, value);
             }
         }
 
@@ -319,7 +333,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        public void ShouldCreateSingleInstanceSubResourceForHasA()
+        public void ShouldReplaceInstanceSubResourceForHasOnePlaceholder()
         {
             var getRobotExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Get,
                 JsonFormatExpectation(),
@@ -340,7 +354,46 @@ namespace ShopifyAPIAdapterLibrary.Tests
             translationExpectation.MustHaveHappened();
 
             Assert.IsInstanceOf<SingleInstanceSubResource<Brain>>(answer.Result.Brain);
+            Assert.AreEqual(56, answer.Result.Brain.Id);
         }
+
+        [Test]
+        public void ShouldReplaceInstanceSubResourceForHasOnePlaceholdersWithinAHasOneInline()
+        {
+            // if we receive a has one inline, we need to be sure that the post-processing also
+            // happens for the resourcemodels deserialized inside a HasOneInline<>
+
+            var getRobotExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Get,
+                JsonFormatExpectation(),
+                "/admin/robots/420", EmptyQueryParametersExpectation(), null));
+            getRobotExpectation.Returns(TaskForResult<string>("Robot #420's json"));
+
+            // Robot #42 has Brain #56
+            var translationExpectation = A.CallTo(() => Shopify.TranslateObject<Robot>("robot", "Robot #420's json"));
+            var translatedBrain = new Brain { Id = 747, DeepNested = new HasOneDeserializationPlaceholder<DeepNestedHasAInline>(8010)};
+            var translatedRobot = new Robot
+            {
+                Id = 420,
+                Brain = new HasOneInline<Brain>(translatedBrain)
+            };
+            translationExpectation.Returns(translatedRobot);
+
+            var answer = Robots.Get(420);
+            answer.Wait(1000);
+
+            getRobotExpectation.MustHaveHappened();
+            translationExpectation.MustHaveHappened();
+
+            Assert.IsInstanceOf<HasOneInline<Brain>>(answer.Result.Brain);
+            var hasOneBrain = (HasOneInline<Brain>)(answer.Result.Brain);
+            var brain = hasOneBrain.Get();
+            brain.Wait(1000);
+            Assert.IsInstanceOf<SingleInstanceSubResource<DeepNestedHasAInline>>(brain.Result.DeepNested);
+            Assert.AreEqual(8010, brain.Result.DeepNested.Id);
+        }
+
+        // inlined has ones are directly handled by JsonDataTranslator, and thus are not mediated by
+        // by RestResource.
 
         [Test]
         public void ShouldSetHasOneIdOnOwnedModel()

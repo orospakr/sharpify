@@ -46,6 +46,82 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
+    /// <summary>
+    /// NOT THREAD SAFE
+    /// 
+    /// should be reinstantiated for every new deserialization task.
+    /// </summary>
+    public class ResourceConverter : JsonConverter
+    {
+        /// <summary>
+        /// We are currently in the midst of asking the stock JsonConverter
+        /// to deserialize (using the default approach) the resource model.
+        /// 
+        /// Of course, default policy is to invoke ResourceConverter again,
+        /// so, we break for that initial re-entering by temporarily claiming
+        /// that we cannot handle deserializing RestResources, thus allowing
+        /// json.net to continue has normal.
+        /// 
+        /// Ideally, JsonConverter should add some affordance for having
+        /// a JsonConverter call serializer.(De)serialize() and 
+        /// </summary>
+        private bool RecursionAvoidance;
+
+        public ResourceConverter()
+        {
+        }
+
+        /// <summary>
+        /// In order to work around an interesting deficiency in json.net,
+        /// we need to have ResourceConverter refuse to deserialize the
+        /// content of this IResourceModel, otherwise, the ResourceConverter
+        /// will persistently invoke itself inadverdently forever.
+        /// 
+        /// It appears, from my cursory investigation, that json.net
+        /// does not (yet!) cache this information.  As soon as it does,
+        /// the assumption I make in this workaround code.
+        /// </summary>
+        public override bool CanConvert(Type objectType)
+        {
+            if(typeof(IResourceModel).IsAssignableFrom(objectType)) {
+                // hooray for side effects :(
+                if (RecursionAvoidance)
+                {
+                    RecursionAvoidance = false;
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (RecursionAvoidance)
+            {
+                throw new Exception("Crap.  Collision Avoidance should never be true here.");
+            }
+            RecursionAvoidance = true;
+            IResourceModel model = (IResourceModel) serializer.Deserialize(reader, objectType);
+            RecursionAvoidance = false;
+
+            model.Reset();
+            return model;
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            if (RecursionAvoidance)
+            {
+                throw new Exception("Crap.  Collision Avoidance should never be true here.");
+            }
+            RecursionAvoidance = true;
+            serializer.Serialize(writer, value);
+            RecursionAvoidance = false;
+        }
+    }
+
     public class HasOneInlineConverter<T> : JsonConverter where T : IResourceModel
     {
 
@@ -53,12 +129,15 @@ namespace ShopifyAPIAdapterLibrary
         }
 
         public override bool CanConvert(Type objectType) {
+            // TODO: really should be checking the type...
             return true;
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var model = serializer.Deserialize<T>(reader);
+            // TODO: this is the second place that models are directly serialized at.
+            // we have to use the same arrangement here as in the ResourceConverter.
             return new HasOneInline<T>(model);
         }
 
@@ -110,6 +189,10 @@ namespace ShopifyAPIAdapterLibrary
                 {
                     
                     var underscorized = ShopifyAPIClient.Underscoreify(prop.PropertyName);
+
+                    // we will mutate the original property (automatically created by the default
+                    // json.net resolver) such that it handles the task of an addressed has_one
+                    // ("thinger_id").
                     prop.PropertyName =  underscorized + "_id";
 
                     // get type argument of IHasOne
@@ -123,7 +206,7 @@ namespace ShopifyAPIAdapterLibrary
                         UnderlyingName = prop.UnderlyingName,
                         DeclaringType = prop.DeclaringType,
                         ValueProvider = prop.ValueProvider,
-                        Readable = true,
+                        Readable = false,  // the inline property descriptor should not be used for serialization.
                         Writable = true
                     };
 
@@ -155,10 +238,33 @@ namespace ShopifyAPIAdapterLibrary
                     // for serialization:
                     prop.Converter = (JsonConverter)converter;
 
+                    prop.ShouldSerialize = (obj) =>
+                    {
+                        IResourceModel model = (IResourceModel)obj;
+                        return (model.IsFieldDirty(prop.UnderlyingName));
+                    };
+
                     // the inlines should get the same serialization behaviour (to _id) as
                     // the subresource version.  so, give it the same converter.
-                    inlineProperty.Converter = (JsonConverter)converter;
+                    // inlineProperty.Converter = (JsonConverter)converter;
                     return false;
+                }
+
+                // TODO ignore non-modified fields
+                // *on serialization* only.
+
+                if (typeof(IResourceModel).IsAssignableFrom(type))
+                {
+                    // only ignore unchanged fields if they're "primitive" types, like ints, int?s, strings,
+                    // and not the main ID
+                    if((prop.PropertyType.IsPrimitive || prop.PropertyType.IsAssignableFrom(typeof(string))) && prop.PropertyName != "id")
+                    {
+                        prop.ShouldSerialize = (obj) =>
+                        {
+                            IResourceModel model = (IResourceModel)obj;
+                            return (model.IsFieldDirty(prop.UnderlyingName));
+                        };
+                    }
                 }
 
                 return false;
@@ -188,7 +294,7 @@ namespace ShopifyAPIAdapterLibrary
     /// code in RestResource replaces it with a live fetcher.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class HasOneDeserializationPlaceholder<T> : IHasOne<T> where T : IResourceModel
+    public class HasOneDeserializationPlaceholder<T> : IHasOnePlaceholderUntyped, IHasOne<T> where T : IResourceModel
     {
         public int Id { get; private set; }
 
@@ -206,14 +312,14 @@ namespace ShopifyAPIAdapterLibrary
         {
             throw Fail();
         }
-
-        public void Set(T model)
-        {
-            throw Fail();
-        }
     }
 
-    public class HasOneInline<T> : IHasOne<T> where T : IResourceModel
+    public interface IHasOneInlineUntyped
+    {
+        IResourceModel GetUntypedInlineModel();
+    }
+
+    public class HasOneInline<T> : IHasOneInlineUntyped, IHasOne<T> where T : IResourceModel
     {
         public int Id
         {
@@ -237,9 +343,8 @@ namespace ShopifyAPIAdapterLibrary
             return Model;
         }
 
-        public void Set(T model)
-        {
-            Model = model;
+        public IResourceModel GetUntypedInlineModel() {
+            return Model;
         }
     }
 
@@ -252,9 +357,16 @@ namespace ShopifyAPIAdapterLibrary
         {
         }
 
+        /// <summary>
+        /// This should be created for every invocation of use.  ResourceConverter
+        /// in particular must do things that compromise thread safety, in order
+        /// to avoid an infinite recursion loop.
+        /// </summary>
         private JsonSerializerSettings CreateSerializerSettings(string topLevelResourceName)
         {
-            return new JsonSerializerSettings() { ContractResolver = new ShopifyRestStyleJsonResolver(topLevelResourceName) }; 
+            var settings = new JsonSerializerSettings() { ContractResolver = new ShopifyRestStyleJsonResolver(topLevelResourceName) };
+            settings.Converters.Add(new ResourceConverter());
+            return settings;
         }
 
         /// <summary>
@@ -276,8 +388,6 @@ namespace ShopifyAPIAdapterLibrary
         {
             return JObject.Parse(encodedData);
         }
-
-
 
         public T ResourceDecode<T>(String subfieldName, String content)
         {

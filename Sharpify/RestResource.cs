@@ -44,20 +44,18 @@ namespace ShopifyAPIAdapterLibrary
         int Id { get; }
     }
 
+    /// <summary>
+    /// We use this for detecting placeholders inside RestResource.
+    /// </summary>
+    public interface IHasOnePlaceholderUntyped
+    {
+        int Id { get; }
+    }
+
     public interface IHasOne<T> : IHasOneUntyped where T : IResourceModel
     {
         // Retrieve the resource associated with the parent object.
         Task<T> Get();
-
-        /// <summary>
-        /// Sets the instance of the "has one" relationship to the provided model.
-        /// 
-        /// Ie., the "$model_name_id" json field will change.
-        /// 
-        /// This method does *not* directly mutate any state on the server.  Update or
-        /// Save the host model with its Resource for that.
-        /// </summary>
-        void Set(T model);
     }
 
     public interface IParentableResource
@@ -228,6 +226,10 @@ namespace ShopifyAPIAdapterLibrary
             return this.Where("page", page.ToString());
         }
 
+        /// <summary>
+        /// Post-process incoming model instances fresh from the JsonDataTranslator,
+        /// in order to put live HasOne fetchers (aka SingleInstanceSubResource<>).
+        /// </summary>
         private T PlaceResourceProxesOnModel(T model)
         {
             // add HasMany proxies to the model instance
@@ -245,34 +247,48 @@ namespace ShopifyAPIAdapterLibrary
                 prop.SetValue(model, subResourceInstance);
             }
 
-            // replace the HasOne placeholders (which tell us the ID that was on the _id) field
-            // with the live ones
-
-            var hasaPlaceholders = from p in typeof(T).GetProperties() where p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == (typeof(IHasOne<>)) select p;
-            foreach (var placeholderProp in hasaPlaceholders)
-            {
-                // get the ID from the placeholder
-                var placeholder = (IHasOneUntyped)placeholderProp.GetValue(model);
-                if (placeholder == null)
-                {
-                    continue;
-                }
-
-                // get resource model type from the has_a property
-                var subResourceModelType = placeholderProp.PropertyType.GetGenericArguments()[0];
-                var baseSubresourceType = typeof(SingleInstanceSubResource<>);
-                var resourceType = baseSubresourceType.MakeGenericType(new Type[] { subResourceModelType });
-
-                // I was hoping to avoid using Activator in this project, but no such luck
-                var subResourceInstance = Activator.CreateInstance(resourceType, this.Context, placeholder.Id);
-
-                placeholderProp.SetValue(model, subResourceInstance);
-            }
+            RecurseThroughAllHasOneProperties(Context, model);
 
             model.Reset();
 
             return model;
         }
+
+        private static void RecurseThroughAllHasOneProperties(IShopifyAPIClient shopify, IResourceModel model)
+        {
+            // change all placeholders (which tell us the ID that was on the _id) into single
+            // instance subresources (lives ones that are Get()able)
+            var hasOneProperties = from p in model.GetType().GetProperties() where p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == (typeof(IHasOne<>)) select p;
+            foreach (var placeholderPropCandidate in hasOneProperties)
+            {
+                // naturally, any null or inline ones (HasOneInline<>) are skipped
+                var hasOnePlaceholder = placeholderPropCandidate.GetValue(model) as IHasOnePlaceholderUntyped;
+                if (hasOnePlaceholder == null) continue;
+
+                // get resource model type from the has_a property
+                var subResourceModelType = placeholderPropCandidate.PropertyType.GetGenericArguments()[0];
+                var baseSubresourceType = typeof(SingleInstanceSubResource<>);
+                var resourceType = baseSubresourceType.MakeGenericType(new Type[] { subResourceModelType });
+
+                // I was hoping to avoid using Activator in this project, but no such luck
+                var subResourceInstance = Activator.CreateInstance(resourceType, shopify, hasOnePlaceholder.Id);
+
+                placeholderPropCandidate.SetValue(model, subResourceInstance);
+            }
+
+            // recurse into and do the same to any inlined hasones on the model.
+            foreach (var inlineHasOnePropCandidate in hasOneProperties)
+            {
+                var inlineHasOne = inlineHasOnePropCandidate.GetValue(model) as IHasOneInlineUntyped;
+                if (inlineHasOne == null) continue;
+
+                var inlineModel = inlineHasOne.GetUntypedInlineModel();
+                if (inlineModel == null) continue;
+
+                RecurseThroughAllHasOneProperties(shopify, inlineModel);
+            }
+        }
+
 
         public IResourceView<T> Where(Expression<Func<T, object>> propertyLambda, string isEqualTo)
         {
@@ -457,7 +473,8 @@ namespace ShopifyAPIAdapterLibrary
             Id = id;
         }
 
-        public SingleInstanceSubResource(IShopifyAPIClient context, T model) {
+        public SingleInstanceSubResource(IShopifyAPIClient context, T model)
+        {
             Context = context;
             Set(model);
         }
@@ -467,7 +484,7 @@ namespace ShopifyAPIAdapterLibrary
             return await Context.GetResource<T>().Get(Id);
         }
 
-        public void Set(T model)
+        private void Set(T model)
         {
             if (model.Id == null)
             {

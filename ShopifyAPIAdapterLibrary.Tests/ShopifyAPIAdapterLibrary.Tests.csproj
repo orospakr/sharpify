@@ -55,22 +55,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Integration\LiveAPIServiceIntegrationTest.cs" />
     <Compile Include="JsonDataTranslatorTest.cs" />
     <Compile Include="Models\ShopifyResourceModelTest.cs" />
     <Compile Include="PaginatedEnumeratorTest.cs" />
-    <Compile Include="ShopifyAPIAdapterLibrary.Tests.Integration\LiveAPIServiceIntegrationTest.cs" />
     <Compile Include="ShopifyAuthorizerTest.cs" />
     <Compile Include="ShopifyApiClientTest.cs" />
     <Compile Include="RestResourceTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\ShopifyAPIAdapterLibrary\ShopifyAPIAdapterLibrary.csproj">
-      <Project>{6FF5A961-591A-47FC-BA85-00B8F44750D0}</Project>
-      <Name>ShopifyAPIAdapterLibrary</Name>
+    <ProjectReference Include="..\Sharpify\Sharpify.csproj">
+      <Project>{6ff5a961-591a-47fc-ba85-00b8f44750d0}</Project>
+      <Name>Sharpify</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
