@@ -49,6 +49,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HasOneJsonConverter.cs" />
     <Compile Include="IDataTranslator.cs" />
     <Compile Include="IShopifyAPIClient.cs" />
     <Compile Include="ModelAttributes.cs" />
@@ -96,7 +97,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Models\propify.rb" />
-    <None Include="Models\propify.rb~" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

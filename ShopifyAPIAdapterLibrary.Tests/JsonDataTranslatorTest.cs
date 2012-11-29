@@ -223,10 +223,10 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             c.Reset();
 
-            // reset FinancialStatus, so it should appear in the JSON.
+            // set FinancialStatus, so it should appear in the JSON
             c.FinancialStatus = "completed";
 
-            // reset the originating institution, so it should appear in the JSON
+            // set the originating institution, so it should appear in the JSON
             c.OriginatingInstitution = new HasOneDeserializationPlaceholder<Bank>(1001);
 
             var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", c);
@@ -246,17 +246,53 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.IsFalse(ContainsField(props, "bank"));
             Assert.IsFalse(ContainsField(props, "bank_id"));
 
+            Assert.IsFalse(ContainsField(props, "originating_institution"));
+
             Assert.AreEqual("completed", decoded.transaction.financial_status.ToString(), "changed field should turn up in JSON");
 
             Assert.AreEqual("1001", decoded.transaction.originating_institution_id.ToString(), "changed has_one should turn up in JSON");
 
-            // inlined flat objects (not has ones!) for now have no update tracking.
+            // inlined flat objects (this does not refer to has ones!) for now have no update tracking.
             // they must always be included inline, for now, since we can't
             // know if their innards have changed
             Assert.AreEqual("Inline single flat object", decoded.transaction.single_tax.name.ToString());
 
             // lists of inline flats also must also always go through
             Assert.AreEqual("GST", decoded.transaction.taxes[0].name.ToString());
+        }
+
+        [Test]
+        public void ShouldSerializeResourceWithAnInlineHasOne()
+        {
+            var c = new Transaction()
+            {
+                Id = 88,
+                Currency = "BTC",
+                Value = 0.10,
+                Receipient = "Sanders Aircraft"
+            };
+
+            c.Reset();
+
+            var bank = new Bank() { Id = 77, Name = "Commonwealth Shared Risk" };
+            c.Bank = new HasOneInline<Bank>(bank);
+
+
+            var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", c);
+
+            // use late-binding to concisely test expected fields
+            // in the JSON
+            dynamic decoded = JsonConvert.DeserializeObject(encoded);
+
+            IEnumerable<JProperty> props = decoded.transaction.Properties();
+
+            Assert.AreEqual("88", decoded.transaction.id.ToString());
+
+            // as it should be serialized inline, an as-a-id field should not appear.
+
+            Assert.IsFalse(ContainsField(props, "bank_id"));
+            Assert.AreEqual("77", decoded.transaction.bank.id.ToString());
+            Assert.AreEqual("Commonwealth Shared Risk", decoded.transaction.bank.name.ToString());
         }
 
         [Test]
@@ -347,8 +383,6 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual("99", decoded.transaction.id.ToString());
             Assert.AreEqual("88", decoded.transaction.bank_id.ToString());
         }
-
-
 
         [Test]
         public void ShouldSerializeWhileIgnoringHasMany()

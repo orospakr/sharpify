@@ -13,38 +13,38 @@ using System.ComponentModel;
 
 namespace ShopifyAPIAdapterLibrary
 {
-    public class HasOneConverter<T> : JsonConverter where T: IResourceModel {
+    //public class HasOneConverterOLD<T> : JsonConverter where T: IResourceModel {
 
-        public HasOneConverter() {
-        }
+    //    public HasOneConverterOLD() {
+    //    }
 
-        public override bool CanConvert(Type objectType)
-        {
-            // return objectType == typeof(string);
-            return true;
-        }
+    //    public override bool CanConvert(Type objectType)
+    //    {
+    //        // return objectType == typeof(string);
+    //        return true;
+    //    }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var hasAIdValue = reader.Value;
-            if (hasAIdValue == null)
-            {
-                // https://trello.com/card/make-a-test-for-incoming-has-one-id-fields-that-are-null/50a1c9c990c4980e0600178b/31
-                return null;
-            }
-            var hasOneId = Int32.Parse(hasAIdValue.ToString());
+    //    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    //    {
+    //        var hasAIdValue = reader.Value;
+    //        if (hasAIdValue == null)
+    //        {
+    //            // https://trello.com/card/make-a-test-for-incoming-has-one-id-fields-that-are-null/50a1c9c990c4980e0600178b/31
+    //            return null;
+    //        }
+    //        var hasOneId = Int32.Parse(hasAIdValue.ToString());
 
-            var placeholder = new HasOneDeserializationPlaceholder<T>(hasOneId);
-            return placeholder;
-        }
+    //        var placeholder = new HasOneDeserializationPlaceholder<T>(hasOneId);
+    //        return placeholder;
+    //    }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            // var prop = value.GetType().GetProperty(TargetProperty);
-            IHasOne<T> hasOne = (IHasOne<T>)value;
-            writer.WriteValue(hasOne.Id);
-        }
-    }
+    //    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    //    {
+    //        // var prop = value.GetType().GetProperty(TargetProperty);
+    //        IHasOne<T> hasOne = (IHasOne<T>)value;
+    //        writer.WriteValue(hasOne.Id);
+    //    }
+    //}
 
     /// <summary>
     /// NOT THREAD SAFE
@@ -122,31 +122,31 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
-    public class HasOneInlineConverter<T> : JsonConverter where T : IResourceModel
-    {
+    //public class HasOneInlineConverter<T> : JsonConverter where T : IResourceModel
+    //{
 
-        public HasOneInlineConverter() {
-        }
+    //    public HasOneInlineConverter() {
+    //    }
 
-        public override bool CanConvert(Type objectType) {
-            // TODO: really should be checking the type...
-            return true;
-        }
+    //    public override bool CanConvert(Type objectType) {
+    //        // TODO: really should be checking the type...
+    //        return true;
+    //    }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var model = serializer.Deserialize<T>(reader);
-            // TODO: this is the second place that models are directly serialized at.
-            // we have to use the same arrangement here as in the ResourceConverter.
-            return new HasOneInline<T>(model);
-        }
+    //    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    //    {
+    //        var model = serializer.Deserialize<T>(reader);
+    //        // TODO: this is the second place that models are directly serialized at.
+    //        // we have to use the same arrangement here as in the ResourceConverter.
+    //        return new HasOneInline<T>(model);
+    //    }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            var hasOneInline = (HasOneInline<T>)value;
-            serializer.Serialize(writer, hasOneInline.Model);
-        }
-    }
+    //    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    //    {
+    //        var hasOneInline = (HasOneInline<T>)value;
+    //        serializer.Serialize(writer, hasOneInline.Model);
+    //    }
+    //}
 
     public class ShopifyRestStyleJsonResolver : DefaultContractResolver
     {
@@ -187,71 +187,79 @@ namespace ShopifyAPIAdapterLibrary
                 // is property a HasOne?
                 if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(IHasOne<>))
                 {
-                    
                     var underscorized = ShopifyAPIClient.Underscoreify(prop.PropertyName);
-
-                    // we will mutate the original property (automatically created by the default
-                    // json.net resolver) such that it handles the task of an addressed has_one
-                    // ("thinger_id").
-                    prop.PropertyName =  underscorized + "_id";
 
                     // get type argument of IHasOne
                     var hasOneTargetType = prop.PropertyType.GetGenericArguments();
 
-                    // create an additional property for the inline deserialization case
-                    JsonProperty inlineProperty = new JsonProperty() {
+                    // I was really hoping to avoid activator.createinstance... :(
+
+                    Type hasOneInlineConverterType = typeof(HasOneJsonConverter<>).MakeGenericType(hasOneTargetType);
+                    var hasOneInlineConverter = Activator.CreateInstance(hasOneInlineConverterType, underscorized);
+
+                    Type hasOneAsIdConverterType = typeof(IncomingHasOneAsIdJsonConverter<>).MakeGenericType(hasOneTargetType);
+                    var hasOneAsIdConverter = Activator.CreateInstance(hasOneAsIdConverterType, underscorized);
+
+                    // set the standard HasOneConverter
+                    // TODO if we can de-genericify hasOneConverter, just set it up globally and get rid of this
+                    prop.Converter = (JsonConverter)hasOneInlineConverter;
+                    prop.MemberConverter = (JsonConverter)hasOneInlineConverter;
+
+                    // create an additional property for the as-id deserialization (deserialization *only*) case
+                    JsonProperty asIdProperty = new JsonProperty() {
                         PropertyType = prop.PropertyType,
                         Ignored = false,
-                        PropertyName = underscorized,
+                        PropertyName = underscorized + "_id",
                         UnderlyingName = prop.UnderlyingName,
                         DeclaringType = prop.DeclaringType,
                         ValueProvider = prop.ValueProvider,
                         Readable = false,  // the inline property descriptor should not be used for serialization.
-                        Writable = true
+                        Writable = true,
+                        // Converter for serialization
+                        Converter = (JsonConverter)hasOneInlineConverter,
+                        // Converter for deserialization (use the different deserializer for it)
+                        MemberConverter = (JsonConverter)hasOneAsIdConverter
                     };
-
-                    Type hasOneInlineConverterType = typeof(HasOneInlineConverter<>).MakeGenericType(hasOneTargetType);
-
-                    // make an instance of the converter intended for deserializing inline
-                    // has one resources.
-                    var inlineConverter = Activator.CreateInstance(hasOneInlineConverterType);
-                    
-                    // deserialize inline properies using the inline converter.
-                    inlineProperty.MemberConverter = (JsonConverter)inlineConverter;
-
-                    // we add all of the created inline property descriptors after,
+                    // we add all of the created as=id property descriptors after,
                     // in order to avoid modifying the collection while RemoveAll is
                     // running
-                    hasOneInlineProperties.Add(inlineProperty);
+                    hasOneInlineProperties.Add(asIdProperty);
 
-                    // Adjust the originally populated property to handle the _id (not inline version):
+                    // okay, well, going to have to make props:
 
-                    // build the type of the necessary HasOneConverter with the parameter of this has one target type
-                    Type hasOneConverterType = typeof(HasOneConverter<>).MakeGenericType(hasOneTargetType);
+                    // outgoing inline
+                    // outgoing as id
+                    // incoming inline
+                    // incoming as id
 
-                    // I was really hoping to avoid activator.createinstance... :(
-                    var converter = Activator.CreateInstance(hasOneConverterType);
+                    // the outgoings should have ShouldSerializes that do the HasOne type check IN addition to the usual dirty check
+                    // the incomings can be naiive, since the presence of either field in the incoming json makes the selection
 
-                    // for deserialization:
-                    prop.MemberConverter = (JsonConverter)converter;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     
-                    // for serialization:
-                    prop.Converter = (JsonConverter)converter;
-
+                    // we should only serialize such properties as have changed.
                     prop.ShouldSerialize = (obj) =>
                     {
+                        // TODO: https://trello.com/card/isfielddirty-if-called-on-inline-hasone-fields-should-return-true-if-the-contained-resource-model-is-at-all-dirty/50a1c9c990c4980e0600178b/58
                         IResourceModel model = (IResourceModel)obj;
                         return (model.IsFieldDirty(prop.UnderlyingName));
                     };
 
-                    // the inlines should get the same serialization behaviour (to _id) as
-                    // the subresource version.  so, give it the same converter.
-                    // inlineProperty.Converter = (JsonConverter)converter;
                     return false;
                 }
-
-                // TODO ignore non-modified fields
-                // *on serialization* only.
 
                 if (typeof(IResourceModel).IsAssignableFrom(type))
                 {
@@ -333,7 +341,8 @@ namespace ShopifyAPIAdapterLibrary
 
         public HasOneInline(T model)
         {
-            
+            // TODO: this will have to change when we support creating new resources that
+            // should post with a similarly new inline
             if (model.Id == null) throw new ShopifyUsageException("HasOneInline must be given a model that has a set ID.");
             Model = model;
         }
