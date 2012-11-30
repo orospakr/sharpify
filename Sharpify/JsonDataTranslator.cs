@@ -122,32 +122,6 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
-    //public class HasOneInlineConverter<T> : JsonConverter where T : IResourceModel
-    //{
-
-    //    public HasOneInlineConverter() {
-    //    }
-
-    //    public override bool CanConvert(Type objectType) {
-    //        // TODO: really should be checking the type...
-    //        return true;
-    //    }
-
-    //    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-    //    {
-    //        var model = serializer.Deserialize<T>(reader);
-    //        // TODO: this is the second place that models are directly serialized at.
-    //        // we have to use the same arrangement here as in the ResourceConverter.
-    //        return new HasOneInline<T>(model);
-    //    }
-
-    //    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    //    {
-    //        var hasOneInline = (HasOneInline<T>)value;
-    //        serializer.Serialize(writer, hasOneInline.Model);
-    //    }
-    //}
-
     public class ShopifyRestStyleJsonResolver : DefaultContractResolver
     {
         public string ResourceName { get; private set; }
@@ -168,7 +142,7 @@ namespace ShopifyAPIAdapterLibrary
         {
             var properties = new List<JsonProperty>(base.CreateProperties(type, memberSerialization));
 
-            var hasOneInlineProperties = new List<JsonProperty>();
+            var hasOneAdIdProperties = new List<JsonProperty>();
 
             properties.RemoveAll((prop) => {
                 // do not attempt to (de)serialize IHasManys
@@ -194,14 +168,14 @@ namespace ShopifyAPIAdapterLibrary
 
                     // I was really hoping to avoid activator.createinstance... :(
 
-                    Type hasOneInlineConverterType = typeof(HasOneJsonConverter<>).MakeGenericType(hasOneTargetType);
-                    var hasOneInlineConverter = Activator.CreateInstance(hasOneInlineConverterType, underscorized);
+                    Type hasOneInlineConverterType = typeof(HasOneInlineJsonConverter<>).MakeGenericType(hasOneTargetType);
+                    var hasOneInlineConverter = Activator.CreateInstance(hasOneInlineConverterType);
 
-                    Type hasOneAsIdConverterType = typeof(IncomingHasOneAsIdJsonConverter<>).MakeGenericType(hasOneTargetType);
-                    var hasOneAsIdConverter = Activator.CreateInstance(hasOneAsIdConverterType, underscorized);
+                    Type hasOneAsIdConverterType = typeof(HasOneAsIdJsonConverter<>).MakeGenericType(hasOneTargetType);
+                    var hasOneAsIdConverter = Activator.CreateInstance(hasOneAsIdConverterType);
 
                     // set the standard HasOneConverter
-                    // TODO if we can de-genericify hasOneConverter, just set it up globally and get rid of this
+                    // TODO if we can de-genericify hasOneConverter, just set it up globally and get rid of this dynamic instantiation
                     prop.Converter = (JsonConverter)hasOneInlineConverter;
                     prop.MemberConverter = (JsonConverter)hasOneInlineConverter;
 
@@ -213,17 +187,12 @@ namespace ShopifyAPIAdapterLibrary
                         UnderlyingName = prop.UnderlyingName,
                         DeclaringType = prop.DeclaringType,
                         ValueProvider = prop.ValueProvider,
-                        Readable = false,  // the inline property descriptor should not be used for serialization.
+                        Readable = true,
                         Writable = true,
-                        // Converter for serialization
-                        Converter = (JsonConverter)hasOneInlineConverter,
-                        // Converter for deserialization (use the different deserializer for it)
+                        // Use the as-id converter
+                        Converter = (JsonConverter)hasOneAsIdConverter,
                         MemberConverter = (JsonConverter)hasOneAsIdConverter
                     };
-                    // we add all of the created as=id property descriptors after,
-                    // in order to avoid modifying the collection while RemoveAll is
-                    // running
-                    hasOneInlineProperties.Add(asIdProperty);
 
                     // okay, well, going to have to make props:
 
@@ -234,29 +203,29 @@ namespace ShopifyAPIAdapterLibrary
 
                     // the outgoings should have ShouldSerializes that do the HasOne type check IN addition to the usual dirty check
                     // the incomings can be naiive, since the presence of either field in the incoming json makes the selection
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    
+        
                     // we should only serialize such properties as have changed.
                     prop.ShouldSerialize = (obj) =>
                     {
                         // TODO: https://trello.com/card/isfielddirty-if-called-on-inline-hasone-fields-should-return-true-if-the-contained-resource-model-is-at-all-dirty/50a1c9c990c4980e0600178b/58
+                        var hasOneInstance = prop.ValueProvider.GetValue(obj);
+                        if ((hasOneInstance as IHasOneInlineUntyped) == null) return false;
                         IResourceModel model = (IResourceModel)obj;
                         return (model.IsFieldDirty(prop.UnderlyingName));
                     };
+
+                    asIdProperty.ShouldSerialize = (obj) =>
+                    {
+                        var hasOneInstance = prop.ValueProvider.GetValue(obj);
+                        if ((hasOneInstance as IHasOneAsIdUntyped) == null) return false;
+                        IResourceModel model = (IResourceModel)obj;
+                        return (model.IsFieldDirty(asIdProperty.UnderlyingName));
+                    };
+
+                    // we add all of the created as=id property descriptors after,
+                    // in order to avoid modifying the collection while RemoveAll is
+                    // running
+                    hasOneAdIdProperties.Add(asIdProperty);
 
                     return false;
                 }
@@ -278,7 +247,7 @@ namespace ShopifyAPIAdapterLibrary
                 return false;
             });
 
-            properties.AddRange(hasOneInlineProperties);
+            properties.AddRange(hasOneAdIdProperties);
             return properties;
         }
     }

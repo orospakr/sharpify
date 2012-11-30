@@ -44,13 +44,18 @@ namespace ShopifyAPIAdapterLibrary
         int Id { get; }
     }
 
+    public interface IHasOneAsIdUntyped : IHasOneUntyped
+    {
+    }
+
     /// <summary>
     /// We use this for detecting placeholders inside RestResource.
     /// </summary>
-    public interface IHasOnePlaceholderUntyped
+    public interface IHasOnePlaceholderUntyped : IHasOneAsIdUntyped
     {
-        int Id { get; }
     }
+
+
 
     public interface IHasOne<T> : IHasOneUntyped where T : IResourceModel
     {
@@ -462,7 +467,7 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
-    public class SingleInstanceSubResource<T> : IHasOne<T> where T : IResourceModel, new()
+    public class SingleInstanceSubResource<T> : IHasOne<T>, IHasOneAsIdUntyped where T : IResourceModel, new()
     {
         public IShopifyAPIClient Context { get; set; }
         public int Id { get; set; }
