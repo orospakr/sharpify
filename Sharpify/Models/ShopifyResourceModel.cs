@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,13 +39,34 @@ namespace ShopifyAPIAdapterLibrary.Models
             Dirty.Clear();
         }
 
-        public bool IsFieldDirty(string field)
+        private bool CheckForDirtyDirtiable(PropertyInfo prop) {
+            var dirtiable = prop.GetValue(this) as IDirtiable;
+            if (dirtiable != null)
+            {
+                if (!dirtiable.IsClean()) return true;
+            }
+            return false;
+        }
+
+        public virtual bool IsFieldDirty(string field)
         {
+            if (CheckForDirtyDirtiable(this.GetType().GetProperty(field))) return true;
+            
             return Dirty.Contains(field);
         }
 
-        public bool IsClean()
+        public virtual bool IsFieldDirty(PropertyInfo field)
         {
+            if (CheckForDirtyDirtiable(field)) return true;
+            return Dirty.Contains(field.Name);
+        }
+
+        public virtual bool IsClean()
+        {
+            foreach (var prop in this.GetType().GetProperties())
+            {
+                if(CheckForDirtyDirtiable(prop))return false;
+            }
             return Dirty.Count == 0;
         }
 

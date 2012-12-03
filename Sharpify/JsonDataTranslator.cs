@@ -194,7 +194,7 @@ namespace ShopifyAPIAdapterLibrary
                         MemberConverter = (JsonConverter)hasOneAsIdConverter
                     };
 
-                    // okay, well, going to have to make props:
+                    // make props:
 
                     // outgoing inline
                     // outgoing as id
@@ -296,7 +296,7 @@ namespace ShopifyAPIAdapterLibrary
         IResourceModel GetUntypedInlineModel();
     }
 
-    public class HasOneInline<T> : IHasOneInlineUntyped, IHasOne<T> where T : IResourceModel
+    public class HasOneInline<T> : IDirtiable, IHasOneInlineUntyped, IHasOne<T> where T : IResourceModel
     {
         public int Id
         {
@@ -323,6 +323,12 @@ namespace ShopifyAPIAdapterLibrary
 
         public IResourceModel GetUntypedInlineModel() {
             return Model;
+        }
+
+        public bool IsClean()
+        {
+            if(Model == null) return true;
+            return Model.IsClean();
         }
     }
 

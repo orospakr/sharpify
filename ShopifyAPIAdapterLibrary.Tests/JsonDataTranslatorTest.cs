@@ -444,5 +444,15 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var encoded = JsonConvert.SerializeObject(dt);
             Assert.AreEqual(@"""2009-07-29T14:13:45Z""", encoded);
         }
+
+        [Test]
+        public void ShouldHaveInlineHasOneReturnModelDirtiness()
+        {
+            var transaction = A.Fake<Transaction>();
+            A.CallTo(() => transaction.IsClean()).Returns(false);
+            transaction.Id = 56;
+            var x = new HasOneInline<Transaction>(transaction);
+            Assert.IsFalse(x.IsClean());
+        }
     }
 }

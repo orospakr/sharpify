@@ -2,11 +2,16 @@
 using System.ComponentModel;
 namespace ShopifyAPIAdapterLibrary.Models
 {
+    public interface IDirtiable
+    {
+        bool IsClean();
+    }
+
     /// <summary>
     /// Models that are to be used as full-fledged resources or subresources
     /// (but inlines needn't), should implement this interface.
     /// </summary>
-    public interface IResourceModel : INotifyPropertyChanged
+    public interface IResourceModel : INotifyPropertyChanged, IDirtiable
     {
         /// <summary>
         /// The ID of the record.  Must be present on resources.
@@ -22,7 +27,5 @@ namespace ShopifyAPIAdapterLibrary.Models
         void Reset();
 
         bool IsFieldDirty(string field);
-
-        bool IsClean();
     }
 }
