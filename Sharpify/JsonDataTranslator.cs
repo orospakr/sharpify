@@ -13,39 +13,6 @@ using System.ComponentModel;
 
 namespace ShopifyAPIAdapterLibrary
 {
-    //public class HasOneConverterOLD<T> : JsonConverter where T: IResourceModel {
-
-    //    public HasOneConverterOLD() {
-    //    }
-
-    //    public override bool CanConvert(Type objectType)
-    //    {
-    //        // return objectType == typeof(string);
-    //        return true;
-    //    }
-
-    //    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-    //    {
-    //        var hasAIdValue = reader.Value;
-    //        if (hasAIdValue == null)
-    //        {
-    //            // https://trello.com/card/make-a-test-for-incoming-has-one-id-fields-that-are-null/50a1c9c990c4980e0600178b/31
-    //            return null;
-    //        }
-    //        var hasOneId = Int32.Parse(hasAIdValue.ToString());
-
-    //        var placeholder = new HasOneDeserializationPlaceholder<T>(hasOneId);
-    //        return placeholder;
-    //    }
-
-    //    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    //    {
-    //        // var prop = value.GetType().GetProperty(TargetProperty);
-    //        IHasOne<T> hasOne = (IHasOne<T>)value;
-    //        writer.WriteValue(hasOne.Id);
-    //    }
-    //}
-
     /// <summary>
     /// NOT THREAD SAFE
     /// 
@@ -53,6 +20,7 @@ namespace ShopifyAPIAdapterLibrary
     /// </summary>
     public class ResourceConverter : JsonConverter
     {
+
         /// <summary>
         /// We are currently in the midst of asking the stock JsonConverter
         /// to deserialize (using the default approach) the resource model.
@@ -66,10 +34,6 @@ namespace ShopifyAPIAdapterLibrary
         /// a JsonConverter call serializer.(De)serialize() and 
         /// </summary>
         private bool RecursionAvoidance;
-
-        public ResourceConverter()
-        {
-        }
 
         /// <summary>
         /// In order to work around an interesting deficiency in json.net,
@@ -105,7 +69,6 @@ namespace ShopifyAPIAdapterLibrary
             RecursionAvoidance = true;
             IResourceModel model = (IResourceModel) serializer.Deserialize(reader, objectType);
             RecursionAvoidance = false;
-
             model.Reset();
             return model;
         }
@@ -337,6 +300,7 @@ namespace ShopifyAPIAdapterLibrary
     /// </summary>
     public class JsonDataTranslator : IDataTranslator
     {
+
         public JsonDataTranslator()
         {
         }

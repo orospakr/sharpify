@@ -11,6 +11,7 @@ namespace ShopifyAPIAdapterLibrary
     /// accessed with the pagination behaviour with the ?page=
     /// query parameter.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
     class Paginated : System.Attribute
     {
     }

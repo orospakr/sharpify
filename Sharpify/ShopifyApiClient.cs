@@ -31,6 +31,14 @@ namespace ShopifyAPIAdapterLibrary
         private IDictionary<Type, IUntypedResource> Resources { get; set; }
 
         /// <summary>
+        /// Used to translate the data sent and recieved by the Shopify API in
+        /// JSON.
+        /// 
+        /// Another implementation could be implemented for XML.
+        /// </summary>
+        public IDataTranslator Translator { get; set; }
+
+        /// <summary>
         /// Creates an instance of this class for use with making API Calls
         /// </summary>
         /// <param name="state">the authorization state required to make the API Calls</param>
@@ -375,14 +383,7 @@ namespace ShopifyAPIAdapterLibrary
         /// </summary>
         public ShopifyAuthorizationState State { get; set; }
 
-        /// <summary>
-        /// Used to translate the data sent and recieved by the Shopify API
-        /// </summary>
-        /// <example>
-        /// This could be used to translate from C# objects to XML or JSON.  Thus making your code
-        /// that consumes this class much more clean
-        /// </example>
-        protected IDataTranslator Translator { get; set; }
+
 
         /// <summary>
         /// Gets the name (as in, domain name fragment) of the Shop this ApiClient is associated with.

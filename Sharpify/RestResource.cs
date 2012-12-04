@@ -440,6 +440,42 @@ namespace ShopifyAPIAdapterLibrary
             var action = ShopifyAPIClient.Underscoreify(prop.Name);
             return CallAction(instance, action);
         }
+
+        public void Has<H>(T belongsTo, Expression<Func<T, IHasOne<H>>> propertyLambda, H hasOne) where H : IResourceModel, new()
+        {
+            var memberExpression = propertyLambda.Body as MemberExpression;
+            if (memberExpression == null)
+            {
+                throw new ShopifyUsageException("Expression specified to Has() did not specify a member of a type.");
+            }
+            var prop = memberExpression.Member as PropertyInfo;
+            if (prop == null)
+            {
+                throw new ShopifyUsageException("Expression specified to Has() did not specify a property.");
+            }
+            var checkType = typeof(T);
+            if (!checkType.IsAssignableFrom(prop.ReflectedType))
+            {
+                throw new ShopifyUsageException("Expression specified to Has() specified a property on a different resource model than this one.");
+            }
+
+            if (prop.GetCustomAttribute<Inlinable>() != null)
+            {
+                // make an inline
+                var hasOneProp = new HasOneInline<H>(hasOne);
+                prop.SetValue(belongsTo, hasOneProp);
+            }
+            else
+            {
+                // make a singleinstance subresource
+                if (!hasOne.Id.HasValue)
+                {
+                    throw new ShopifyUsageException("Must use a model instance with an ID to save a not-inlined Has One.");
+                }
+                var hasOneProp = new SingleInstanceSubResource<H>(Context, hasOne.Id.Value);
+                prop.SetValue(belongsTo, hasOneProp);
+            }
+        }
     }
 
     public class SubResource<T> : RestResource<T>, IHasMany<T> where T : IResourceModel, new()

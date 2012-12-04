@@ -9,7 +9,18 @@ using System.Threading.Tasks;
 
 namespace ShopifyAPIAdapterLibrary.Tests.Models
 {
+    // used as a flat inline
     public class Faction : ShopifyResourceModel
+    {
+    }
+
+    // used as a Has One inline
+    public class Tier : ShopifyResourceModel
+    {
+        
+    }
+
+    public class AI : ShopifyResourceModel
     {
     }
 
@@ -25,6 +36,7 @@ namespace ShopifyAPIAdapterLibrary.Tests.Models
             }
         }
 
+        // inline flat
         private Faction _Faction;
         public Faction Faction
         {
@@ -32,6 +44,29 @@ namespace ShopifyAPIAdapterLibrary.Tests.Models
             set
             {
                 SetProperty(ref _Faction, value);
+            }
+        }
+
+        // as by-id has one
+        private IHasOne<AI> _AI;
+        public IHasOne<AI> AI
+        {
+            get { return _AI; }
+            set
+            {
+                SetProperty(ref _AI, value);
+            }
+        }
+        
+        // inline has one
+        private IHasOne<Tier> _Tier;
+        [Inlinable]
+        public IHasOne<Tier> Tier
+        {
+            get { return _Tier; }
+            set
+            {
+                SetProperty(ref _Tier, value);
             }
         }
     }

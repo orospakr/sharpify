@@ -65,6 +65,17 @@ namespace ShopifyAPIAdapterLibrary.Tests
             }
         }
 
+        private IHasOne<Laser> _Laser;
+        [Inlinable]
+        public IHasOne<Laser> Laser
+        {
+            get { return _Laser; }
+            set
+            {
+                SetProperty(ref _Laser, value);
+            }
+        }
+
 
         private SpecialAction _Explode;
         public SpecialAction Explode
@@ -102,6 +113,10 @@ namespace ShopifyAPIAdapterLibrary.Tests
             }
         }
 
+    }
+
+    public class Laser : ShopifyResourceModel
+    {
     }
 
     // our test subresource
@@ -432,6 +447,22 @@ namespace ShopifyAPIAdapterLibrary.Tests
                 JsonFormatExpectation(),
                 "/admin/robots/42/explode", EmptyQueryParametersExpectation(),
                 null)).MustHaveHappened();
+        }
+
+        [Test]
+        public void ShouldSetHasOneAsIdByDefault()
+        {
+            var brain = new Brain() { Id = 38 };
+            Robots.Has<Brain>(Calculon, (calculon) => calculon.Brain, brain);
+            Assert.IsInstanceOf<SingleInstanceSubResource<Brain>>(Calculon.Brain);
+        }
+
+        [Test]
+        public void ShouldSetHasOneInlineByDefault()
+        {
+            var laser = new Laser() { Id = 32 };
+            Robots.Has<Laser>(Calculon, (calculon) => calculon.Laser, laser);
+            Assert.IsInstanceOf<HasOneInline<Laser>>(Calculon.Laser);
         }
     }
 }

@@ -7,9 +7,16 @@ namespace ShopifyAPIAdapterLibrary.Models
         bool IsClean();
     }
 
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class Inlinable : Attribute
+    {
+    }
+
     /// <summary>
     /// Models that are to be used as full-fledged resources or subresources
-    /// (but inlines needn't), should implement this interface.
+    /// (but inlined "flats" -- not has ones, mind -- needn't), should implement
+    /// this interface.
     /// </summary>
     public interface IResourceModel : INotifyPropertyChanged, IDirtiable
     {
