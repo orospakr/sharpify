@@ -194,7 +194,7 @@ namespace ShopifyAPIAdapterLibrary
                     return false;
                 }
 
-                if (typeof(IResourceModel).IsAssignableFrom(type))
+                if (typeof(IGranularDirtiable).IsAssignableFrom(type))
                 {
                     // only ignore unchanged fields if they're "primitive" types, like ints, int?s, strings,
                     // and not the main ID

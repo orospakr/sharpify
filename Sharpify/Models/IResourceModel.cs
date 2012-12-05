@@ -7,6 +7,11 @@ namespace ShopifyAPIAdapterLibrary.Models
         bool IsClean();
     }
 
+    public interface IGranularDirtiable : IDirtiable
+    {
+        bool IsFieldDirty(string field);
+    }
+
     [AttributeUsage(AttributeTargets.Property)]
     public class Inlinable : Attribute
     {
@@ -17,7 +22,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// (but inlined "flats" -- not has ones, mind -- needn't), should implement
     /// this interface.
     /// </summary>
-    public interface IResourceModel : INotifyPropertyChanged, IDirtiable
+    public interface IResourceModel : INotifyPropertyChanged, IGranularDirtiable
     {
         /// <summary>
         /// The ID of the record.  Must be present on resources.

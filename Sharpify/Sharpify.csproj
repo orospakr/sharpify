@@ -49,6 +49,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DirtiableObject.cs" />
     <Compile Include="HasOneJsonConverter.cs" />
     <Compile Include="IDataTranslator.cs" />
     <Compile Include="IShopifyAPIClient.cs" />

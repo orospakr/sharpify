@@ -6,14 +6,18 @@ using System.Threading.Tasks;
 
 namespace ShopifyAPIAdapterLibrary.Models
 {
-    public class Property
+    public class Fragment : DirtiableObject
+    {
+    }
+
+    public class Property : Fragment
     {
         public string Name { get; set; }
 
         public string Value { get; set; }
     }
 
-    public class Receipt
+    public class Receipt : Fragment
     {
         public bool? Testcase { get; set; }
 
@@ -24,7 +28,7 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
     }
 
-    public class DiscountCode
+    public class DiscountCode : Fragment
     {
         public string Code { get; set; }
         public double? Amount { get; set; }
@@ -34,7 +38,7 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
     }
 
-    public class Rule
+    public class Rule : Fragment
     {
         public string Column { get; set; }
 
@@ -44,7 +48,7 @@ namespace ShopifyAPIAdapterLibrary.Models
         public string Condition { get; set; }
     }
 
-    public class ShippingLine
+    public class ShippingLine : Fragment
     {
         public string Code { get; set; }
 
@@ -60,7 +64,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     }
 
     // Da, Comrade Mulroney.
-    public class TaxLine
+    public class TaxLine : Fragment
     {
         public string Price { get; set; }
 
@@ -73,7 +77,7 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
     }
 
-    public class PaymentDetails
+    public class PaymentDetails : Fragment
     {
         public string AvsResultCode { get; set; }
 
@@ -90,7 +94,7 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
     }
 
-    public class ClientDetails
+    public class ClientDetails : Fragment
     {
         /// <summary>
         /// Presumably in ISO 639-2?
@@ -114,7 +118,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// for placement on a shipping label for international routing to the
     /// addressee.
     /// </summary>
-    public class Address
+    public class Address : Fragment
     {
         /// <summary>
         /// Line 1 of the street address.
@@ -174,9 +178,10 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// <summary>
     /// Per-order line items.  Seems to include a lot of content from Variant.
     /// 
-    /// Could have been a full (sub)resource, but it is not exposed by Shopify except as inlines.
+    /// Could have been a full (sub)resource, but it is not exposed by Shopify except
+    /// as inlines (there is no matching REST interface, so it can't be a full has_many)
     /// </summary>
-    public class LineItem
+    public class LineItem : Fragment
     {
         // TODO updated_at/created_at
 
