@@ -211,6 +211,18 @@ namespace ShopifyAPIAdapterLibrary
                 Path(), null, jsonString);
         }
 
+        public Task Save(T model)
+        {
+            if (model.IsNew())
+            {
+                return Create(model);
+            }
+            else
+            {
+                return Update(model);
+            }
+        }
+
         public async Task Update(T model)
         {
             if (model.Id == null)

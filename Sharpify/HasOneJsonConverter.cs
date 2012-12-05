@@ -49,6 +49,8 @@ namespace ShopifyAPIAdapterLibrary
 
             T model = serializer.Deserialize<T>(reader);
 
+            model.SetExisting();
+
             return new HasOneInline<T>(model);
         }
 

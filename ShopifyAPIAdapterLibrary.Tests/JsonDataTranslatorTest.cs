@@ -303,6 +303,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
                 @"{""region"": ""Illinois"", ""percentage"": 6.25}]}}";
             var decoded = DataTranslator.ResourceDecode<Transaction>("transaction", fixture);
             Assert.IsTrue(decoded.IsClean());
+            Assert.IsFalse(decoded.IsNew());
             Assert.AreEqual(48, decoded.Id);
             Assert.AreEqual(1, decoded.Taxes.Count);
             Assert.AreEqual(6.25, decoded.Taxes.ElementAt(0).Percentage);
@@ -340,10 +341,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
             Assert.AreEqual(48, decoded.Id);
             Assert.AreEqual(1, decoded.Taxes.Count);
             Assert.IsTrue(decoded.IsClean());
+            Assert.IsFalse(decoded.IsNew());
 
             var bankAnswer = decoded.Bank.Get();
             bankAnswer.Wait();
 
+            Assert.IsFalse(bankAnswer.Result.IsNew());
             Assert.IsTrue(bankAnswer.Result.IsClean());
             Assert.AreEqual("Mulligan Bank", bankAnswer.Result.Name);
             Assert.AreEqual(18, bankAnswer.Result.Id);

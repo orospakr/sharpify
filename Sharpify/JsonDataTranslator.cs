@@ -70,6 +70,7 @@ namespace ShopifyAPIAdapterLibrary
             IResourceModel model = (IResourceModel) serializer.Deserialize(reader, objectType);
             RecursionAvoidance = false;
             model.Reset();
+            model.SetExisting();
             return model;
         }
 
@@ -363,8 +364,5 @@ namespace ShopifyAPIAdapterLibrary
         /// The content type used by JSON
         /// </summary>
         public static readonly MediaTypeHeaderValue ContentType = new MediaTypeHeaderValue("application/json");
-
-
-
     }
 }

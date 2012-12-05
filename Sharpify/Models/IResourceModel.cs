@@ -7,7 +7,6 @@ namespace ShopifyAPIAdapterLibrary.Models
         bool IsClean();
     }
 
-
     [AttributeUsage(AttributeTargets.Property)]
     public class Inlinable : Attribute
     {
@@ -34,5 +33,9 @@ namespace ShopifyAPIAdapterLibrary.Models
         void Reset();
 
         bool IsFieldDirty(string field);
+
+        bool IsNew();
+
+        void SetExisting();
     }
 }

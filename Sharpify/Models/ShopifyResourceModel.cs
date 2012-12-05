@@ -81,6 +81,18 @@ namespace ShopifyAPIAdapterLibrary.Models
             }
         }
 
+        private bool _Existing = false;
+
+        public bool IsNew()
+        {
+            return !_Existing;
+        }
+
+        public void SetExisting()
+        {
+            _Existing = true;
+        }
+
         private DateTime _CreatedAt;
         public DateTime CreatedAt
         {
