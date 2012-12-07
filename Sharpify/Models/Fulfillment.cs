@@ -88,8 +88,8 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
 
 
-        private IList<LineItem> _LineItems;
-        public IList<LineItem> LineItems
+        private FragmentList<LineItem> _LineItems;
+        public FragmentList<LineItem> LineItems
         {
             get { return _LineItems; }
             set {

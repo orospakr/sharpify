@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace ShopifyAPIAdapterLibrary.Models
 {
+    //public interface IFragmentList<T> : IDirtiableList<T> where T : Fragment
+    //{
+    //}
+
     public class Fragment : DirtiableObject
+    {
+    }
+
+    public class FragmentList<T> : DirtiableList<T> where T : Fragment
     {
     }
 
@@ -226,6 +234,6 @@ namespace ShopifyAPIAdapterLibrary.Models
         // TODO: not really sure what this is
         public string VariantInventoryManagement { get; set; }
 
-        public IList<Property> Properties { get; set; }
+        public FragmentList<Property> Properties { get; set; }
     }
 }

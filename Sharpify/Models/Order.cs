@@ -270,8 +270,8 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
 
 
-        private IList<DiscountCode> _DiscountCodes;
-        public IList<DiscountCode> DiscountCodes
+        private FragmentList<DiscountCode> _DiscountCodes;
+        public FragmentList<DiscountCode> DiscountCodes
         {
             get { return _DiscountCodes; }
             set {
@@ -280,8 +280,8 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
 
 
-        private IList<Property> _NoteAttributes;
-        public IList<Property> NoteAttributes
+        private FragmentList<Property> _NoteAttributes;
+        public FragmentList<Property> NoteAttributes
         {
             get { return _NoteAttributes; }
             set {
@@ -301,8 +301,8 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
 
 
-        private IList<LineItem> _LineItems;
-        public IList<LineItem> LineItems
+        private FragmentList<LineItem> _LineItems;
+        public FragmentList<LineItem> LineItems
         {
             get { return _LineItems; }
             set {
@@ -311,8 +311,8 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
 
 
-        private IList<ShippingLine> _ShippingLines;
-        public IList<ShippingLine> ShippingLines
+        private FragmentList<ShippingLine> _ShippingLines;
+        public FragmentList<ShippingLine> ShippingLines
         {
             get { return _ShippingLines; }
             set {
@@ -321,8 +321,8 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
 
 
-        private IList<TaxLine> _TaxLines;
-        public IList<TaxLine> TaxLines
+        private FragmentList<TaxLine> _TaxLines;
+        public FragmentList<TaxLine> TaxLines
         {
             get { return _TaxLines; }
             set {

@@ -80,8 +80,8 @@ namespace ShopifyAPIAdapterLibrary.Models
         }
 
 
-        private IList<Rule> _Rules;
-        public IList<Rule> Rules
+        private FragmentList<Rule> _Rules;
+        public FragmentList<Rule> Rules
         {
             get { return _Rules; }
             set {
