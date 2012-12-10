@@ -28,15 +28,6 @@ def process_directory(models_path)
   Dir.glob(cs_glob) do |cs_file|
     puts "... #{cs_file}"
 
-    # we put all of our inlined complex types thare are not full
-    # ShopifyResourceModels in their own separate file to avoid them
-    # getting modified (matching the class derivation type from the
-    # regex would be a total nuisance).
-    if cs_file =~ /Fragments\.cs/i
-      puts "... skipping fragments."
-      next
-    end
-
     cs_file_path = cs_file
 
     cs_file_contents = ""

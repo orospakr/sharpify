@@ -12,16 +12,48 @@ namespace ShopifyAPIAdapterLibrary.Models
 
     public class Property : Fragment
     {
-        public string Name { get; set; }
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set {
+                SetProperty(ref _Name, value);
+            }
+        }
 
-        public string Value { get; set; }
+
+        private string _Value;
+        public string Value
+        {
+            get { return _Value; }
+            set {
+                SetProperty(ref _Value, value);
+            }
+        }
+
     }
 
     public class Receipt : Fragment
     {
-        public bool? Testcase { get; set; }
+        private bool? _Testcase;
+        public bool? Testcase
+        {
+            get { return _Testcase; }
+            set {
+                SetProperty(ref _Testcase, value);
+            }
+        }
 
-        public string Authorization { get; set; }
+
+        private string _Authorization;
+        public string Authorization
+        {
+            get { return _Authorization; }
+            set {
+                SetProperty(ref _Authorization, value);
+            }
+        }
+
 
         public Receipt()
         {
@@ -30,8 +62,24 @@ namespace ShopifyAPIAdapterLibrary.Models
 
     public class DiscountCode : Fragment
     {
-        public string Code { get; set; }
-        public double? Amount { get; set; }
+        private string _Code;
+        public string Code
+        {
+            get { return _Code; }
+            set {
+                SetProperty(ref _Code, value);
+            }
+        }
+
+        private double? _Amount;
+        public double? Amount
+        {
+            get { return _Amount; }
+            set {
+                SetProperty(ref _Amount, value);
+            }
+        }
+
 
         public DiscountCode()
         {
@@ -40,23 +88,79 @@ namespace ShopifyAPIAdapterLibrary.Models
 
     public class Rule : Fragment
     {
-        public string Column { get; set; }
+        private string _Column;
+        public string Column
+        {
+            get { return _Column; }
+            set {
+                SetProperty(ref _Column, value);
+            }
+        }
+
 
         // TODO: Enum
-        public string Relation { get; set; }
+        private string _Relation;
+        public string Relation
+        {
+            get { return _Relation; }
+            set {
+                SetProperty(ref _Relation, value);
+            }
+        }
 
-        public string Condition { get; set; }
+
+        private string _Condition;
+        public string Condition
+        {
+            get { return _Condition; }
+            set {
+                SetProperty(ref _Condition, value);
+            }
+        }
+
     }
 
     public class ShippingLine : Fragment
     {
-        public string Code { get; set; }
+        private string _Code;
+        public string Code
+        {
+            get { return _Code; }
+            set {
+                SetProperty(ref _Code, value);
+            }
+        }
 
-        public double? Price { get; set; }
 
-        public string Source { get; set; }
+        private double? _Price;
+        public double? Price
+        {
+            get { return _Price; }
+            set {
+                SetProperty(ref _Price, value);
+            }
+        }
 
-        public string Title { get; set; }
+
+        private string _Source;
+        public string Source
+        {
+            get { return _Source; }
+            set {
+                SetProperty(ref _Source, value);
+            }
+        }
+
+
+        private string _Title;
+        public string Title
+        {
+            get { return _Title; }
+            set {
+                SetProperty(ref _Title, value);
+            }
+        }
+
 
         public ShippingLine()
         {
@@ -66,11 +170,35 @@ namespace ShopifyAPIAdapterLibrary.Models
     // Da, Comrade Mulroney.
     public class TaxLine : Fragment
     {
-        public string Price { get; set; }
+        private string _Price;
+        public string Price
+        {
+            get { return _Price; }
+            set {
+                SetProperty(ref _Price, value);
+            }
+        }
 
-        public double? Rate { get; set; }
 
-        public string Title { get; set; }
+        private double? _Rate;
+        public double? Rate
+        {
+            get { return _Rate; }
+            set {
+                SetProperty(ref _Rate, value);
+            }
+        }
+
+
+        private string _Title;
+        public string Title
+        {
+            get { return _Title; }
+            set {
+                SetProperty(ref _Title, value);
+            }
+        }
+
 
         public TaxLine()
         {
@@ -79,15 +207,55 @@ namespace ShopifyAPIAdapterLibrary.Models
 
     public class PaymentDetails : Fragment
     {
-        public string AvsResultCode { get; set; }
+        private string _AvsResultCode;
+        public string AvsResultCode
+        {
+            get { return _AvsResultCode; }
+            set {
+                SetProperty(ref _AvsResultCode, value);
+            }
+        }
 
-        public string CreditCardBin { get; set; }
 
-        public string CvvResultCode { get; set; }
+        private string _CreditCardBin;
+        public string CreditCardBin
+        {
+            get { return _CreditCardBin; }
+            set {
+                SetProperty(ref _CreditCardBin, value);
+            }
+        }
 
-        public string CreditCardNumber { get; set; }
 
-        public string CreditCardCompany { get; set; }
+        private string _CvvResultCode;
+        public string CvvResultCode
+        {
+            get { return _CvvResultCode; }
+            set {
+                SetProperty(ref _CvvResultCode, value);
+            }
+        }
+
+
+        private string _CreditCardNumber;
+        public string CreditCardNumber
+        {
+            get { return _CreditCardNumber; }
+            set {
+                SetProperty(ref _CreditCardNumber, value);
+            }
+        }
+
+
+        private string _CreditCardCompany;
+        public string CreditCardCompany
+        {
+            get { return _CreditCardCompany; }
+            set {
+                SetProperty(ref _CreditCardCompany, value);
+            }
+        }
+
 
         public PaymentDetails()
         {
@@ -99,13 +267,45 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// <summary>
         /// Presumably in ISO 639-2?
         /// </summary>
-        public string AcceptLanguage { get; set; }
+        private string _AcceptLanguage;
+        public string AcceptLanguage
+        {
+            get { return _AcceptLanguage; }
+            set {
+                SetProperty(ref _AcceptLanguage, value);
+            }
+        }
 
-        public string BrowserIP { get; set; }
 
-        public string SessionHash { get; set; }
+        private string _BrowserIP;
+        public string BrowserIP
+        {
+            get { return _BrowserIP; }
+            set {
+                SetProperty(ref _BrowserIP, value);
+            }
+        }
 
-        public string UserAgent { get; set; }
+
+        private string _SessionHash;
+        public string SessionHash
+        {
+            get { return _SessionHash; }
+            set {
+                SetProperty(ref _SessionHash, value);
+            }
+        }
+
+
+        private string _UserAgent;
+        public string UserAgent
+        {
+            get { return _UserAgent; }
+            set {
+                SetProperty(ref _UserAgent, value);
+            }
+        }
+
 
         public ClientDetails()
         {
@@ -133,46 +333,150 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// <summary>
         /// City's written name, suitable for the delivery locale.
         /// </summary>
-        public string City { get; set; }
+        private string _City;
+        public string City
+        {
+            get { return _City; }
+            set {
+                SetProperty(ref _City, value);
+            }
+        }
 
-        public string Company { get; set; }
+
+        private string _Company;
+        public string Company
+        {
+            get { return _Company; }
+            set {
+                SetProperty(ref _Company, value);
+            }
+        }
+
 
         /// <summary>
         /// Country's written name, suitable for the delivery locale.
         /// </summary>
-        public string Country { get; set; }
+        private string _Country;
+        public string Country
+        {
+            get { return _Country; }
+            set {
+                SetProperty(ref _Country, value);
+            }
+        }
 
-        public string FirstName { get; set; }
 
-        public string LastName { get; set; }
+        private string _FirstName;
+        public string FirstName
+        {
+            get { return _FirstName; }
+            set {
+                SetProperty(ref _FirstName, value);
+            }
+        }
 
-        public double? Longitude { get; set; }
 
-        public double? Latitude { get; set; }
+        private string _LastName;
+        public string LastName
+        {
+            get { return _LastName; }
+            set {
+                SetProperty(ref _LastName, value);
+            }
+        }
 
-        public string Phone { get; set; }
+
+        private double? _Longitude;
+        public double? Longitude
+        {
+            get { return _Longitude; }
+            set {
+                SetProperty(ref _Longitude, value);
+            }
+        }
+
+
+        private double? _Latitude;
+        public double? Latitude
+        {
+            get { return _Latitude; }
+            set {
+                SetProperty(ref _Latitude, value);
+            }
+        }
+
+
+        private string _Phone;
+        public string Phone
+        {
+            get { return _Phone; }
+            set {
+                SetProperty(ref _Phone, value);
+            }
+        }
+
 
         /// <summary>
         /// Province/State subdivision written name, suitable for the delivery locale.
         /// </summary>
-        public string Provice { get; set; }
+        private string _Provice;
+        public string Provice
+        {
+            get { return _Provice; }
+            set {
+                SetProperty(ref _Provice, value);
+            }
+        }
 
-        public string Zip { get; set; }
+
+        private string _Zip;
+        public string Zip
+        {
+            get { return _Zip; }
+            set {
+                SetProperty(ref _Zip, value);
+            }
+        }
+
 
         /// <summary>
         /// Addressee's full name.
         /// </summary>
-        public string Name { get; set; }
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set {
+                SetProperty(ref _Name, value);
+            }
+        }
+
 
         /// <summary>
         /// ISO 3166-1.
         /// </summary>
-        public string CountryCode { get; set; }
+        private string _CountryCode;
+        public string CountryCode
+        {
+            get { return _CountryCode; }
+            set {
+                SetProperty(ref _CountryCode, value);
+            }
+        }
+
 
         /// <summary>
         /// ISO 3166-2.
         /// </summary>
-        public string ProviceCode { get; set; }
+        private string _ProviceCode;
+        public string ProviceCode
+        {
+            get { return _ProviceCode; }
+            set {
+                SetProperty(ref _ProviceCode, value);
+            }
+        }
+
     }
 
     /// <summary>
@@ -187,45 +491,165 @@ namespace ShopifyAPIAdapterLibrary.Models
 
 
         // TODO: Enum (or do we?  how changeable is the fulfillment services list?)
-        public string FulfillmentService { get; set; }
+        private string _FulfillmentService;
+        public string FulfillmentService
+        {
+            get { return _FulfillmentService; }
+            set {
+                SetProperty(ref _FulfillmentService, value);
+            }
+        }
 
-        public int? Grams { get; set; }
 
-        public string Id { get; set; }
+        private int? _Grams;
+        public int? Grams
+        {
+            get { return _Grams; }
+            set {
+                SetProperty(ref _Grams, value);
+            }
+        }
 
-        public double Price { get; set; }
+
+        private string _Id;
+        public string Id
+        {
+            get { return _Id; }
+            set {
+                SetProperty(ref _Id, value);
+            }
+        }
+
+
+        private double _Price;
+        public double Price
+        {
+            get { return _Price; }
+            set {
+                SetProperty(ref _Price, value);
+            }
+        }
+
 
         // I hope this works okay without being nested in a IResourceModel...
-        public IHasOne<Product> Product { get; set; }
+        private IHasOne<Product> _Product;
+        public IHasOne<Product> Product
+        {
+            get { return _Product; }
+            set {
+                SetProperty(ref _Product, value);
+            }
+        }
 
-        public int Quantity { get; set; }
 
-        public bool RequiresShipping { get; set; }
+        private int _Quantity;
+        public int Quantity
+        {
+            get { return _Quantity; }
+            set {
+                SetProperty(ref _Quantity, value);
+            }
+        }
 
-        public string SKU { get; set; }
+
+        private bool _RequiresShipping;
+        public bool RequiresShipping
+        {
+            get { return _RequiresShipping; }
+            set {
+                SetProperty(ref _RequiresShipping, value);
+            }
+        }
+
+
+        private string _SKU;
+        public string SKU
+        {
+            get { return _SKU; }
+            set {
+                SetProperty(ref _SKU, value);
+            }
+        }
+
 
         /// <summary>
         /// Seems to be the title of the referenced Product.
         /// </summary>
-        public string Title { get; set; }
+        private string _Title;
+        public string Title
+        {
+            get { return _Title; }
+            set {
+                SetProperty(ref _Title, value);
+            }
+        }
 
-        public IHasOne<Variant> Variant { get; set; }
+
+        private IHasOne<Variant> _Variant;
+        public IHasOne<Variant> Variant
+        {
+            get { return _Variant; }
+            set {
+                SetProperty(ref _Variant, value);
+            }
+        }
+
 
         /// <summary>
         /// A copy of the title of the reference Variant, for convenience.
         /// </summary>
-        public string VariantTitle { get; set; }
+        private string _VariantTitle;
+        public string VariantTitle
+        {
+            get { return _VariantTitle; }
+            set {
+                SetProperty(ref _VariantTitle, value);
+            }
+        }
 
-        public string Vendor { get; set; }
+
+        private string _Vendor;
+        public string Vendor
+        {
+            get { return _Vendor; }
+            set {
+                SetProperty(ref _Vendor, value);
+            }
+        }
+
 
         /// <summary>
         /// Seems to be the Title and the Variant title concatenated.
         /// </summary>
-        public string Name { get; set; }
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set {
+                SetProperty(ref _Name, value);
+            }
+        }
+
 
         // TODO: not really sure what this is
-        public string VariantInventoryManagement { get; set; }
+        private string _VariantInventoryManagement;
+        public string VariantInventoryManagement
+        {
+            get { return _VariantInventoryManagement; }
+            set {
+                SetProperty(ref _VariantInventoryManagement, value);
+            }
+        }
 
-        public IList<Property> Properties { get; set; }
+
+        private IList<Property> _Properties;
+        public IList<Property> Properties
+        {
+            get { return _Properties; }
+            set {
+                SetProperty(ref _Properties, value);
+            }
+        }
+
     }
 }
