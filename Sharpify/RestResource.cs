@@ -34,9 +34,9 @@ namespace ShopifyAPIAdapterLibrary
     {
         Task<T> Get(int id);
 
-        Task Create(T model);
+        Task<T> Create(T model);
 
-        Task Update(T model);
+        Task<T> Update(T model);
     }
 
     public interface IHasOneUntyped
@@ -205,13 +205,14 @@ namespace ShopifyAPIAdapterLibrary
             return TranslateObject(Name, resourceString);
         }
 
-        public async Task Create(T model) {
+        public async Task<T> Create(T model) {
             var jsonString = Context.ObjectTranslate<T>(Name, model);
-            await Context.CallRaw(HttpMethod.Post, Context.GetRequestContentType(),
+            var resourceString = await Context.CallRaw(HttpMethod.Post, Context.GetRequestContentType(),
                 Path(), null, jsonString);
+            return TranslateObject(Name, resourceString);
         }
 
-        public Task Save(T model)
+        public Task<T> Save(T model)
         {
             if (model.IsNew())
             {
@@ -223,15 +224,16 @@ namespace ShopifyAPIAdapterLibrary
             }
         }
 
-        public async Task Update(T model)
+        public async Task<T> Update(T model)
         {
             if (model.Id == null)
             {
                 throw new ShopifyUsageException("Model must have an ID in order to put an update.");
             }
             var resourceString = Context.ObjectTranslate<T>(Name, model);
-            await Context.CallRaw(HttpMethod.Put, Context.GetRequestContentType(),
+            var updatedResourceString = await Context.CallRaw(HttpMethod.Put, Context.GetRequestContentType(),
                 InstanceOrVerbPath(model.Id.ToString()), null, resourceString);
+            return TranslateObject(Name, updatedResourceString);
         }
 
         public IResourceView<T> Where(string field, string isEqualTo) {
@@ -493,7 +495,7 @@ namespace ShopifyAPIAdapterLibrary
     public class SubResource<T> : RestResource<T>, IHasMany<T> where T : IResourceModel, new()
     {
         public IParentableResource ParentResource;
-        public IResourceModel ParentInstance;
+        public IResourceModel ParentInstance;   
  
         public SubResource(IParentableResource parent, IResourceModel parentInstance, String name = null) : base(parent.Context, name : name)
         {

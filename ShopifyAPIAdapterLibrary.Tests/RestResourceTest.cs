@@ -298,15 +298,22 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var postRawExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Post,
                 JsonFormatExpectation(),
                 "/admin/robots/42/parts", null, "PART 988 JSON"));
-            postRawExpectation.Returns(TaskForResult<string>(""));
+            postRawExpectation.Returns(TaskForResult<string>("PART 988 REAL JSON"));
+
+            var resultTranslationExpectation = A.CallTo(() => Shopify.TranslateObject<Part>("part", "PART 988 REAL JSON"));
+            // it got the id of 90 on the server
+            var resultantPart = new Part() { Id = 90 };
+            resultTranslationExpectation.Returns(resultantPart);
 
             var answer = CalculonsParts.Create(partToPost);
 
             answer.Wait();
 
-
             translationExpectation.MustHaveHappened();
             postRawExpectation.MustHaveHappened();
+            resultTranslationExpectation.MustHaveHappened();
+
+            Assert.AreSame(resultantPart, answer.Result);
         }
 
         [Test]
