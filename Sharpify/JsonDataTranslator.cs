@@ -202,7 +202,7 @@ namespace ShopifyAPIAdapterLibrary
                     {
                         prop.ShouldSerialize = (obj) =>
                         {
-                            IResourceModel model = (IResourceModel)obj;
+                            IGranularDirtiable model = (IGranularDirtiable)obj;
                             return (model.IsFieldDirty(prop.UnderlyingName));
                         };
                     }

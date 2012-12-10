@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace ShopifyAPIAdapterLibrary.Models
 {
+    //public interface IFragmentList<T> : IDirtiableList<T> where T : Fragment
+    //{
+    //}
+
     public class Fragment : DirtiableObject
+    {
+    }
+
+    public class FragmentList<T> : DirtiableList<T> where T : Fragment
     {
     }
 
@@ -651,5 +659,6 @@ namespace ShopifyAPIAdapterLibrary.Models
             }
         }
 
+        public FragmentList<Property> Properties { get; set; }
     }
 }

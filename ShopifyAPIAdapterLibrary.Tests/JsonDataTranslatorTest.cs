@@ -11,13 +11,36 @@ using System.Threading.Tasks;
 
 namespace ShopifyAPIAdapterLibrary.Tests
 {
-    public class Tax
+    public class Tax : Fragment
     {
-        public string Region { get; set; }
+        private string _Region;
+        public string Region
+        {
+            get { return _Region; }
+            set
+            {
+                SetProperty(ref _Region, value);
+            }
+        }
 
-        public string Name { get; set; }
-
-        public double Percentage { get; set; }
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set
+            {
+                SetProperty(ref _Name, value);
+            }
+        }
+        private double _Percentage;
+        public double Percentage
+        {
+            get { return _Percentage; }
+            set
+            {
+                SetProperty(ref _Percentage, value);
+            }
+        }
     }
 
 
@@ -92,8 +115,8 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
 
-        private IList<Tax> _Taxes;
-        public IList<Tax> Taxes
+        private FragmentList<Tax> _Taxes;
+        public FragmentList<Tax> Taxes
         {
             get { return _Taxes; }
             set {
@@ -215,7 +238,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
                 Value = 0.10,
                 Receipient = "Sanders Aircraft",
                 FinancialStatus = "new",
-                Taxes = new List<Tax>{new Tax() { Name = "GST" }},
+                Taxes = new FragmentList<Tax>{new Tax() { Name = "GST" }},
                 SingleTax = new Tax() {Name = "Inline single flat object" },
                 Bank = new HasOneDeserializationPlaceholder<Bank>(999),
                 OriginatingInstitution = new HasOneDeserializationPlaceholder<Bank>(1000)
@@ -310,14 +333,14 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
-        public void ShouldSerializeObjectWithInlineFlatObject()
+        public void ShouldSerializeObjectWithInlineFragmentObject()
         {
             var c = new Transaction()
             {
                 Id = 77,
                 Currency = "NZD",
                 Receipient = "Weta Workshop",
-                Taxes = new List<Tax> {
+                Taxes = new FragmentList<Tax> {
                     new Tax { Region = "New Zealand", Percentage = 15}
                 }
             };

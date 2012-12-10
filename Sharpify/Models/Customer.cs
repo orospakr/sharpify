@@ -133,8 +133,8 @@ namespace ShopifyAPIAdapterLibrary.Models
         // even though ID fields appear in this one, I have to
         // treat it as a flat because there isn't
         // any has-many REST api (subresource) for it.
-        private IList<Address> _Addresses;
-        public IList<Address> Addresses
+        private FragmentList<Address> _Addresses;
+        public FragmentList<Address> Addresses
         {
             get { return _Addresses; }
             set {
