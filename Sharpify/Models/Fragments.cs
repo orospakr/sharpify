@@ -649,9 +649,8 @@ namespace ShopifyAPIAdapterLibrary.Models
             }
         }
 
-
-        private IList<Property> _Properties;
-        public IList<Property> Properties
+        private FragmentList<Property> _Properties;
+        public FragmentList<Property> Properties
         {
             get { return _Properties; }
             set {
@@ -659,6 +658,5 @@ namespace ShopifyAPIAdapterLibrary.Models
             }
         }
 
-        public FragmentList<Property> Properties { get; set; }
     }
 }
