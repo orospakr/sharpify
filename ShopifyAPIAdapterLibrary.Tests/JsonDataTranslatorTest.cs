@@ -275,12 +275,10 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             Assert.AreEqual("1001", decoded.transaction.originating_institution_id.ToString(), "changed has_one should turn up in JSON");
 
-            // inlined flat objects (this does not refer to has ones!) for now have no update tracking.
-            // they must always be included inline, for now, since we can't
-            // know if their innards have changed
+            // the single tax object was never reset, so is still dirty.
             Assert.AreEqual("Inline single flat object", decoded.transaction.single_tax.name.ToString());
 
-            // lists of inline flats also must also always go through
+            // the inline flat list is also dirty, so it'll come through too.
             Assert.AreEqual("GST", decoded.transaction.taxes[0].name.ToString());
         }
 
@@ -344,6 +342,57 @@ namespace ShopifyAPIAdapterLibrary.Tests
                     new Tax { Region = "New Zealand", Percentage = 15}
                 }
             };
+
+            var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", c);
+
+            dynamic decoded = JsonConvert.DeserializeObject(encoded);
+            Assert.AreEqual("77", decoded.transaction.id.ToString());
+            Assert.AreEqual(1, decoded.transaction.taxes.Count);
+            Assert.AreEqual("New Zealand", decoded.transaction.taxes[0].region.ToString());
+        }
+
+        [Test]
+        public void ShouldSkipSerializingCleanInlineFragmentList()
+        {
+            var c = new Transaction()
+            {
+                Id = 77,
+                Currency = "NZD",
+                Receipient = "Weta Workshop",
+                Taxes = new FragmentList<Tax> {
+                    new Tax { Region = "New Zealand", Percentage = 15}
+                }
+            };
+
+            c.Reset();
+            c.Taxes.Reset();
+            c.Taxes[0].Reset();
+
+            var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", c);
+
+            dynamic decoded = JsonConvert.DeserializeObject(encoded);
+
+            IEnumerable<JProperty> props = decoded.transaction.Properties();
+
+            Assert.IsFalse(ContainsField(props, "taxes"));
+
+            Assert.AreEqual("77", decoded.transaction.id.ToString());
+        }
+
+        [Test]
+        public void ShouldSerializeDirtyInlineFragmentListEvenIfModelIsClean()
+        {
+            var c = new Transaction()
+            {
+                Id = 77,
+                Currency = "NZD",
+                Receipient = "Weta Workshop",
+                Taxes = new FragmentList<Tax> {
+                    new Tax { Region = "New Zealand", Percentage = 15}
+                }
+            };
+
+            c.Reset();
 
             var encoded = DataTranslator.ResourceEncode<Transaction>("transaction", c);
 

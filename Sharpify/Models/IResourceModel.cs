@@ -19,7 +19,7 @@ namespace ShopifyAPIAdapterLibrary.Models
 
     /// <summary>
     /// Models that are to be used as full-fledged resources or subresources
-    /// (but inlined "flats" -- not has ones, mind -- needn't), should implement
+    /// (but inlined "fragments" -- not has ones, mind -- needn't), should implement
     /// this interface.
     /// </summary>
     public interface IResourceModel : INotifyPropertyChanged, IGranularDirtiable

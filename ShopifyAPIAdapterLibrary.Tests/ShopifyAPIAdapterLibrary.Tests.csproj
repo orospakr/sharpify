@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="DirtiableListTest.cs" />
     <Compile Include="HasOneJsonConverterTest.cs" />
     <Compile Include="Integration\LiveAPIServiceIntegrationTest.cs" />
     <Compile Include="JsonDataTranslatorTest.cs" />

@@ -18,9 +18,8 @@ namespace ShopifyAPIAdapterLibrary
     /// 
     /// should be reinstantiated for every new deserialization task.
     /// </summary>
-    public class ResourceConverter : JsonConverter
+    public abstract class WrappedConverter<T> : JsonConverter
     {
-
         /// <summary>
         /// We are currently in the midst of asking the stock JsonConverter
         /// to deserialize (using the default approach) the resource model.
@@ -47,13 +46,16 @@ namespace ShopifyAPIAdapterLibrary
         /// </summary>
         public override bool CanConvert(Type objectType)
         {
-            if(typeof(IResourceModel).IsAssignableFrom(objectType)) {
+            if (typeof(T).IsAssignableFrom(objectType))
+            {
                 // hooray for side effects :(
                 if (RecursionAvoidance)
                 {
                     RecursionAvoidance = false;
                     return false;
-                } else {
+                }
+                else
+                {
                     return true;
                 }
             }
@@ -67,12 +69,13 @@ namespace ShopifyAPIAdapterLibrary
                 throw new Exception("Crap.  Collision Avoidance should never be true here.");
             }
             RecursionAvoidance = true;
-            IResourceModel model = (IResourceModel) serializer.Deserialize(reader, objectType);
+            T model = (T)serializer.Deserialize(reader, objectType);
             RecursionAvoidance = false;
-            model.Reset();
-            model.SetExisting();
+            PostProcess(model);
             return model;
         }
+
+        public abstract void PostProcess(T obj);
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
@@ -85,6 +88,32 @@ namespace ShopifyAPIAdapterLibrary
             RecursionAvoidance = false;
         }
     }
+
+    public class ResourceConverter : WrappedConverter<IResourceModel>
+    {
+        public override void PostProcess(IResourceModel model)
+        {
+            model.Reset();
+            model.SetExisting();
+        }
+    }
+
+    public class FragmentConverter : WrappedConverter<Fragment>
+    {
+        public override void PostProcess(Fragment frag)
+        {
+            frag.Reset();
+        }
+    }
+
+    public class FragmentListConverter : WrappedConverter<UntypedDirtiableList>
+    {
+        public override void PostProcess(UntypedDirtiableList fragList)
+        {
+            fragList.Reset();
+        }
+    }
+
 
     public class ShopifyRestStyleJsonResolver : DefaultContractResolver
     {
@@ -196,9 +225,8 @@ namespace ShopifyAPIAdapterLibrary
 
                 if (typeof(IGranularDirtiable).IsAssignableFrom(type))
                 {
-                    // only ignore unchanged fields if they're "primitive" types, like ints, int?s, strings,
-                    // and not the main ID
-                    if((prop.PropertyType.IsPrimitive || prop.PropertyType.IsAssignableFrom(typeof(string))) && prop.PropertyName != "id")
+                    // the main ID field should always be included
+                    if(prop.PropertyName != "id")
                     {
                         prop.ShouldSerialize = (obj) =>
                         {
@@ -315,6 +343,8 @@ namespace ShopifyAPIAdapterLibrary
         {
             var settings = new JsonSerializerSettings() { ContractResolver = new ShopifyRestStyleJsonResolver(topLevelResourceName) };
             settings.Converters.Add(new ResourceConverter());
+            settings.Converters.Add(new FragmentConverter());
+            settings.Converters.Add(new FragmentListConverter());
             return settings;
         }
 
