@@ -38,6 +38,8 @@ namespace ShopifyAPIAdapterLibrary
 
         Task<T> Update<T1>(T model) where T1 : T, IMutable;
 
+        Task Delete<T1>(T model) where T1 : T, IDeletable;
+
         Task<T> Save<T1>(T model) where T1 : T, ICreatable, IMutable;
     }
 
@@ -206,6 +208,10 @@ namespace ShopifyAPIAdapterLibrary
         }
 
         public async Task<T> Create<T1>(T model) where T1 : T, ICreatable {
+            if (!model.IsNew())
+            {
+                throw new ShopifyUsageException("Cannot create an already existing resource model instance.");
+            }
             var jsonString = Context.ObjectTranslate<T>(Name, model);
             var resourceString = await Context.CallRaw(HttpMethod.Post, Context.GetRequestContentType(),
                 Path(), null, jsonString);
@@ -222,6 +228,16 @@ namespace ShopifyAPIAdapterLibrary
             {
                 return Update<T1>(model);
             }
+        }
+
+        public Task Delete<T1>(T model) where T1 : T, IDeletable
+        {
+            if (model.IsNew() || model.Id == null)
+            {
+                throw new ShopifyUsageException("Resource model instance must exist on the server and have an ID in order to delete it.");
+            }
+            return Context.CallRaw(HttpMethod.Delete, Context.GetRequestContentType(),
+                InstanceOrVerbPath(model.Id.ToString()), null, null);
         }
 
         public async Task<T> Update<T1>(T model) where T1 : T, IMutable

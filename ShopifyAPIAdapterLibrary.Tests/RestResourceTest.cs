@@ -337,6 +337,24 @@ namespace ShopifyAPIAdapterLibrary.Tests
         }
 
         [Test]
+        public void ShouldDeleteASubResourceRecord()
+        {
+            var partToPost = new Part() { Id = 83 };
+            partToPost.SetExisting();
+
+            var deleteRawExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Delete,
+                JsonFormatExpectation(),
+                "/admin/robots/42/parts/83", null, null));
+            deleteRawExpectation.Returns(TaskForResult<string>(""));
+
+            var answer = CalculonsParts.Delete<Part>(partToPost);
+
+            answer.Wait();
+
+            deleteRawExpectation.MustHaveHappened();
+        }
+
+        [Test]
         public void ShouldFetchASubResourceRecord()
         {
             var callRawExpectation = A.CallTo(() => Shopify.CallRaw(HttpMethod.Get,
