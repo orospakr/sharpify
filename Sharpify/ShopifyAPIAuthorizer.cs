@@ -62,7 +62,7 @@ namespace ShopifyAPIAdapterLibrary
         {
             var authURL = new StringBuilder();
 
-            authURL.AppendFormat("http://{0}.myshopify.com/admin/oauth/authorize", this._shopName);
+            authURL.AppendFormat("https://{0}.myshopify.com/admin/oauth/authorize", this._shopName);
             authURL.AppendFormat("?client_id={0}", this._apiKey);
 
             if (scope != null && scope.Length > 0)

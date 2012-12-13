@@ -321,7 +321,7 @@ namespace ShopifyAPIAdapterLibrary
 
         public UriBuilder ShopUri()
         {
-            return new UriBuilder(String.Format("http://{0}.myshopify.com/", ShopName));
+            return new UriBuilder(String.Format("https://{0}.myshopify.com/", ShopName));
         }
 
         public string AdminPath()
