@@ -9,9 +9,9 @@ namespace ShopifyAPIAdapterLibrary
 {
     public class PaginatedEnumerator<T> where T : IResourceModel, new()
     {
-        private IResourceView<T> Resource { get; set; }
+        private IRestResourceView<T> Resource { get; set; }
 
-        public PaginatedEnumerator(IResourceView<T> resource)
+        public PaginatedEnumerator(IRestResourceView<T> resource)
         {
             Resource = resource;
         }

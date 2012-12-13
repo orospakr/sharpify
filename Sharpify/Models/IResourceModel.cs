@@ -17,6 +17,10 @@ namespace ShopifyAPIAdapterLibrary.Models
     {
     }
 
+    public interface ISaveable
+    {
+    }
+
     /// <summary>
     /// Models that are to be used as full-fledged resources or subresources
     /// (but inlined "fragments" -- not has ones, mind -- needn't), should implement

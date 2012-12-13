@@ -120,7 +120,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
     }
 
     // our test subresource
-    public class Part : ShopifyResourceModel
+    public class Part : ShopifyResourceModel, ISaveable
     {
 
         private string _Sku;
@@ -305,7 +305,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var resultantPart = new Part() { Id = 90 };
             resultTranslationExpectation.Returns(resultantPart);
 
-            var answer = CalculonsParts.Create(partToPost);
+            var answer = CalculonsParts.Create<Part>(partToPost);
 
             answer.Wait();
 
@@ -328,7 +328,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
                 "/admin/robots/42/parts/9777", null, "PART 988 JSON"));
             putRawExpectation.Returns(TaskForResult<string>(""));
 
-            var answer = CalculonsParts.Update(partToPost);
+            var answer = CalculonsParts.Update<Part>(partToPost);
 
             answer.Wait();
 

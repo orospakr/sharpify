@@ -27,7 +27,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         /// (http://stackoverflow.com/questions/7559354/faking-mocking-an-interface-gives-no-default-constructor-error-how-can-that-b)
         /// So I have to make own mocks the old fashioned way.
         /// </summary>
-        public class ResourcePageMock : IResourceView<Customer>
+        public class ResourcePageMock : IRestResourceView<Customer>
         {
             private int PageNumber;
             private int ItemCount;
@@ -54,17 +54,17 @@ namespace ShopifyAPIAdapterLibrary.Tests
                 return pageContents;
             }
 
-            public IResourceView<Customer> Page(int p)
+            public IRestResourceView<Customer> Page(int p)
             {
                 throw new NotImplementedException();
             }
 
-            public IResourceView<Customer> Where(System.Linq.Expressions.Expression<Func<Customer, object>> propertyLambda, string isEqualTo)
+            public IRestResourceView<Customer> Where(System.Linq.Expressions.Expression<Func<Customer, object>> propertyLambda, string isEqualTo)
             {
                 throw new NotImplementedException();
             }
 
-            public IResourceView<Customer> Where(string field, string isEqualTo)
+            public IRestResourceView<Customer> Where(string field, string isEqualTo)
             {
                 throw new NotImplementedException();
             }
@@ -110,7 +110,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             }
         }
 
-        public class PaginatedResourceMock : IResourceView<Customer>
+        public class PaginatedResourceMock : IRestResourceView<Customer>
         {
             private int PageToReturnEmptyAt;
 
@@ -129,7 +129,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
                 throw new NotImplementedException();
             }
 
-            public IResourceView<Customer> Page(int p)
+            public IRestResourceView<Customer> Page(int p)
             {
                 if (p <= PageToReturnEmptyAt)
                 {
@@ -141,12 +141,12 @@ namespace ShopifyAPIAdapterLibrary.Tests
                 }
             }
 
-            public IResourceView<Customer> Where(System.Linq.Expressions.Expression<Func<Customer, object>> propertyLambda, string isEqualTo)
+            public IRestResourceView<Customer> Where(System.Linq.Expressions.Expression<Func<Customer, object>> propertyLambda, string isEqualTo)
             {
                 throw new NotImplementedException();
             }
 
-            public IResourceView<Customer> Where(string field, string isEqualTo)
+            public IRestResourceView<Customer> Where(string field, string isEqualTo)
             {
                 throw new NotImplementedException();
             }

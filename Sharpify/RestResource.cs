@@ -30,13 +30,15 @@ namespace ShopifyAPIAdapterLibrary
         string InstancePath(int p);
     }
 
-    public interface IHasMany<T> : IUntypedResource
+    public interface IHasMany<T> : IUntypedResource, IRestResourceView<T> where T : IResourceModel, new()
     {
         Task<T> Get(int id);
 
-        Task<T> Create(T model);
+        Task<T> Create<T1>(T model) where T1 : T, ISaveable;
 
-        Task<T> Update(T model);
+        Task<T> Update<T1>(T model) where T1 : T, ISaveable;
+
+        Task<T> Save<T1>(T model) where T1 : T, ISaveable;
     }
 
     public interface IHasOneUntyped
@@ -72,7 +74,7 @@ namespace ShopifyAPIAdapterLibrary
         Type GetModelType();
     }
 
-    public interface IResourceView<T> : IUntypedResource
+    public interface IRestResourceView<T> : IUntypedResource
         where T : IResourceModel, new() 
     {
         /// <summary>
@@ -98,11 +100,11 @@ namespace ShopifyAPIAdapterLibrary
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        IResourceView<T> Page(int p);
+        IRestResourceView<T> Page(int p);
 
-        IResourceView<T> Where(Expression<Func<T, object>> propertyLambda, string isEqualTo);
+        IRestResourceView<T> Where(Expression<Func<T, object>> propertyLambda, string isEqualTo);
 
-        IResourceView<T> Where(string field, string isEqualTo);
+        IRestResourceView<T> Where(string field, string isEqualTo);
 
         Task CallAction(T instance, string action);
 
@@ -111,7 +113,7 @@ namespace ShopifyAPIAdapterLibrary
         NameValueCollection FullParameters();
     }
 
-    public class RestResource<T> : IResourceView<T>, IParentableResource where T : IResourceModel, new()
+    public class RestResource<T> : IRestResourceView<T>, IParentableResource, IRestResource<T> where T : IResourceModel, new()
     {
         public IShopifyAPIClient Context { get; protected set; }
 
@@ -205,26 +207,26 @@ namespace ShopifyAPIAdapterLibrary
             return TranslateObject(Name, resourceString);
         }
 
-        public async Task<T> Create(T model) {
+        public async Task<T> Create<T1>(T model) where T1 : T, ISaveable {
             var jsonString = Context.ObjectTranslate<T>(Name, model);
             var resourceString = await Context.CallRaw(HttpMethod.Post, Context.GetRequestContentType(),
                 Path(), null, jsonString);
             return TranslateObject(Name, resourceString);
         }
 
-        public Task<T> Save(T model)
+        public Task<T> Save<T1>(T model) where T1 : T, ISaveable
         {
             if (model.IsNew())
             {
-                return Create(model);
+                return Create<T1>(model);
             }
             else
             {
-                return Update(model);
+                return Update<T1>(model);
             }
         }
 
-        public async Task<T> Update(T model)
+        public async Task<T> Update<T1>(T model) where T1 : T, ISaveable
         {
             if (model.Id == null)
             {
@@ -236,11 +238,11 @@ namespace ShopifyAPIAdapterLibrary
             return TranslateObject(Name, updatedResourceString);
         }
 
-        public IResourceView<T> Where(string field, string isEqualTo) {
+        public IRestResourceView<T> Where(string field, string isEqualTo) {
             return new RestResource<T>(this, new NameValueCollection { { field, isEqualTo } });
         }
 
-        public IResourceView<T> Page(int page)
+        public IRestResourceView<T> Page(int page)
         {
             return this.Where("page", page.ToString());
         }
@@ -309,7 +311,7 @@ namespace ShopifyAPIAdapterLibrary
         }
 
 
-        public IResourceView<T> Where(Expression<Func<T, object>> propertyLambda, string isEqualTo)
+        public IRestResourceView<T> Where(Expression<Func<T, object>> propertyLambda, string isEqualTo)
         {
             // http://merrickchaffer.blogspot.ca/2012/03/accessing-properties-in-c-using-lambda.html
             var memberExpression = propertyLambda.Body as MemberExpression;
