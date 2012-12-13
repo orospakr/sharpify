@@ -12,7 +12,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Customer_%28API%29
     /// </summary>
     [Paginated]
-    public class Customer : ShopifyResourceModel
+    public class Customer : ShopifyResourceModel, ISaveable
     {
         private bool _AcceptsMarketing;
         public bool AcceptsMarketing

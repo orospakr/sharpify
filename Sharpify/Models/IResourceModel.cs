@@ -17,6 +17,15 @@ namespace ShopifyAPIAdapterLibrary.Models
     {
     }
 
+    /// <summary>
+    /// Used to tag resources that are mutable on the REST service.
+    /// 
+    /// (Create, Update, Delete).
+    /// 
+    /// There may be a few exceptions to this, which will become
+    /// apparent on attempts to use those operations on certain
+    /// resources at runtime.
+    /// </summary>
     public interface ISaveable
     {
     }

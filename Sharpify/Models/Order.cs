@@ -14,7 +14,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Order_%28API%29
     /// </summary>
     [Paginated]
-    public class Order : ShopifyResourceModel
+    public class Order : ShopifyResourceModel, ISaveable
     {
         // TODO updated_at/created_at
         private bool? _BuyerAcceptsMarketing;

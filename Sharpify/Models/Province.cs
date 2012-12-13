@@ -11,8 +11,10 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Province_%28API%29
     /// </summary>
-    public class Province: ShopifyResourceModel
+    public class Province: ShopifyResourceModel, ISaveable
     {
+        // actually not deletable, but ISaveable will do.
+
         /// <summary>
         /// ISO 3166-2 Alpha 2 Subdivision Code.
         /// </summary>

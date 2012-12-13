@@ -57,8 +57,6 @@ namespace ShopifyAPIAdapterLibrary
     {
     }
 
-
-
     public interface IHasOne<T> : IHasOneUntyped where T : IResourceModel
     {
         // Retrieve the resource associated with the parent object.

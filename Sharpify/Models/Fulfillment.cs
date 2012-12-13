@@ -12,7 +12,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Fulfillment_%28API%29
     /// </summary>
     [Paginated]
-    public class Fulfillment : ShopifyResourceModel
+    public class Fulfillment : ShopifyResourceModel, ISaveable
     {
 
         // TODO Second-half of HasMany<> that must be implemented

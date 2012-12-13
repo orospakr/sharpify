@@ -14,7 +14,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// A persistent filter of Products.
     /// </summary>
     [Paginated]
-    public class SmartCollection : ShopifyResourceModel
+    public class SmartCollection : ShopifyResourceModel, ISaveable
     {
         private string _BodyHTML;
         public string BodyHTML

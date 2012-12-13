@@ -11,7 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Blog_%28API%29
     /// </summary>
-    public class Blog : ShopifyResourceModel
+    public class Blog : ShopifyResourceModel, ISaveable
     {
         // TODO: Enum, because they "yes"/"no" instead of true/false here for some reason
         private string _Commentable;

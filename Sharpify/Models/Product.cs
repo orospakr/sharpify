@@ -9,7 +9,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Product_%28API%29
     /// </summary>
     [Paginated]
-    public class Product : ShopifyResourceModel
+    public class Product : ShopifyResourceModel, ISaveable
     {
         private string _BodyHtml;
         public string BodyHtml

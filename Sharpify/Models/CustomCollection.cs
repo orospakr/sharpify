@@ -12,7 +12,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// Aka "CustomCollection", annoyingly.
     /// </summary>
     [Paginated]
-    public class CustomCollection : ShopifyResourceModel
+    public class CustomCollection : ShopifyResourceModel, ISaveable
     {
         private string _BodyHTML;
         public string BodyHTML
