@@ -30,17 +30,8 @@ namespace ShopifyAPIAdapterLibrary
         string InstancePath(int p);
     }
 
-    public interface IHasMany<T> : IUntypedResource, IRestResourceView<T> where T : IResourceModel, new()
+    public interface IHasMany<T> : IUntypedResource, IRestResource<T> where T : IResourceModel, new()
     {
-        Task<T> Get(int id);
-
-        Task<T> Create<T1>(T model) where T1 : T, ICreatable;
-
-        Task<T> Update<T1>(T model) where T1 : T, IMutable;
-
-        Task Delete<T1>(T model) where T1 : T, IDeletable;
-
-        Task<T> Save<T1>(T model) where T1 : T, ICreatable, IMutable;
     }
 
     public interface IHasOneUntyped

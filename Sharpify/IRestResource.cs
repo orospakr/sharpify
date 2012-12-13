@@ -1,7 +1,7 @@
 ﻿using System;
 namespace ShopifyAPIAdapterLibrary
 {
-    interface IRestResource<T>
+    public interface IRestResource<T> : IRestResourceView<T>
      where T : ShopifyAPIAdapterLibrary.Models.IResourceModel, new()
     {
         System.Threading.Tasks.Task<System.Collections.Generic.IList<T>> AsList();
