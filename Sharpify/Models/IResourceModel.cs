@@ -18,15 +18,32 @@ namespace ShopifyAPIAdapterLibrary.Models
     }
 
     /// <summary>
-    /// Used to tag resources that are mutable on the REST service.
+    /// Tags resources that can be deleted (DELETE).
+    /// </summary>
+    public interface IDeletable
+    {
+    }
+
+    /// <summary>
+    /// Tags resources that can be created (POST).
+    /// </summary>
+    public interface ICreatable
+    {
+    }
+
+    /// <summary>
+    /// Tags resources that can be modified (PUT).
+    /// </summary>
+    public interface IMutable
+    {
+    }
+
+    /// <summary>
+    /// Used to tag resources that are fully mutable on the REST service.
     /// 
     /// (Create, Update, Delete).
-    /// 
-    /// There may be a few exceptions to this, which will become
-    /// apparent on attempts to use those operations on certain
-    /// resources at runtime.
     /// </summary>
-    public interface ISaveable
+    public interface IFullMutable : ICreatable, IDeletable, IMutable
     {
     }
 

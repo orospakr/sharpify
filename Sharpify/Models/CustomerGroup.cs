@@ -15,7 +15,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// preset for selecting customers.
     /// </summary>
     [Paginated]
-    public class CustomerGroup : ShopifyResourceModel, ISaveable
+    public class CustomerGroup : ShopifyResourceModel, IFullMutable
     {
         private string _Name;
         public string Name

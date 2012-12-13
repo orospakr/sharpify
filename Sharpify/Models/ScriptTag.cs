@@ -12,7 +12,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Script_Tag_%28API%29
     /// </summary>
     [Paginated]
-    public class ScriptTag : ShopifyResourceModel, ISaveable
+    public class ScriptTag : ShopifyResourceModel, IFullMutable
     {
         /// <summary>
         /// Name of JS-subscrible event emitted by the Browser's Document API

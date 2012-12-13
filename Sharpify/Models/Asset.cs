@@ -11,7 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Asset_%28API%29
     /// </summary>
-    public class Asset : ShopifyResourceModel, ISaveable
+    public class Asset : ShopifyResourceModel, IFullMutable
     {
 
         private string _Key;

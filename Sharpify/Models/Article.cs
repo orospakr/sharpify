@@ -12,7 +12,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://wiki.shopify.com/Article_%28API%29
     /// </summary>
     [Paginated]
-    public class Article : ShopifyResourceModel, ISaveable
+    public class Article : ShopifyResourceModel, IFullMutable
     {
 
         private string _Author;

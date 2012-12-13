@@ -13,7 +13,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// Aka ProductImage.
     /// </summary>
-    public class Image : ShopifyResourceModel, IResourceModel, ISaveable
+    public class Image : ShopifyResourceModel, IResourceModel, ICreatable, IDeletable
     {
         private IHasOne<Product> _Product;
         public IHasOne<Product> Product

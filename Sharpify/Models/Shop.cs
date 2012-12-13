@@ -10,6 +10,10 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// http://api.shopify.com/shop.html
     /// 
     /// http://wiki.shopify.com/Shop_%28API%29
+    /// 
+    /// This resource is special in that it is a singleton
+    /// (at least as far as a given auth context/ShopifyApiClient
+    /// is concerned), and as such is not hosted in a RestResource.
     /// </summary>
     public class Shop : ShopifyResourceModel
     {

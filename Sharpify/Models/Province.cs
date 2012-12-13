@@ -11,7 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Province_%28API%29
     /// </summary>
-    public class Province: ShopifyResourceModel, ISaveable
+    public class Province: ShopifyResourceModel, IMutable
     {
         // actually not deletable, but ISaveable will do.
 

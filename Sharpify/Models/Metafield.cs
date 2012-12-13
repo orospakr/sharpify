@@ -19,7 +19,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// way to do it.  They have the benefit of being accessible through
     /// Liquid templates on Shopify itself, too.
     /// </summary>
-    public class Metafield : ShopifyResourceModel, ISaveable
+    public class Metafield : ShopifyResourceModel, IFullMutable
     {
         private string _Description;
         public string Description

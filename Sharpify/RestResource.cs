@@ -34,11 +34,11 @@ namespace ShopifyAPIAdapterLibrary
     {
         Task<T> Get(int id);
 
-        Task<T> Create<T1>(T model) where T1 : T, ISaveable;
+        Task<T> Create<T1>(T model) where T1 : T, ICreatable;
 
-        Task<T> Update<T1>(T model) where T1 : T, ISaveable;
+        Task<T> Update<T1>(T model) where T1 : T, IMutable;
 
-        Task<T> Save<T1>(T model) where T1 : T, ISaveable;
+        Task<T> Save<T1>(T model) where T1 : T, ICreatable, IMutable;
     }
 
     public interface IHasOneUntyped
@@ -205,14 +205,14 @@ namespace ShopifyAPIAdapterLibrary
             return TranslateObject(Name, resourceString);
         }
 
-        public async Task<T> Create<T1>(T model) where T1 : T, ISaveable {
+        public async Task<T> Create<T1>(T model) where T1 : T, ICreatable {
             var jsonString = Context.ObjectTranslate<T>(Name, model);
             var resourceString = await Context.CallRaw(HttpMethod.Post, Context.GetRequestContentType(),
                 Path(), null, jsonString);
             return TranslateObject(Name, resourceString);
         }
 
-        public Task<T> Save<T1>(T model) where T1 : T, ISaveable
+        public Task<T> Save<T1>(T model) where T1 : T, ICreatable, IMutable
         {
             if (model.IsNew())
             {
@@ -224,7 +224,7 @@ namespace ShopifyAPIAdapterLibrary
             }
         }
 
-        public async Task<T> Update<T1>(T model) where T1 : T, ISaveable
+        public async Task<T> Update<T1>(T model) where T1 : T, IMutable
         {
             if (model.Id == null)
             {

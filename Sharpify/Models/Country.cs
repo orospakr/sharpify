@@ -11,7 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Countries_%28API%29
     /// </summary>
-    public class Country : ShopifyResourceModel, ISaveable
+    public class Country : ShopifyResourceModel, IFullMutable
     {
         /// <summary>
         /// ISO 3166-1 Alpha-2 Country Code.

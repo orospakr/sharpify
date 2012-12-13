@@ -120,7 +120,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
     }
 
     // our test subresource
-    public class Part : ShopifyResourceModel, ISaveable
+    public class Part : ShopifyResourceModel, IFullMutable
     {
 
         private string _Sku;

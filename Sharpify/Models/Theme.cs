@@ -11,7 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Theme_%28API%29
     /// </summary>
-    public class Theme : ShopifyResourceModel, ISaveable
+    public class Theme : ShopifyResourceModel, IFullMutable
     {
         private string _Name;
         public string Name

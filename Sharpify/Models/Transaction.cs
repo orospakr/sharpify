@@ -11,7 +11,7 @@ namespace ShopifyAPIAdapterLibrary.Models
     /// 
     /// http://wiki.shopify.com/Transaction_%28API%29
     /// </summary>
-    public class Transaction : ShopifyResourceModel, ISaveable
+    public class Transaction : ShopifyResourceModel, ICreatable
     {
         private Double _Amount;
         public Double Amount
