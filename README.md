@@ -1,11 +1,16 @@
-# shopify.net
+# Sharpify
 
-Lightweight object-oriented .NET client for the Shopify API.
+Type-safe, asynchronous, object-oriented .NET adapter for the Shopify
+API, derived from Colin McDonald's original lightweight dynamic
+adapter.
 
 ## Author
 
-Colin McDonald - [colinmcdonald.ca](http://colinmcdonald.ca)
-Andrew Clunis - [andrew@orospakr.ca](andrew@orospakr.ca)
+Copyright (c) 2012 Andrew Clunis <[andrew@orospakr.ca](andrew@orospakr.ca)>
+
+Copyright (c) 2012 Colin McDonald [colinmcdonald.ca](http://colinmcdonald.ca)
+
+Licensed under the MIT license.
 
 ## Requirements
 
@@ -15,8 +20,19 @@ Andrew Clunis - [andrew@orospakr.ca](andrew@orospakr.ca)
 
 ## Installation
 
-For now, the easiest and only, download the source code and add the
-project to your solution.
+I do not yet offer a NuGet package.  For now, the easiest and only
+method is download the source code and add the project to your
+solution.  I recommend using a git submodule, with something like
+this:
+
+    git submodule add git://github.com/orospakr/sharpify dependencies/Sharpify
+    
+MonoDevelop and Visual Studio 2012 happily consume the sln and csproj
+without problems.
+
+For now, I added all of the dependencies as binaries for the purpose
+of convenience into the repository because NuGet isn't usable on Mono,
+so no additional step for installing the secondary deps is necessary.
 
 If, on Mono, you get Web Security crypto exceptions, try importing
 Mozilla's trusted CA list into Mono by running:
@@ -26,6 +42,12 @@ Mozilla's trusted CA list into Mono by running:
 (alternatively, you could try manually importing the certificate of
 the CA shopify uses by using Mono's `certmgr` tool.)
 
+NB. For all that, a
+[bug](https://bugzilla.xamarin.com/show_bug.cgi?id=8829) in Mono 3.0
+currently breaks Sharpify, preventing use on Linux and Mac OS X.  A
+fix has already been committed to upstream Mono's master, so it should
+presumably start working in the next release.  Sorry about that.
+
 ## Shopify API Authorization
 
 In order to understand how shopify authorizes your code to make API
@@ -34,6 +56,22 @@ document:
 [Shopify API Authentication](http://api.shopify.com/authentication.html)
 
 ### ShopifyAPIAuthorizer
+
+THINGS I GOTTA DOC:
+
+-- auth procedure
+
+-- explain resources succinctly
+
+-- resource fetch procedure
+
+-- " save and delete
+
+-- explain error handling
+
+-- explain subresources succinctly
+
+-- mention that the dynamic Colin McDonald interface still exists
 
 This is the class in this library that will enable your code to
 quickly authorize your app.
@@ -132,7 +170,9 @@ This is a quick litte example to show you how you would use the ShopifyAPIAuthor
 
 ```
 
-## Shopify API Usage
+## Usage
+
+
 
 In order to use the Shopify API you will have to become intimate
 knowledge-wise with this documentation:
@@ -319,8 +359,14 @@ Shopify Blog objects.
 Included is a test suite, include both unit and integration tests.
 You'll need a NUnit harness to run them.
 
-To run the integration tests (ie., test the Adapter against the actual
-upstream service.
+To run the *live* integration tests (ie., test the Adapter against the
+actual upstream service:
+
+(note that the live integration tests can't test with great coverage
+because they can't guarantee what fixture data is in your test store,
+and what data is there will likely differ from mine and produce
+different results.  Still, this harness is convenient to have in
+development, if nothing else)
 
 1. Sign up for a [Shopify Partner account](http://www.shopify.com/partners);
 
