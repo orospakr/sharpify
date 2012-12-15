@@ -65,12 +65,26 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// </summary>
         int? Id { get; set; }
 
+        /// <summary>
+        /// Marks this resource model as clean (ie., forgets that
+        /// any fields have changed).
+        /// </summary>
         void Reset();
 
+        /// <summary>
+        /// Has this resource model come from the remote service?
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
         bool IsFieldDirty(string field);
 
         bool IsNew();
 
+        /// <summary>
+        /// Marks this resource model as existing on the server.
+        /// 
+        /// The deserializer typically hits this.
+        /// </summary>
         void SetExisting();
     }
 }

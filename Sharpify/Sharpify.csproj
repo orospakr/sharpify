@@ -90,7 +90,7 @@
     <Compile Include="Models\Webhook.cs" />
     <Compile Include="PaginatedEnumerator.cs" />
     <Compile Include="ShopifyAPIAuthorizer.cs" />
-    <Compile Include="ShopifyApiClient.cs" />
+    <Compile Include="ShopifyApiContext.cs" />
     <Compile Include="JsonDataTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShopifyAuthorizationState.cs" />

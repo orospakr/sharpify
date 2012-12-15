@@ -12,7 +12,7 @@ namespace SampleWebApp.Controllers
     [ShopifyAuthorize]
     public class BlogsController : Controller
     {
-        ShopifyAPIClient _shopify;
+        ShopifyAPIContext _shopify;
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -20,7 +20,7 @@ namespace SampleWebApp.Controllers
             ShopifyAuthorizationState authState = ShopifyAuthorize.GetAuthorizationState(this.HttpContext);
             if (authState != null)
             {
-                _shopify = new ShopifyAPIClient(authState, new JsonDataTranslator());
+                _shopify = new ShopifyAPIContext(authState, new JsonDataTranslator());
             }
         }
 

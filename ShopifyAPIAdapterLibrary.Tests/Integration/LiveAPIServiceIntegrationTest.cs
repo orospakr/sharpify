@@ -29,7 +29,7 @@ namespace ShopifyAPIAdapterLibrary.Tests.Integration
         }
 
         String TestStoreName;
-        ShopifyAPIClient ShopifyClient;
+        ShopifyAPIContext ShopifyClient;
 
         public LiveAPIServiceIntegrationTest ()
         {
@@ -70,7 +70,7 @@ namespace ShopifyAPIAdapterLibrary.Tests.Integration
 
                 Console.WriteLine ("Attempting to authorize against store " + TestStoreName);
                 var sa = new ShopifyAPIAdapterLibrary.ShopifyAPIAuthorizer (TestStoreName, ConfigurationManager.AppSettings ["Shopify.TestAppKey"], ConfigurationManager.AppSettings ["Shopify.TestAppSecret"]);
-                var authUrl = sa.GetAuthorizationURL (new string[] { "write_content,write_themes,write_products,write_customers,write_script_tags,write_orders" }, ConfigurationManager.AppSettings ["Shopify.TestHttpServerUri"]);
+                var authUrl = sa.GetAuthorizationURL (new string[] { "write_content", "write_themes", "write_products", "write_customers", "write_script_tags", "write_orders" }, ConfigurationManager.AppSettings ["Shopify.TestHttpServerUri"]);
                 Console.WriteLine (authUrl);
 
 
@@ -88,7 +88,7 @@ namespace ShopifyAPIAdapterLibrary.Tests.Integration
                 // acquire our authorization token for actual API requests
                 AuthorizationState = authTask.Result;
 
-                ShopifyClient = new ShopifyAPIClient (AuthorizationState, new JsonDataTranslator ());
+                ShopifyClient = new ShopifyAPIContext (AuthorizationState, new JsonDataTranslator ());
             } catch (Exception e) {
                 using (var fd = new StreamWriter("sharpify_test_before_fixture_error.txt")) {
                     fd.Write (e.ToString ());

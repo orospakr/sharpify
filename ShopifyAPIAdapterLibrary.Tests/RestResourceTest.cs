@@ -149,7 +149,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
         }
 
-        public IShopifyAPIClient Shopify { get; set; }
+        public IShopifyAPIContext Shopify { get; set; }
 
         public RestResource<Robot> Robots { get; set; }
 
@@ -167,7 +167,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [SetUp]
         public void BeforeEach()
         {
-            Shopify = A.Fake<IShopifyAPIClient>();
+            Shopify = A.Fake<IShopifyAPIContext>();
             A.CallTo(() => Shopify.AdminPath()).Returns("/admin");
             A.CallTo(() => Shopify.GetRequestContentType()).Returns(new MediaTypeHeaderValue("application/json"));
 

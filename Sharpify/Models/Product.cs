@@ -59,6 +59,16 @@ namespace ShopifyAPIAdapterLibrary.Models
                 SetProperty(ref _Title, value);
             }
         }
+
+        private string _ProductType;
+        public string ProductType
+        {
+            get { return _ProductType; }
+            set
+            {
+                SetProperty(ref _ProductType, value);
+            }
+        }
  
 
         private string _Vendor;

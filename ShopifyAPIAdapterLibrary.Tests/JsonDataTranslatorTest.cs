@@ -208,7 +208,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
 
             // this bit is for testing that the SubResource proxies
             // don't mess with the serialization process
-            var shopify = A.Fake<IShopifyAPIClient>();
+            var shopify = A.Fake<IShopifyAPIContext>();
             var transactions = new RestResource<Transaction>(shopify);
             c.SKUs = new SubResource<SKU>(transactions, c);
 

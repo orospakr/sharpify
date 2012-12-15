@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace ShopifyAPIAdapterLibrary
 {
 
-    public interface IShopifyAPIClient
+    public interface IShopifyAPIContext
     {
         string AdminPath();
         Task<object> Call(System.Net.Http.HttpMethod method, string path, System.Collections.Specialized.NameValueCollection parameters = null, object data = null);

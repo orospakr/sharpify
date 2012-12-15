@@ -14,7 +14,9 @@ using System.ComponentModel;
 namespace ShopifyAPIAdapterLibrary
 {
     /// <summary>
-    /// NOT THREAD SAFE
+    /// Modify objects of the provided type just after dserialization completes.
+    /// 
+    /// NOT THREAD SAFE (ie., do not use for multiple deserialization tasks at once).
     /// 
     /// should be reinstantiated for every new deserialization task.
     /// </summary>
@@ -128,7 +130,7 @@ namespace ShopifyAPIAdapterLibrary
 
         protected override string ResolvePropertyName(string propertyName)
         {
-            return ShopifyAPIClient.Underscoreify(propertyName);
+            return ShopifyAPIContext.Underscoreify(propertyName);
         }
 
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
@@ -154,7 +156,7 @@ namespace ShopifyAPIAdapterLibrary
                 // is property a HasOne?
                 if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(IHasOne<>))
                 {
-                    var underscorized = ShopifyAPIClient.Underscoreify(prop.PropertyName);
+                    var underscorized = ShopifyAPIContext.Underscoreify(prop.PropertyName);
 
                     // get type argument of IHasOne
                     var hasOneTargetType = prop.PropertyType.GetGenericArguments();

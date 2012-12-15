@@ -58,7 +58,7 @@ namespace ShopifyAPIAdapterLibrary
 
     public interface IParentableResource
     {
-        IShopifyAPIClient Context { get; }
+        IShopifyAPIContext Context { get; }
 
         string InstanceOrVerbPath(string id);
 
@@ -106,7 +106,7 @@ namespace ShopifyAPIAdapterLibrary
 
     public class RestResource<T> : IRestResourceView<T>, IParentableResource, IRestResource<T> where T : IResourceModel, new()
     {
-        public IShopifyAPIClient Context { get; protected set; }
+        public IShopifyAPIContext Context { get; protected set; }
 
         public string Name { get; protected set; }
 
@@ -130,12 +130,12 @@ namespace ShopifyAPIAdapterLibrary
         /// Default is underscorized from the model type.
         /// </param>
         // TODO: put name back as an optional
-        public RestResource(IShopifyAPIClient context, string name = null) {
+        public RestResource(IShopifyAPIContext context, string name = null) {
             Context = context;
 
             if (name == null)
             {
-                Name = ShopifyAPIClient.Underscoreify(typeof(T).Name);
+                Name = ShopifyAPIContext.Underscoreify(typeof(T).Name);
             }
             else
             {
@@ -167,11 +167,11 @@ namespace ShopifyAPIAdapterLibrary
         }
         
         public virtual string Path() {
-            return ShopifyAPIClient.UriPathJoin(Context.AdminPath(), ShopifyAPIClient.Pluralize(Name));
+            return ShopifyAPIContext.UriPathJoin(Context.AdminPath(), ShopifyAPIContext.Pluralize(Name));
         }
         
         public string InstanceOrVerbPath(string id) {
-            return ShopifyAPIClient.UriPathJoin(Path(), id);
+            return ShopifyAPIContext.UriPathJoin(Path(), id);
         }
 
         public string InstancePath(int id)
@@ -280,7 +280,7 @@ namespace ShopifyAPIAdapterLibrary
             return model;
         }
 
-        private static void RecurseThroughAllHasOneProperties(IShopifyAPIClient shopify, IResourceModel model)
+        private static void RecurseThroughAllHasOneProperties(IShopifyAPIContext shopify, IResourceModel model)
         {
             // change all placeholders (which tell us the ID that was on the _id) into single
             // instance subresources (lives ones that are Get()able)
@@ -393,7 +393,7 @@ namespace ShopifyAPIAdapterLibrary
             // TODO warn developer from putting an inline resource in that itself contains a full SubResource
 
             var resourceString = await Context.CallRaw(HttpMethod.Get, Context.GetRequestContentType(), Path(), parameters: FullParameters(), requestBody: null);
-            var list = Context.TranslateObject<List<T>>(ShopifyAPIClient.Pluralize(Name), resourceString);
+            var list = Context.TranslateObject<List<T>>(ShopifyAPIContext.Pluralize(Name), resourceString);
             foreach (var model in list)
             {
                 PlaceResourceProxesOnModel(model);
@@ -434,7 +434,7 @@ namespace ShopifyAPIAdapterLibrary
         {
             await Context.CallRaw(HttpMethod.Post,
                 Context.GetRequestContentType(),
-                ShopifyAPIClient.UriPathJoin(InstancePath(instance.Id.Value), action), FullParameters(), null);
+                ShopifyAPIContext.UriPathJoin(InstancePath(instance.Id.Value), action), FullParameters(), null);
         }
 
         public Task CallAction(T instance, Expression<Func<T, SpecialAction>> actionPropertyLambda)
@@ -458,7 +458,7 @@ namespace ShopifyAPIAdapterLibrary
             {
                 throw new ShopifyUsageException("Actions can only be called on models with an ID.");
             }
-            var action = ShopifyAPIClient.Underscoreify(prop.Name);
+            var action = ShopifyAPIContext.Underscoreify(prop.Name);
             return CallAction(instance, action);
         }
 
@@ -520,22 +520,22 @@ namespace ShopifyAPIAdapterLibrary
 
         public override string Path()
         {
-            return ShopifyAPIClient.UriPathJoin(ParentResource.InstanceOrVerbPath(ParentInstance.Id.ToString()), ShopifyAPIClient.Pluralize(Name));
+            return ShopifyAPIContext.UriPathJoin(ParentResource.InstanceOrVerbPath(ParentInstance.Id.ToString()), ShopifyAPIContext.Pluralize(Name));
         }
     }
 
     public class SingleInstanceSubResource<T> : IHasOne<T>, IHasOneAsIdUntyped where T : IResourceModel, new()
     {
-        public IShopifyAPIClient Context { get; set; }
+        public IShopifyAPIContext Context { get; set; }
         public int Id { get; set; }
 
-        public SingleInstanceSubResource(IShopifyAPIClient context, int id)
+        public SingleInstanceSubResource(IShopifyAPIContext context, int id)
         {
             Context = context;
             Id = id;
         }
 
-        public SingleInstanceSubResource(IShopifyAPIClient context, T model)
+        public SingleInstanceSubResource(IShopifyAPIContext context, T model)
         {
             Context = context;
             Set(model);

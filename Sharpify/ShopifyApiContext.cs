@@ -16,13 +16,16 @@ using Newtonsoft.Json.Linq;
 namespace ShopifyAPIAdapterLibrary
 {
     /// <summary>
-    /// This class is used to make Shopify API calls 
+    /// Use the Shopify API in the context of a given store, with the provided authorization.
+    /// 
+    /// This object contains the set of top-level Shopify REST API "resources" (such as "order", "customer", and so on) which you can request, create resource 
+    /// 
     /// </summary>
     /// <remarks>
     /// You will first need to use the ShopifyAPIAuthorizer to obtain the required authorization.
     /// </remarks>
     /// <seealso cref="http://api.shopify.com/"/>
-    public class ShopifyAPIClient : ShopifyAPIAdapterLibrary.IShopifyAPIClient
+    public class ShopifyAPIContext : ShopifyAPIAdapterLibrary.IShopifyAPIContext
     {
         /// <summary>
         /// Programmatically-accessible mapping of IResourceModels to
@@ -42,7 +45,7 @@ namespace ShopifyAPIAdapterLibrary
         /// Creates an instance of this class for use with making API Calls
         /// </summary>
         /// <param name="state">the authorization state required to make the API Calls</param>
-        public ShopifyAPIClient(ShopifyAuthorizationState state)
+        public ShopifyAPIContext(ShopifyAuthorizationState state)
         {
             this.State = state;
             SetUpResources();
@@ -53,7 +56,7 @@ namespace ShopifyAPIAdapterLibrary
         /// </summary>
         /// <param name="state">the authorization state required to make the API Calls</param>
         /// <param name="translator">the translator used to transform the data between your C# client code and the Shopify API</param>
-        public ShopifyAPIClient(ShopifyAuthorizationState state, IDataTranslator translator)
+        public ShopifyAPIContext(ShopifyAuthorizationState state, IDataTranslator translator)
         {
             this.State = state;
             this.Translator = translator;
