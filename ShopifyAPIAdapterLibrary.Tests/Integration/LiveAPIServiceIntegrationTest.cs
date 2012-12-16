@@ -179,7 +179,7 @@ namespace ShopifyAPIAdapterLibrary.Tests.Integration
             Assert.AreEqual("Rearden Metal", (string)getResult.product.title);
 
             // and with the typesafe api:
-            var getTypeTask = ShopifyClient.GetResource<Product>().Get(Int32.Parse(newId));
+            var getTypeTask = ShopifyClient.GetResource<Product>().Find(Int32.Parse(newId));
             getTypeTask.Wait();
             Assert.AreEqual("Rearden Metal", getTypeTask.Result.Title);
         }

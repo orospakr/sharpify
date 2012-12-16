@@ -15,7 +15,7 @@ namespace ShopifyAPIAdapterLibrary
         void Has<H>(T belongsTo, System.Linq.Expressions.Expression<Func<T, IHasOne<H>>> propertyLambda, H hasOne) where H : ShopifyAPIAdapterLibrary.Models.IResourceModel, new();
         string Name { get; }
         System.Threading.Tasks.Task<T> Create<T1>(T model) where T1 : T, ShopifyAPIAdapterLibrary.Models.ICreatable;
-        System.Threading.Tasks.Task<T> Get(int id);
+        System.Threading.Tasks.Task<T> Find(int id);
         System.Threading.Tasks.Task<T> Update<T1>(T model) where T1 : T, ShopifyAPIAdapterLibrary.Models.IMutable;
         System.Threading.Tasks.Task Delete<T1>(T model) where T1 : T, ShopifyAPIAdapterLibrary.Models.IDeletable;
         System.Threading.Tasks.Task<T> Save<T1>(T model) where T1 : T, ShopifyAPIAdapterLibrary.Models.ICreatable, ShopifyAPIAdapterLibrary.Models.IMutable;

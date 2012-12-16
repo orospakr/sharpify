@@ -193,7 +193,7 @@ namespace ShopifyAPIAdapterLibrary
             return Context.TranslateObject<int>("count", countString);
         }
         
-        public async Task<T> Get(int id) {
+        public async Task<T> Find(int id) {
             var resourceString = await Context.CallRaw(HttpMethod.Get, Context.GetRequestContentType(), InstancePath(id), parameters: FullParameters(), requestBody: null);
             return TranslateObject(Name, resourceString);
         }
@@ -543,7 +543,7 @@ namespace ShopifyAPIAdapterLibrary
 
         public async Task<T> Get()
         {
-            return await Context.GetResource<T>().Get(Id);
+            return await Context.GetResource<T>().Find(Id);
         }
 
         private void Set(T model)

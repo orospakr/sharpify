@@ -275,7 +275,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             // TODO: .Get will start setting
 
             translationExpectation.Returns(translatedRobot);
-            var answer = Robots.Get(89);
+            var answer = Robots.Find(89);
             answer.Wait();
 
             Assert.AreSame(answer.Result, translatedRobot);
@@ -366,7 +366,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             var translatedPart = new Part { Id = 69 };
             translationExpectation.Returns(translatedPart);
 
-            var answer = CalculonsParts.Get(69);
+            var answer = CalculonsParts.Find(69);
             answer.Wait();
 
             Assert.AreSame(translatedPart, answer.Result);
@@ -387,7 +387,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             };
             translationExpectation.Returns(translatedRobot);
 
-            var answer = Robots.Get(420);
+            var answer = Robots.Find(420);
             answer.Wait();
 
             getRobotExpectation.MustHaveHappened();
@@ -418,7 +418,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
             };
             translationExpectation.Returns(translatedRobot);
 
-            var answer = Robots.Get(420);
+            var answer = Robots.Find(420);
             answer.Wait(1000);
 
             getRobotExpectation.MustHaveHappened();
