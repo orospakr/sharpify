@@ -6,10 +6,6 @@ using System.Threading.Tasks;
 
 namespace ShopifyAPIAdapterLibrary.Models
 {
-    //public interface IFragmentList<T> : IDirtiableList<T> where T : Fragment
-    //{
-    //}
-
     public class Fragment : DirtiableObject
     {
     }

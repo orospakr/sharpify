@@ -467,7 +467,7 @@ namespace ShopifyAPIAdapterLibrary.Tests
         [Test]
         public void ShouldCallActionsByProperty()
         {
-            Robots.CallAction(Calculon, (robot) => robot.Explode);
+            Robots.CallAction(Calculon, () => Calculon.Explode);
              A.CallTo(() => Shopify.CallRaw(HttpMethod.Post,
                 JsonFormatExpectation(),
                 "/admin/robots/42/explode", EmptyQueryParametersExpectation(),

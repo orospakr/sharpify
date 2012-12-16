@@ -184,7 +184,7 @@ RestResource<Order> Orders = shopify.GetResource<Order>();
 ### Fetch a Model instance
 
 ```csharp
-Product engine = await Products.Get(1083);
+Product engine = await Products.Find(1083);
 ```
 
 ### Update a Model instance
@@ -201,8 +201,8 @@ NB. It's necessary for you to pass the resource type again into the
 only saveable resources can be passed to these methods.  The compiler
 won't let you get it wrong.
 
-If the Shopify API adds anything to your model on save, it'll show up
-in the returned object.  The original object will not be mutated.
+If the Shopify API modifies your model on save, it'll show up in the
+returned object.  The original object will not be mutated.
 
 ### Create a Model instance
 
@@ -215,6 +215,23 @@ The same guarantees regarding object immutability apply here.
 
 (The day I can buy the above product on Shopify my life will be
 complete)
+
+### Special Per-Model Actions
+
+Some resource models, such as `Order`, have special actions you can
+perform.  For instance, `Order` has `Cancel`, `Close`, and `Open`.
+
+```csharp
+var order = await Orders.Find(77);
+Orders.CallAction(order, () => order.Cancel);
+```
+
+Alternatively, the action can be named by string:
+
+```csharp
+var order = await Orders.Find(77);
+Orders.CallAction(order, "cancel");
+```
 
 ### Fetch all Models in a Resource
 
@@ -264,7 +281,7 @@ Get the resource model instance from the server pointed to by a
 
 ```csharp
 // Get the customer
-var customer = Customers.Find(99);
+var customer = await Customers.Find(99);
 
 // For illustration, let a local variable equal the IHasOne<T> itself
 IHasOne<Order> lastOrder = customer.LastOrder;
@@ -289,7 +306,7 @@ Customers.Save<Customer>(customer);
 
 ```csharp
 // Get the order
-var order = Orders.Get(66);
+var order = await Orders.Find(66);
 
 // For illustration, let a local variable equal the IHasMany<T> itself
 IHasMany<Fulfillment> fulfillments = order.Fulfillments;
@@ -304,8 +321,9 @@ var fulfillmentsList = fulfillments.AsList();
 ### "Fragments"
 
 There's a few inlined complex types on a few of the resources, but
-they're not full REST resources.  Just treat them as the simply
-serialized POCO objects, as the types will indicate.
+they're not full REST resources, such as the list of `DiscountCode`s
+on `Order`.  Just treat them as the simply serialized POCO objects, as
+the types will indicate.
 
 ### Events
 

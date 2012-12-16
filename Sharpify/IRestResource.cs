@@ -5,7 +5,7 @@ namespace ShopifyAPIAdapterLibrary
      where T : ShopifyAPIAdapterLibrary.Models.IResourceModel, new()
     {
         System.Threading.Tasks.Task<System.Collections.Generic.IList<T>> AsList();
-        System.Threading.Tasks.Task CallAction(T instance, System.Linq.Expressions.Expression<Func<T, SpecialAction>> actionPropertyLambda);
+        System.Threading.Tasks.Task CallAction(T instance, System.Linq.Expressions.Expression<Func<SpecialAction>> actionPropertyLambda);
         System.Threading.Tasks.Task CallAction(T instance, string action);
         System.Threading.Tasks.Task<int> Count();
 

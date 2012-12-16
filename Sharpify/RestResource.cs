@@ -97,10 +97,6 @@ namespace ShopifyAPIAdapterLibrary
 
         IRestResourceView<T> Where(string field, string isEqualTo);
 
-        Task CallAction(T instance, string action);
-
-        Task CallAction(T instance, Expression<Func<T, SpecialAction>> actionPropertyLambda);
-
         NameValueCollection FullParameters();
     }
 
@@ -437,7 +433,7 @@ namespace ShopifyAPIAdapterLibrary
                 ShopifyAPIContext.UriPathJoin(InstancePath(instance.Id.Value), action), FullParameters(), null);
         }
 
-        public Task CallAction(T instance, Expression<Func<T, SpecialAction>> actionPropertyLambda)
+        public Task CallAction(T instance, Expression<Func<SpecialAction>> actionPropertyLambda)
         {
             var memberExpression = actionPropertyLambda.Body as MemberExpression;
             if (memberExpression == null)
