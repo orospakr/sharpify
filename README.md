@@ -4,7 +4,7 @@ Type-safe, asynchronous, object-oriented .NET adapter for the Shopify
 API, derived from Colin McDonald's original lightweight dynamic
 adapter.
 
-## Author
+## Authors
 
 Copyright (c) 2012 Andrew Clunis <[andrew@orospakr.ca](andrew@orospakr.ca)>
 
@@ -40,13 +40,14 @@ Mozilla's trusted CA list into Mono's CA list by running:
     mozroots --import
 
 (alternatively, you could try manually importing the certificate of
-the CA shopify uses by using Mono's `certmgr` tool.)
+the CA shopify uses by using Mono's `certmgr` tool)
 
 NB. For all that, a
 [bug](https://bugzilla.xamarin.com/show_bug.cgi?id=8829) in Mono 3.0
 currently breaks Sharpify, preventing use on Linux and Mac OS X.  A
-fix has already been committed to upstream Mono's master, so it should
-presumably start working in the next release.  Sorry about that.
+fix has already been committed to upstream Mono's master branch, so it
+should presumably start working in the next release.  Sorry about
+that.
 
 ## Design Principles
 
@@ -58,35 +59,39 @@ recommended that you review the
 
 After obtaining your authorization token, you can create a
 `ShopifyApiContext` from which in turn you can get access to the
-RestResource objects, which can fetch and push individual model
+`RestResource` objects, which can fetch and push individual model
 objects (an Order, Customer, and so on).
 
 However, unlike ActiveRecord and ActiveResource, the model instances
 themselves do not offer any identity guarantee.  That is, when you ask
-a RestResource object to save one of these or fetch the same ID, it
+a `RestResource` object to save one of these or fetch the same ID, it
 always will pass you a new instance.  The only state in the resource
 models themselves aside from the actual data is tracking of field
 dirtiness.
 
 In the Rails tradition of modelling associations, "has one" and "has
-many"-style relationships are implemented.  However, here they are
-implemented with explicit containers (identifiable by IHasOne<T> and
-IHasMany<T>) instead of implicit proxies.
+many"-style relationships are such that they are trivially traversable
+from the model objects.  However, here they are implemented with
+explicit containers (identifiable by `IHasOne<T>` and `IHasMany<T>`)
+instead of implicit proxies.
 
 ## Usage
 
-### Shopify API Authorization
+### Get Authorized
 
-In order to understand how shopify authorizes your code to make API
-calls for a certain shopify customer, I recommend reading this
+In order to understand how Shopify authorizes your app to make API
+calls for a certain Shopify customer, I recommend reading this
 document:
 [Shopify API Authentication](http://api.shopify.com/authentication.html).
 
+You'll need to repeat this procedure for any store owner that desires
+to offer you access to their store.
+
 Instantiate ShopifyAPIAuthorizer with your customer's store you wish
 to authorize against (generally the subdomain from
-https://:store_name.myshopify.com").  You'll need your app's API key
-and API shared secret, as provided by your account on Shopify Partners
-interface.
+`https://[:store_name].myshopify.com`).  You'll need your app's API
+key and API shared secret, as provided by your account on Shopify
+Partners interface.
 
 ```csharp
 var sa = new ShopifyAPIAuthorizer ("TARGET STORE NAME",
@@ -95,7 +100,7 @@ var sa = new ShopifyAPIAuthorizer ("TARGET STORE NAME",
 ```
 
 Then, ask the `Authorizer` to give you an authorization URL to send
-your app's user to.  Specifying the REST interface portions you want
+your app's user to, specifying the REST interface portions you want
 permission for
 ([the full list of permissions](http://api.shopify.com/authentication.html#scopes)).
 
@@ -104,11 +109,12 @@ authorization code will be returned to (as a query parameter,
 `?code=`).  Note that the Shopify authorization service redirects the
 app user's browser to this URI.  This URI needs to be nested within
 the URI you provided when creating the app in the partners interface.
-The Shopify service itself never attempts to fetch this URL.
+Note that the Shopify service itself never attempts to fetch this URL.
 
 If your app already has authorization for this store with the same
 permissions list, the service will immediately redirect the user's
-browser to your redirect URI.
+browser to your redirect URI (that is, Shopify will not display the
+authorization UI).
 
 ```
 var authUrl = sa.GetAuthorizationURL (new string[] { "write_content",
@@ -121,19 +127,23 @@ var authUrl = sa.GetAuthorizationURL (new string[] { "write_content",
 ```
                                           
 Sharpify can't really provide you with any means of receiving the
-code.  You're own your own.
+temporary auth code.  You're own your own.
                                           
 If you're developing a webapp that consumes the Shopify API, it's
-likely a simple matter of adding an endpoint to your app that will
-check the user's browser session and grab the auth code.
+likely a simple matter of adding an HTTP endpoint to your app that
+will check the user's browser session and grab the temporary auth code
+from the query parameters.
 
 If you're developing a desktop app, it's a bit trickier.  One approach
-is to find some way of instrumenting the webview you've embedded in
-your app with a signal handler for noticing navigation.  With this
-method, no HTTP server running at the other end of the URI is
-necessary.  Alternatively, you could run a local HTTP server with the
-sole purpose of grabbing the code, which is the method the live
-integration test suite for Sharpify uses.
+is to find some way of instrumenting the webview you've necessarily
+embedded in your app (needed for displaying the Shopify App
+authorization UI to the shop owner) with a signal handler for noticing
+navigation.  With this method, no HTTP server running at the other end
+of the URI is necessary.  Alternatively, you could run a local HTTP
+server with the sole purpose of grabbing the code, which is the method
+the live integration test suite for Sharpify uses (I did it this way
+in order to avoid a complicated dependency on a specific browser
+engine).
 
 Then, there's one final task: take that temporary authorization code
 and request the service to provide you with a permanent access token
@@ -157,7 +167,7 @@ your saved access token for that shop).
 var shopify = new ShopifyAPIContext(authState, new JsonDataTranslator());
 ```
     
-(for now, always give it the new `JsonDataTranslator`)
+(for now, always give it the `JsonDataTranslator`)
 
 RestResource objects, as provided by
 `ShopifyAPIContext#GetResource<T>()` where T is the type of the
@@ -243,6 +253,10 @@ against.
 
 ### Linked Models ("has one")
 
+Many resource models sometimes contain or refer to another resource,
+such as an Order referring to the Customer that made it.  Here's how
+to deal with those:
+
 #### Get a Has One
 
 Get the resource model instance from the server pointed to by a
@@ -312,6 +326,10 @@ not be hidden from the URLs of the API or the ways in which the API
 will require the data to be passed.  Note that this approach does not
 handle pagination or any other higher-level details.
 
+It may prove a useful and quick alternative for any operations that
+turn out to be be buggy or be otherwise deficient in the fancy
+type-safe API.
+
 ### Get a Model with the Dynamic API
 
 Get all Products (on a single page) from the API as a string.
@@ -325,8 +343,8 @@ object data = await api.Get("/admin/products.json");
 // use your favorite JSON library to decode the string into a C# object
 ```
 
-Get all Products (on the first page) from the API as a JObject from
-json.net, suitable for use with `dynamic`:
+Alternatively, get all Products (on the first page) from the API as a
+JObject from json.net, suitable for use with `dynamic`:
 
 ```csharp
 // pass the supplied JSON Data Translator
@@ -441,9 +459,10 @@ development, if nothing else)
    authorization.  The first time you run the test suite, Shopify will
    prompt you to add the Test App you created to your test store.
 
-Testing protip: if a unit test (ie., not an integration) test hangs, the problem may be
-that a null Task being returned by a mock receiving an unexpected call.  Temporarily add
-some sane length of delay to the blocking Wait() statements used in the test, and see
-if you get an error from the mock that displays a list of unexpected calls.
+Testing protip: if a unit test (ie., not an integration) test hangs,
+the problem may be that a null Task being returned by a mock receiving
+an unexpected call.  Temporarily add some sane length of delay to the
+blocking Wait() statements used in the test, and see if you get an
+error from the mock that displays a list of unexpected calls.
 
 ## Happy Trading!
