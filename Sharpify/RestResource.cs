@@ -21,8 +21,14 @@ namespace ShopifyAPIAdapterLibrary
     /// </summary>
     public interface IUntypedResource
     {
+        /// <summary>
+        /// Return the type of models (always inherits from IResourceModel) used by this resource?
+        /// </summary>
         Type GetModelType();
 
+        /// <summary>
+        /// Request the number of models this resource will match on the service.
+        /// </summary>
         Task<int> Count();
 
         string Path();
@@ -80,23 +86,35 @@ namespace ShopifyAPIAdapterLibrary
         /// Fetch and buffer the entire set of records matched by this resource,
         /// and return them all together.
         /// </summary>
-        /// <returns></returns>
         Task<IList<T>> AsListUnpaginated();
 
+        /// <summary>
+        /// Fetch and buffer up all resource models matched by this resource view on the service
+        /// and return them in a list.
+        /// </summary>
         Task<IList<T>> AsList();
 
         /// <summary>
         /// Returns a new view of this resource filtered to a specific page (for
         /// paginated resources).
         /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
         IRestResourceView<T> Page(int p);
 
+        /// <summary>
+        /// Return a new view of this RestResource with the specified additional field
+        /// constraint added.
+        /// </summary>
+        /// <param name="propertyLambda"></param>
+        /// <param name="isEqualTo"></param>
+        /// <returns></returns>
         IRestResourceView<T> Where(Expression<Func<T, object>> propertyLambda, string isEqualTo);
 
         IRestResourceView<T> Where(string field, string isEqualTo);
 
+        /// <summary>
+        /// Returns the full set of query string parameters that this resource view
+        /// will pass to the REST API.
+        /// </summary>
         NameValueCollection FullParameters();
     }
 
@@ -139,8 +157,6 @@ namespace ShopifyAPIAdapterLibrary
             }
         }
 
-        // protected RestResource(IShopifyAPIClient context, string name, bool registerAsToplevel
-
         public RestResource(RestResource<T> parent, NameValueCollection queryParameters) {
             this.Context = parent.Context;
             this.Parent = parent;
@@ -150,7 +166,6 @@ namespace ShopifyAPIAdapterLibrary
 
         public NameValueCollection FullParameters() {
             var r = (Parent != null) ? new NameValueCollection(Parent.FullParameters()) : new NameValueCollection();
-           // var r = Parent.QueryParameters);
 
             if (QueryParameters != null)
             {
@@ -311,7 +326,6 @@ namespace ShopifyAPIAdapterLibrary
             }
         }
 
-
         public IRestResourceView<T> Where(Expression<Func<T, object>> propertyLambda, string isEqualTo)
         {
             // http://merrickchaffer.blogspot.ca/2012/03/accessing-properties-in-c-using-lambda.html
@@ -332,62 +346,6 @@ namespace ShopifyAPIAdapterLibrary
         }
 
         public async Task<IList<T>> AsListUnpaginated() {
-            // TODO Need an async/streamed version.
-            // ICollection is okay for now. we buffer up all the answers before returning them.
-            // actually, the thing this returns needs to offer
-
-            // ANDREW start here: once finished dealing with silly untyped combinatoric
-            // impedances(lol), make sure that build up of nested RestResources with query
-            // parameter filters works (make test) DONE
-
-            // then add creation of query parameters with cute func-to-property-name c#
-            // idiom WhereAsync method DONE
-
-            // Min/max updated_at and created_at where() things
-
-            // then go on to make my own IAsyncResourceSet (kind of like ICollection, but
-            // appropriate for this and also async) that RestResource inherits.
-
-            // then make the subresources (Shopify Article in Blog, for instance) by having
-            // the IAsyncQueryable set on the models which is actually a RestResource with
-            // the appropriate filter on (or, rather, concatenated paths) DONE
-
-            // then go on to make mutation work on those subresource IAsyncResourceSet work
-            // (just take the QueryParamter filter and naiively set those same fields on the
-            // incoming model POCO, perhaps? review list of query params for how appropriate
-            // this approach could be)
-
-            // Inline subresources?  We do want it to work.
-            // Does Shopify have any of these?
-
-            // TODO: inline singles (has_a): actually, this should Just Work already
-            // TODO: inline multiples (has_many)
-
-            // TODO: paging.  this should be abstracted behind, ienumerable style
-
-            // what approach I should use? if an inline is found, should
-            // I make an entirely different IAsyncCollection and set it
-            // on the field OR...
-            // ... should I have RestResource have a notion of a cached/
-            // preloaded list?
-            // OR... when deserializing, as it is, inline list models should be
-            // automatically added to a simple ICollection by json.net
-            // perhaps we should only put our proxies in *if* they come up null
-            // ... but wait, if I do that then:
-            //     -- when serializing the top-level object, the serializer will reach
-            //        down and hit a proxy, and try to fetch everything from the proxy,
-            //        reserialize it, and then pushing it to the server (actually, this can happen to any arrangement where I have proxies)
-            //        -- could use IContractResolver to filter out such proxies at serialization time
-            //     -- also, say if any proxies are skipped, it means that if a user naiively
-            //        adds an item to a subresource collection, in some cases adding it will directly
-            //        push it to the server, and in others it just modifies a local List<>.
-            // perhaps ahead of time explicit stating of what's inline and what's not is better?
-            // so, use of IInlineResource<T> (implements ICollection) for inlines and ISubResource<T> for proxied.
-
-            // then go on to add Count to IAsyncResourceSet and RestResource
-
-            // TODO warn developer from putting an inline resource in that itself contains a full SubResource
-
             var resourceString = await Context.CallRaw(HttpMethod.Get, Context.GetRequestContentType(), Path(), parameters: FullParameters(), requestBody: null);
             var list = Context.TranslateObject<List<T>>(ShopifyAPIContext.Pluralize(Name), resourceString);
             foreach (var model in list)
@@ -495,6 +453,9 @@ namespace ShopifyAPIAdapterLibrary
         }
     }
 
+    /// <summary>
+    /// Represents a nested REST subresource, a "has many" relationship.
+    /// </summary>
     public class SubResource<T> : RestResource<T>, IHasMany<T> where T : IResourceModel, new()
     {
         public IParentableResource ParentResource;

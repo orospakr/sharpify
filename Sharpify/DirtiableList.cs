@@ -102,8 +102,8 @@ namespace ShopifyAPIAdapterLibrary
 
         public bool Remove(T item)
         {
-            return _Wrapped.Remove(item);
             _Dirty = true;
+            return _Wrapped.Remove(item);
         }
 
         public IEnumerator<T> GetEnumerator()

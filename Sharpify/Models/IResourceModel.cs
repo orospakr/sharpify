@@ -4,14 +4,28 @@ namespace ShopifyAPIAdapterLibrary.Models
 {
     public interface IDirtiable
     {
+        /// <summary>
+        /// Has this object been mutated since arriving from its original source or being newly created?
+        /// </summary>
+        /// <returns></returns>
         bool IsClean();
     }
 
     public interface IGranularDirtiable : IDirtiable
     {
+        /// <summary>
+        /// Has the specified field been mutated since this object arrived from its original source or
+        /// was newly created?
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
         bool IsFieldDirty(string field);
     }
 
+    /// <summary>
+    /// Should the object pointed to by the specified Has relationship be set to be saved inline
+    /// when the relationship is reset?
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class Inlinable : Attribute
     {
@@ -76,8 +90,6 @@ namespace ShopifyAPIAdapterLibrary.Models
         /// </summary>
         /// <param name="field"></param>
         /// <returns></returns>
-        bool IsFieldDirty(string field);
-
         bool IsNew();
 
         /// <summary>

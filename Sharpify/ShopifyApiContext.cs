@@ -355,7 +355,6 @@ namespace ShopifyAPIAdapterLibrary
             return TranslateObject<Shop>("shop", shopString);
         }
 
-        [Obsolete]
         public T TranslateObject<T>(String subfieldName, string content)
         {
             if (Translator == null)
@@ -365,7 +364,6 @@ namespace ShopifyAPIAdapterLibrary
             return Translator.ResourceDecode<T>(subfieldName, content);
         }
 
-        [Obsolete]
         public string ObjectTranslate<T>(String subfieldName, T model)
         {
             if (Translator == null)
