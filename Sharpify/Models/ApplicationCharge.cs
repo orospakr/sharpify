@@ -64,6 +64,10 @@ namespace Sharpify.Models
             }
         }
 
+        /// <summary>
+        /// Activate the charge.
+        /// </summary>
+        public SpecialAction Activate { get; set; }
 
         public ApplicationCharge()
         {
