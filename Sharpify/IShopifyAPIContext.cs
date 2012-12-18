@@ -1,9 +1,9 @@
-﻿using ShopifyAPIAdapterLibrary.Models;
+﻿using Sharpify.Models;
 using System;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace ShopifyAPIAdapterLibrary
+namespace Sharpify
 {
 
     public interface IShopifyAPIContext

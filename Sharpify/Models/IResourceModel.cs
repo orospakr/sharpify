@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-namespace ShopifyAPIAdapterLibrary.Models
+namespace Sharpify.Models
 {
     public interface IDirtiable
     {

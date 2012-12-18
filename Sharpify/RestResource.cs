@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq.Expressions;
 using System.Reflection;
-using ShopifyAPIAdapterLibrary.Models;
+using Sharpify.Models;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
-namespace ShopifyAPIAdapterLibrary
+namespace Sharpify
 {
     /// <summary>
     /// Untyped access to a RestResource.
@@ -234,9 +234,9 @@ namespace ShopifyAPIAdapterLibrary
 
         public Task Delete<T1>(T model) where T1 : T, IDeletable
         {
-            if (model.IsNew() || model.Id == null)
+            if (model.Id == null)
             {
-                throw new ShopifyUsageException("Resource model instance must exist on the server and have an ID in order to delete it.");
+                throw new ShopifyUsageException("Resource model instance must have an ID in order to delete it.");
             }
             return Context.CallRaw(HttpMethod.Delete, Context.GetRequestContentType(),
                 InstanceOrVerbPath(model.Id.ToString()), null, null);
@@ -246,7 +246,7 @@ namespace ShopifyAPIAdapterLibrary
         {
             if (model.Id == null)
             {
-                throw new ShopifyUsageException("Model must have an ID in order to put an update.");
+                throw new ShopifyUsageException("Model must have an ID in order to PUT an update.");
             }
             var resourceString = Context.ObjectTranslate<T>(Name, model);
             var updatedResourceString = await Context.CallRaw(HttpMethod.Put, Context.GetRequestContentType(),

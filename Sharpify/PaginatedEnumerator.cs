@@ -1,11 +1,11 @@
-﻿using ShopifyAPIAdapterLibrary.Models;
+﻿using Sharpify.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShopifyAPIAdapterLibrary
+namespace Sharpify
 {
     public class PaginatedEnumerator<T> where T : IResourceModel, new()
     {

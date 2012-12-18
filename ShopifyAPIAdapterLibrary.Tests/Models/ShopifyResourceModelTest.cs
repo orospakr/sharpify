@@ -1,13 +1,14 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
-using ShopifyAPIAdapterLibrary.Models;
+using Sharpify.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShopifyAPIAdapterLibrary.Tests.Models
+namespace Sharpify.Tests.Models
 {
     // used as a flat inline
     public class Faction : ShopifyResourceModel
@@ -98,5 +99,17 @@ namespace ShopifyAPIAdapterLibrary.Tests.Models
             mob.Reset();
             Assert.IsFalse(mob.IsClean());
         }
+
+        //[Test]
+        //public void ShouldUpdateAttributes()
+        //{
+        //    var mob = new Mob();
+        //    var vals = new NameValueCollection();
+        //    vals.Add("Level", "78");
+        //    mob.UpdateAttributes(vals);
+        //    Assert.AreEqual(78, mob.Level);
+        //    Assert.IsTrue(mob.IsFieldDirty("Level"));
+        //    Assert.IsFalse(mob.IsClean());
+        //}
     }
 }

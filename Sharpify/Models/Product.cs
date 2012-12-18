@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ShopifyAPIAdapterLibrary.Models
+namespace Sharpify.Models
 {
     /// <summary>
     /// http://api.shopify.com/product.html

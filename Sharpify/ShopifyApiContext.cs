@@ -7,13 +7,13 @@ using System.Text;
 using System.Web;
 using System.Threading.Tasks;
 using System.Net.Http;
-using ShopifyAPIAdapterLibrary.Models;
+using Sharpify.Models;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Linq;
 
-namespace ShopifyAPIAdapterLibrary
+namespace Sharpify
 {
     /// <summary>
     /// Use the Shopify API in the context of a given store, with the provided authorization.
@@ -25,7 +25,7 @@ namespace ShopifyAPIAdapterLibrary
     /// You will first need to use the ShopifyAPIAuthorizer to obtain the required authorization.
     /// </remarks>
     /// <seealso cref="http://api.shopify.com/"/>
-    public class ShopifyAPIContext : ShopifyAPIAdapterLibrary.IShopifyAPIContext
+    public class ShopifyAPIContext : Sharpify.IShopifyAPIContext
     {
         /// <summary>
         /// Programmatically-accessible mapping of IResourceModels to

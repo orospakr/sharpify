@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShopifyAPIAdapterLibrary
+namespace Sharpify
 {
     /// <summary>
     /// A property of this this placed on a IResourceModel

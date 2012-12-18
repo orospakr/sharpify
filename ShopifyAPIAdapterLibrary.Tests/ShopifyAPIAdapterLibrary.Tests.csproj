@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{518267B5-2759-4B38-9D4E-10F4E8706253}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>ShopifyAPIAdapterLibrary.Tests</RootNamespace>
+    <RootNamespace>Sharpify.Tests</RootNamespace>
     <AssemblyName>ShopifyAPIAdapterLibrary.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>

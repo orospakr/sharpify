@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using FakeItEasy;
-using ShopifyAPIAdapterLibrary.Models;
+using Sharpify.Models;
 
-namespace ShopifyAPIAdapterLibrary.Tests
+namespace Sharpify.Tests
 {
     [TestFixture]
     public class DirtiableListTest

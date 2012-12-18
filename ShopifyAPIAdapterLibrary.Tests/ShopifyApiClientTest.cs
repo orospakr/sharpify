@@ -1,7 +1,7 @@
 using System;
 using NUnit.Framework;
 
-namespace ShopifyAPIAdapterLibrary.Tests
+namespace Sharpify.Tests
 {
     [TestFixture]
     public class ShopifyApiClientTest

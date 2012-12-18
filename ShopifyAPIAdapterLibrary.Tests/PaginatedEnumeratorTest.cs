@@ -1,7 +1,7 @@
 ﻿using FakeItEasy;
 using FakeItEasy.Configuration;
 using NUnit.Framework;
-using ShopifyAPIAdapterLibrary.Models;
+using Sharpify.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShopifyAPIAdapterLibrary.Tests
+namespace Sharpify.Tests
 {
     // This test is just kind of terrible.  Sorry. :(
     [TestFixture]

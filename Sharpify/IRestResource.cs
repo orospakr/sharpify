@@ -1,8 +1,8 @@
 ﻿using System;
-namespace ShopifyAPIAdapterLibrary
+namespace Sharpify
 {
     public interface IRestResource<T> : IRestResourceView<T>
-     where T : ShopifyAPIAdapterLibrary.Models.IResourceModel, new()
+     where T : Sharpify.Models.IResourceModel, new()
     {
         /// <summary>
         /// Call a special per-resource action on the server (such as "Cancel" on an Order).
@@ -30,7 +30,7 @@ namespace ShopifyAPIAdapterLibrary
         /// <param name="belongsTo">The resource model instance containing the IHasOne field</param>
         /// <param name="propertyLambda">Use a "member expression" to identify the IHasOne field itself</param>
         /// <param name="hasOne">The target to set the "has one" relationship to</param>
-        void Has<H>(T belongsTo, System.Linq.Expressions.Expression<Func<T, IHasOne<H>>> propertyLambda, H hasOne) where H : ShopifyAPIAdapterLibrary.Models.IResourceModel, new();
+        void Has<H>(T belongsTo, System.Linq.Expressions.Expression<Func<T, IHasOne<H>>> propertyLambda, H hasOne) where H : Sharpify.Models.IResourceModel, new();
 
         /// <summary>
         /// The underscorized identifier of the resource on the REST interface.
@@ -42,7 +42,7 @@ namespace ShopifyAPIAdapterLibrary
         /// </summary>
         /// <typeparam name="T1">Pass the type of the model back in;  this is needed so an additional type check of the creatability of the model type is possible</typeparam>
         /// <returns>The newly created model instance sent back from the service</returns>
-        System.Threading.Tasks.Task<T> Create<T1>(T model) where T1 : T, ShopifyAPIAdapterLibrary.Models.ICreatable;
+        System.Threading.Tasks.Task<T> Create<T1>(T model) where T1 : T, Sharpify.Models.ICreatable;
 
         /// <summary>
         /// Fetch a model by ID from the service.
@@ -50,23 +50,27 @@ namespace ShopifyAPIAdapterLibrary
         System.Threading.Tasks.Task<T> Find(int id);
 
         /// <summary>
-        /// Save over an existing model instance back into the REST resource.
+        /// Save over an existing model instance back into the REST resource.  The resource must
+        /// have an ID set in order to identify the resource to update.
+        /// 
+        /// Only modified fields will be included in the sent JSON, and Shopify/Rails will
+        /// merge (aka update_attributes) them into the existing record.
         /// </summary>
         /// <typeparam name="T1">Pass the type of the model back in;  this is needed so an additional type check of the saveablity of the model type is possible</typeparam>
         /// <param name="model"></param>
         /// <returns></returns>
-        System.Threading.Tasks.Task<T> Update<T1>(T model) where T1 : T, ShopifyAPIAdapterLibrary.Models.IMutable;
+        System.Threading.Tasks.Task<T> Update<T1>(T model) where T1 : T, Sharpify.Models.IMutable;
 
         /// <summary>
         /// Destroy an existing model instance from the REST resource.
         /// </summary>
         /// <typeparam name="T1">Pass the type of the model back in;  this is needed so an additional type check of the deletability of the model type is possible</typeparam>
-        System.Threading.Tasks.Task Delete<T1>(T model) where T1 : T, ShopifyAPIAdapterLibrary.Models.IDeletable;
+        System.Threading.Tasks.Task Delete<T1>(T model) where T1 : T, Sharpify.Models.IDeletable;
 
         /// <summary>
         /// Either create a new model or save an existing model into the REST resource.
         /// </summary>
         /// <typeparam name="T1">Pass the type of the model back in;  this is needed so an additional type check of the creatability of the model type is possible</typeparam>
-        System.Threading.Tasks.Task<T> Save<T1>(T model) where T1 : T, ShopifyAPIAdapterLibrary.Models.ICreatable, ShopifyAPIAdapterLibrary.Models.IMutable;
+        System.Threading.Tasks.Task<T> Save<T1>(T model) where T1 : T, Sharpify.Models.ICreatable, Sharpify.Models.IMutable;
     }
 }

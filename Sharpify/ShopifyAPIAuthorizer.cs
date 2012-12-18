@@ -7,7 +7,7 @@ using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 
-namespace ShopifyAPIAdapterLibrary
+namespace Sharpify
 {
     /// <summary>
     /// this class is used to obtain the authorization

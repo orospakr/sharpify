@@ -2,7 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 
-namespace ShopifyAPIAdapterLibrary
+namespace Sharpify
 {
     public class ShopifyException : Exception
     {

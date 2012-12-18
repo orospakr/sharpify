@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShopifyAPIAdapterLibrary.Models
+namespace Sharpify.Models
 {
     public class Fragment : DirtiableObject
     {

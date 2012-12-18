@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Net.Http.Headers;
 
-namespace ShopifyAPIAdapterLibrary
+namespace Sharpify
 {
 
     /// <summary>

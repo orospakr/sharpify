@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
@@ -9,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShopifyAPIAdapterLibrary.Models
+namespace Sharpify.Models
 {
     public class ShopifyResourceModel : DirtiableObject, IResourceModel
     {
@@ -54,6 +55,17 @@ namespace ShopifyAPIAdapterLibrary.Models
                 SetProperty(ref _UpdatedAt, value);
             }
         }
+
+        //public void UpdateAttributes(NameValueCollection props) {
+        //    foreach (var key in props.AllKeys)
+        //    {
+        //        var property = this.GetType().GetProperty(key);
+        //        if (property != null)
+        //        {
+        //            property.SetValue(this, props[key]);
+        //        }
+        //    }
+        //}
 
         public ShopifyResourceModel()
         {

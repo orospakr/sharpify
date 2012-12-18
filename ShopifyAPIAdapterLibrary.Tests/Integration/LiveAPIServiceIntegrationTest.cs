@@ -7,15 +7,16 @@ using System.Net;
 using System.IO;
 using System.Diagnostics;
 using System.Collections;
-using ShopifyAPIAdapterLibrary.Models;
+using Sharpify.Models;
 using System.Collections.Specialized;
 
-namespace ShopifyAPIAdapterLibrary.Tests.Integration
+namespace Sharpify.Tests.Integration
 {
     /// <summary>
     /// Test the interaction with the actual, running service at :shop.myshopify.com.
     /// </summary>
     [TestFixture]
+    [Ignore]
     public class LiveAPIServiceIntegrationTest
     {
         ShopifyAuthorizationState AuthorizationState {
@@ -69,7 +70,7 @@ namespace ShopifyAPIAdapterLibrary.Tests.Integration
                 var redirectReplyPromise = ListenForIncomingShopTokenFromRedirect (5409);
 
                 Console.WriteLine ("Attempting to authorize against store " + TestStoreName);
-                var sa = new ShopifyAPIAdapterLibrary.ShopifyAPIAuthorizer (TestStoreName, ConfigurationManager.AppSettings ["Shopify.TestAppKey"], ConfigurationManager.AppSettings ["Shopify.TestAppSecret"]);
+                var sa = new Sharpify.ShopifyAPIAuthorizer (TestStoreName, ConfigurationManager.AppSettings ["Shopify.TestAppKey"], ConfigurationManager.AppSettings ["Shopify.TestAppSecret"]);
                 var authUrl = sa.GetAuthorizationURL (new string[] { "write_content", "write_themes", "write_products", "write_customers", "write_script_tags", "write_orders" }, ConfigurationManager.AppSettings ["Shopify.TestHttpServerUri"]);
                 Console.WriteLine (authUrl);
 

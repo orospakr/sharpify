@@ -3,8 +3,8 @@ using FakeItEasy.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using ShopifyAPIAdapterLibrary;
-using ShopifyAPIAdapterLibrary.Models;
+using Sharpify;
+using Sharpify.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -12,7 +12,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace ShopifyAPIAdapterLibrary.Tests
+namespace Sharpify.Tests
 {
     // our test top-level resource
     public class Robot : ShopifyResourceModel {

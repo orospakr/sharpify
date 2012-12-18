@@ -2,14 +2,14 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using ShopifyAPIAdapterLibrary.Models;
+using Sharpify.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShopifyAPIAdapterLibrary.Tests
+namespace Sharpify.Tests
 {
     public class Tax : Fragment
     {

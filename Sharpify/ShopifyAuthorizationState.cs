@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShopifyAPIAdapterLibrary
+namespace Sharpify
 {
     /// <summary>
     /// 

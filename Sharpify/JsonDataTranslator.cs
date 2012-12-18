@@ -8,10 +8,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using Newtonsoft.Json.Serialization;
-using ShopifyAPIAdapterLibrary.Models;
+using Sharpify.Models;
 using System.ComponentModel;
 
-namespace ShopifyAPIAdapterLibrary
+namespace Sharpify
 {
     /// <summary>
     /// Modify objects of the provided type just after dserialization completes.
