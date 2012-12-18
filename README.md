@@ -423,14 +423,6 @@ var api = new ShopifyAPIClient(authState, new JsonDataTranslator());
 await api.Delete(String.Format("/admin/products/{0}.json", id));
 ```
 
-## Sample Web Application
-
-This sample application should give you an excellent idea how you will
-need to perform the required oAuth authentication and API calls.
-
-Once you go through the authorization steps, you can Add/Edit/Delete
-Shopify Blog objects.
-
 ## Test Suite
 
 Included is a test suite, include both unit and integration tests.
@@ -482,5 +474,21 @@ the problem may be that a null Task being returned by a mock receiving
 an unexpected call.  Temporarily add some sane length of delay to the
 blocking Wait() statements used in the test, and see if you get an
 error from the mock that displays a list of unexpected calls.
+
+## Sample Web Application
+
+The sample ASP.net MVC3 webapp is meant to demonstrate basic use of
+the Adapter.  It's pretty simple and naiive, but it should give you
+very basic CRUD access to Blogs and Products.
+
+Setup procedure:
+
+1. Follow steps 1 through 6 of the Test Suite procedure above, but
+   modify `SampleWebApp/Web.config` rather than the test suite's
+   `App.config`.  Make sure you set the `Shopify.AppUrl` value to the
+   same value as you provided to the Shopify Partners UI, with no
+   trailing slash.
+
+2. Start the webapp and enter your shop name.
 
 ## Happy Trading!

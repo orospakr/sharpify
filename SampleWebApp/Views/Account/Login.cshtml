@@ -6,8 +6,8 @@
 }
 
 <hgroup class="title">
-    <h1>@ViewBag.Title.</h1>
-    <h2>Enter your user name and password below.</h2>
+    <h1>@ViewBag.Title:</h1>
+    <h2>Enter your shop name below.</h2>
 </hgroup>
 
 <script src="~/Scripts/jquery.validate.min.js"></script>
@@ -21,7 +21,7 @@
         <ol>
             <li>
                 @Html.LabelFor(m => m.ShopName)
-                @Html.TextBoxFor(m => m.ShopName)
+                https:// @Html.TextBoxFor(m => m.ShopName) .myshopify.com/
                 @Html.ValidationMessageFor(m => m.ShopName)
                 @Html.AntiForgeryToken()
             </li>
