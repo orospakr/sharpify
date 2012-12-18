@@ -14,37 +14,42 @@ using System.ComponentModel;
 namespace Sharpify
 {
     /// <summary>
-    /// Modify objects of the provided type just after dserialization completes.
+    /// Modify objects of the provided type just after dserialization
+    /// completes.
     /// 
-    /// NOT THREAD SAFE (ie., do not use for multiple deserialization tasks at once).
+    /// NOT THREAD SAFE (ie., do not use for multiple deserialization
+    /// tasks at once).
     /// 
     /// should be reinstantiated for every new deserialization task.
     /// </summary>
     public abstract class WrappedConverter<T> : JsonConverter
     {
         /// <summary>
-        /// We are currently in the midst of asking the stock JsonConverter
-        /// to deserialize (using the default approach) the resource model.
+        /// We are currently in the midst of asking the stock
+        /// JsonConverter to deserialize (using the default approach)
+        /// the resource model.
         /// 
-        /// Of course, default policy is to invoke ResourceConverter again,
-        /// so, we break for that initial re-entering by temporarily claiming
-        /// that we cannot handle deserializing RestResources, thus allowing
-        /// json.net to continue has normal.
+        /// Of course, default policy is to invoke ResourceConverter
+        /// again, so, we break for that initial re-entering by
+        /// temporarily claiming that we cannot handle deserializing
+        /// RestResources, thus allowing json.net to continue has
+        /// normal.
         /// 
-        /// Ideally, JsonConverter should add some affordance for having
-        /// a JsonConverter call serializer.(De)serialize() and 
+        /// Ideally, JsonConverter should add some affordance for
+        /// having a JsonConverter call serializer.(De)serialize() and
         /// </summary>
         private bool RecursionAvoidance;
 
         /// <summary>
-        /// In order to work around an interesting deficiency in json.net,
-        /// we need to have ResourceConverter refuse to deserialize the
-        /// content of this IResourceModel, otherwise, the ResourceConverter
-        /// will persistently invoke itself inadverdently forever.
+        /// In order to work around an interesting deficiency in
+        /// json.net, we need to have ResourceConverter refuse to
+        /// deserialize the content of this IResourceModel, otherwise,
+        /// the ResourceConverter will persistently invoke itself
+        /// inadverdently forever.
         /// 
         /// It appears, from my cursory investigation, that json.net
-        /// does not (yet!) cache this information.  As soon as it does,
-        /// the assumption I make in this workaround code.
+        /// does not (yet!) cache this information.  As soon as it
+        /// does, the assumption I make in this workaround code.
         /// </summary>
         public override bool CanConvert(Type objectType)
         {
@@ -247,12 +252,14 @@ namespace Sharpify
     }
 
     /// <summary>
-    /// Rails-style resource representations are typically wrapped in a JSON object
-    /// with a single property with the name of the contained resource.
+    /// Rails-style resource representations are typically wrapped in
+    /// a JSON object with a single property with the name of the
+    /// contained resource.
     /// 
-    /// In order to use the type-safe JsonConvert API (and have our IContractResolver
-    /// get used) we have to arrange to have a (de)serializable object type getting
-    /// a dynamic name to use for that single field at runtime.
+    /// In order to use the type-safe JsonConvert API (and have our
+    /// IContractResolver get used) we have to arrange to have a
+    /// (de)serializable object type getting a dynamic name to use for
+    /// that single field at runtime.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class Container<T>
@@ -261,8 +268,9 @@ namespace Sharpify
     }
 
     /// <summary>
-    /// Object that remembers the _id of the single subresource temporarily until
-    /// code in RestResource replaces it with a live fetcher.
+    /// Object that remembers the _id of the single subresource
+    /// temporarily until code in RestResource replaces it with a live
+    /// fetcher.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class HasOneDeserializationPlaceholder<T> : IHasOnePlaceholderUntyped, IHasOne<T> where T : IResourceModel
@@ -304,8 +312,6 @@ namespace Sharpify
 
         public HasOneInline(T model)
         {
-            // TODO: this will have to change when we support creating new resources that
-            // should post with a similarly new inline
             if (model.Id == null) throw new ShopifyUsageException("HasOneInline must be given a model that has a set ID.");
             Model = model;
         }
@@ -327,7 +333,8 @@ namespace Sharpify
     }
 
     /// <summary>
-    /// This class is used to translate to and from C# objects and JSON strings 
+    /// This class is used to translate to and from C# objects and
+    /// JSON strings
     /// </summary>
     public class JsonDataTranslator : IDataTranslator
     {
@@ -337,9 +344,10 @@ namespace Sharpify
         }
 
         /// <summary>
-        /// This should be created for every invocation of use.  ResourceConverter
-        /// in particular must do things that compromise thread safety, in order
-        /// to avoid an infinite recursion loop.
+        /// This should be created for every invocation of use.
+        /// ResourceConverter in particular must do things that
+        /// compromise thread safety, in order to avoid an infinite
+        /// recursion loop.
         /// </summary>
         private JsonSerializerSettings CreateSerializerSettings(string topLevelResourceName)
         {
@@ -351,7 +359,8 @@ namespace Sharpify
         }
 
         /// <summary>
-        /// Given a C# object, return a JSON string that can be used by the Shopify API
+        /// Given a C# object, return a JSON string that can be used
+        /// by the Shopify API
         /// </summary>
         /// <param name="data">a c# object that maps to a JSON object</param>
         /// <returns>JSON string</returns>

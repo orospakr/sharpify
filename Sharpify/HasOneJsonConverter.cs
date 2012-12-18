@@ -11,8 +11,8 @@ namespace Sharpify
     /// <summary>
     /// Binds IHasOne<> to JSON.
     /// 
-    /// This handles serialization for both inlined and as-id has ones,
-    /// and handles deserialization for only the inline version
+    /// This handles serialization for both inlined and as-id has
+    /// ones, and handles deserialization for only the inline version
     /// 
     /// See IncomingHasOneAsIdConverter for handling deserialization
     /// of as-id ("_id") fields.
@@ -31,8 +31,8 @@ namespace Sharpify
         }
 
         /// <summary>
-        /// Check to see if this version of the HasOne JsonConverter should
-        /// be used to serialize the given field.
+        /// Check to see if this version of the HasOne JsonConverter
+        /// should be used to serialize the given field.
         /// </summary>
         public static bool CheckIfHasOneShouldSerializeWithThis(Type objectType)
         {
@@ -43,7 +43,8 @@ namespace Sharpify
         // inline read
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            // Converter set for the main property (non "_id") will always see only inlines.
+            // Converter set for the main property (non "_id") will
+            // always see only inlines.
             
             // inline:  incoming property is full object.
 
@@ -57,9 +58,12 @@ namespace Sharpify
         // inline write
         public override void WriteJson(JsonWriter writer, object hasOne, JsonSerializer serializer)
         {
-            // if inline: get the model instance out of the HasOneInline and just call serializer.Serialize on it.
-            // our system will do the usual exclusion of unchanged fields.  also, our system will be doing the usual
-            // will-serialize check on this HasOne property itself, so we don't need to check that either.
+            // if inline: get the model instance out of the
+            // HasOneInline and just call serializer.Serialize on it.
+            // our system will do the usual exclusion of unchanged
+            // fields.  also, our system will be doing the usual
+            // will-serialize check on this HasOne property itself, so
+            // we don't need to check that either.
 
             var hasOneInline = hasOne as HasOneInline<T>;
 
@@ -77,8 +81,9 @@ namespace Sharpify
     }
 
     /// <summary>
-    /// As the only way of detecting the different _id field is to have a separate JsonProperty
-    /// entry, we have a variant of our converter for this case.
+    /// As the only way of detecting the different _id field is to
+    /// have a separate JsonProperty entry, we have a variant of our
+    /// converter for this case.
     /// </summary>
     public class HasOneAsIdJsonConverter<T> : JsonConverter where T : IResourceModel, new()
     {
@@ -95,7 +100,8 @@ namespace Sharpify
         // outgoing as id
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
 
-            // not inline (as id instead): get the ID out of the HasOne and write it.
+            // not inline (as id instead): get the ID out of the
+            // HasOne and write it.
 
             var hasOneAsId = (IHasOneAsIdUntyped)value;
 
@@ -105,7 +111,8 @@ namespace Sharpify
         // incoming as id
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            // if as id: incoming property is an ID int.  return a HasOnePlaceholder() as the old HasOneConverter did
+            // if as id: incoming property is an ID int.  return a
+            // HasOnePlaceholder() as the old HasOneConverter did
             var id = reader.Value;
 
             if (id == null)

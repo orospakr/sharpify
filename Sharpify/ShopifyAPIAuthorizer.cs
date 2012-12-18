@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 namespace Sharpify
 {
     /// <summary>
-    /// this class is used to obtain the authorization
-    /// from the shopify customer to make api calls on their behalf
+    /// this class is used to obtain the authorization from the
+    /// shopify customer to make api calls on their behalf
     /// </summary>
     public class ShopifyAPIAuthorizer
     {
@@ -20,8 +20,9 @@ namespace Sharpify
         private string _shopName;
 
         /// <summary>
-        /// Creates an instance of this class in order to obtain the authorization
-        /// from the shopify customer to make api calls on their behalf
+        /// Creates an instance of this class in order to obtain the
+        /// authorization from the shopify customer to make api calls
+        /// on their behalf
         /// </summary>
         /// <param name="shopName">name of the shop to make the calls for.</param>
         /// <param name="apiKey">the unique api key of your app (obtained from the partner area when you create an app).</param>
@@ -52,8 +53,9 @@ namespace Sharpify
         }
 
         /// <summary>
-        /// Get the URL required by you to redirect the User to in which they will be 
-        /// presented with the ability to grant access to your app with the specified scope
+        /// Get the URL required by you to redirect the User to in
+        /// which they will be presented with the ability to grant
+        /// access to your app with the specified scope
         /// </summary>
         /// <param name="scope"></param>
         /// <param name="redirectUrl"></param>
@@ -81,8 +83,9 @@ namespace Sharpify
         }
 
         /// <summary>
-        /// After the shop owner has authorized your app, Shopify will give you a code.
-        /// Use this code to get your authorization state that you will use to make API calls
+        /// After the shop owner has authorized your app, Shopify will
+        /// give you a code.  Use this code to get your authorization
+        /// state that you will use to make API calls
         /// </summary>
         /// <param name="code">a code given to you by shopify</param>
         /// <returns>Authorization state needed by the API client to make API calls</returns>

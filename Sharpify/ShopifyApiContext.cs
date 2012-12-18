@@ -16,13 +16,17 @@ using Newtonsoft.Json.Linq;
 namespace Sharpify
 {
     /// <summary>
-    /// Use the Shopify API in the context of a given store, with the provided authorization.
+    /// Use the Shopify API in the context of a given store, with the
+    /// provided authorization.
     /// 
-    /// This object contains the set of top-level Shopify REST API "resources" (such as "order", "customer", and so on) which you can request, create resource 
+    /// This object contains the set of top-level Shopify REST API
+    /// "resources" (such as "order", "customer", and so on) which you
+    /// can request, create resource
     /// 
     /// </summary>
     /// <remarks>
-    /// You will first need to use the ShopifyAPIAuthorizer to obtain the required authorization.
+    /// You will first need to use the ShopifyAPIAuthorizer to obtain
+    /// the required authorization.
     /// </remarks>
     /// <seealso cref="http://api.shopify.com/"/>
     public class ShopifyAPIContext : Sharpify.IShopifyAPIContext
@@ -34,15 +38,16 @@ namespace Sharpify
         private IDictionary<Type, IUntypedResource> Resources { get; set; }
 
         /// <summary>
-        /// Used to translate the data sent and recieved by the Shopify API in
-        /// JSON.
+        /// Used to translate the data sent and recieved by the
+        /// Shopify API in JSON.
         /// 
         /// Another implementation could be implemented for XML.
         /// </summary>
         public IDataTranslator Translator { get; set; }
 
         /// <summary>
-        /// Creates an instance of this class for use with making API Calls
+        /// Creates an instance of this class for use with making API
+        /// Calls
         /// </summary>
         /// <param name="state">the authorization state required to make the API Calls</param>
         public ShopifyAPIContext(ShopifyAuthorizationState state)
@@ -52,7 +57,8 @@ namespace Sharpify
         }
 
         /// <summary>
-        /// Creates an instance of this class for use with making API Calls
+        /// Creates an instance of this class for use with making API
+        /// Calls
         /// </summary>
         /// <param name="state">the authorization state required to make the API Calls</param>
         /// <param name="translator">the translator used to transform the data between your C# client code and the Shopify API</param>
@@ -106,14 +112,6 @@ namespace Sharpify
             RegisterResource(new RestResource<SmartCollection>(this));
             RegisterResource(new RestResource<Theme>(this));
             RegisterResource(new RestResource<Webhook>(this));
-
-            //var resourceTypes = new List<Type>(typeof(ApplicationCharge),
-            //    typeof(Article),
-            //    typeof(Blog))
-            //    typeof(Blog), typeof(Theme), typeof
-            //Products = new RestResource<Product>(this, "product");
-            //Customers = new RestResource<Customer>(this, "customer");
-            //Orders = new RestResource<Order>(this, "order");
         }
 
         private void EnsureTranslator() {
@@ -273,8 +271,8 @@ namespace Sharpify
         }
 
         /// <summary>
-        /// Pluralize (using standard English rules) a singular noun.  Meant
-        /// for C locale/invariant programmer-domain use.
+        /// Pluralize (using standard English rules) a singular noun.
+        /// Meant for C locale/invariant programmer-domain use.
         /// </summary>
         /// <param name="input"></param>
         /// <returns>The pluralized form.  Note that it always returns
@@ -300,8 +298,8 @@ namespace Sharpify
         }
 
         /// <summary>
-        /// Mangle C#-style property camel-case (first-humped or no) into Ruby-style property
-        /// underscore-style.
+        /// Mangle C#-style property camel-case (first-humped or no)
+        /// into Ruby-style property underscore-style.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -342,8 +340,8 @@ namespace Sharpify
         }
 
         /// <summary>
-        /// Because the singular Shop is a special case and is not itself a
-        /// RestResource, just fetch it directly here.
+        /// Because the singular Shop is a special case and is not
+        /// itself a RestResource, just fetch it directly here.
         /// </summary>
         /// <returns></returns>
         public async Task<Shop> GetShop()
@@ -374,7 +372,8 @@ namespace Sharpify
         }
 
         /// <summary>
-        /// The default content type to POST/PUT content as on HTTP Requests to the Shopify API
+        /// The default content type to POST/PUT content as on HTTP
+        /// Requests to the Shopify API
         /// </summary>
         protected static readonly string DefaultContentType = "application/json";
 
@@ -387,7 +386,8 @@ namespace Sharpify
 
 
         /// <summary>
-        /// Gets the name (as in, domain name fragment) of the Shop this ApiClient is associated with.
+        /// Gets the name (as in, domain name fragment) of the Shop
+        /// this ApiClient is associated with.
         /// </summary>
         public string ShopName { get {
                 return State.ShopName;

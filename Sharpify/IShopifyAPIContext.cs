@@ -14,7 +14,8 @@ namespace Sharpify
         string AdminPath();
 
         /// <summary>
-        /// Make the specified HTTP call and receive late-bindable JObjects deserialized from the response body.
+        /// Make the specified HTTP call and receive late-bindable
+        /// JObjects deserialized from the response body.
         /// </summary>
         /// <param name="method">HTTP method</param>
         /// <param name="path">HTTP path</param>
@@ -24,7 +25,8 @@ namespace Sharpify
         Task<object> Call(System.Net.Http.HttpMethod method, string path, System.Collections.Specialized.NameValueCollection parameters = null, object data = null);
 
         /// <summary>
-        /// Make the specified API call and get the returned response body as a string.
+        /// Make the specified API call and get the returned response
+        /// body as a string.
         /// </summary>
         /// <param name="method">HTTP method</param>
         /// <param name="acceptType">Accept: HTTP header, for specifying preferred content type of results</param>
@@ -40,12 +42,14 @@ namespace Sharpify
         Task<object> Delete(string path);
 
         /// <summary>
-        /// Call HTTP GET on the specified path, get late-bindable JObjects from response
+        /// Call HTTP GET on the specified path, get late-bindable
+        /// JObjects from response
         /// </summary>
         Task<object> Get(string path);
 
         /// <summary>
-        /// Call HTTP GET on the specified path, get late-bindable JObjects from response
+        /// Call HTTP GET on the specified path, get late-bindable
+        /// JObjects from response
         /// </summary>
         /// <param name="callParams">Query string parameters</param>
         Task<object> Get(string path, System.Collections.Specialized.NameValueCollection callParams);
@@ -56,28 +60,32 @@ namespace Sharpify
         MediaTypeHeaderValue GetRequestContentType();
 
         /// <summary>
-        /// Generate a Sharpify developer friendly exception from the given response.
+        /// Generate a Sharpify developer friendly exception from the
+        /// given response.
         /// </summary>
         ShopifyException HandleError(System.Net.Http.HttpResponseMessage response, string reason);
 
         /// <summary>
-        /// Call HTTP POST on the specified path with the given serializable object
+        /// Call HTTP POST on the specified path with the given
+        /// serializable object
         /// </summary>
         Task<object> Post(string path, object data);
 
         /// <summary>
-        /// Call HTTP PUT on the specified path with the given serializable object
+        /// Call HTTP PUT on the specified path with the given
+        /// serializable object
         /// </summary>
         Task<object> Put(string path, object data);
         
         /// <summary>
-        /// Deserialize an object using the Context'sapplication-specific
-        /// translator.
+        /// Deserialize an object using the
+        /// Context'sapplication-specific translator.
         /// </summary>
         T TranslateObject<T>(string subfieldName, string content);
 
         /// <summary>
-        /// Serialize an object using the Context's application-specific translator.
+        /// Serialize an object using the Context's
+        /// application-specific translator.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="subfieldName"></param>

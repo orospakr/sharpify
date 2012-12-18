@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 namespace Sharpify
 {
     /// <summary>
-    /// Whether or not this resource on the service must be
-    /// accessed with the pagination behaviour with the ?page=
-    /// query parameter.
+    /// Whether or not this resource on the service must be accessed
+    /// with the pagination behaviour with the ?page= query parameter.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     class Paginated : System.Attribute

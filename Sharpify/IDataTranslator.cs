@@ -13,7 +13,8 @@ namespace Sharpify
     public interface IDataTranslator
     {
         /// <summary>
-        /// Encode the data in a way that is expected by the Shopify API
+        /// Encode the data in a way that is expected by the Shopify
+        /// API
         /// </summary>
         /// <param name="data">data that should be encoded for the Shopify API</param>
         /// <returns></returns>
@@ -27,16 +28,18 @@ namespace Sharpify
         object Decode(string encodedData);
 
         /// <summary>
-        /// Shopify's API returns most things wrapped in single JSON field, named by the
-        /// resource being fetched ("product", "products", and so on.)
+        /// Shopify's API returns most things wrapped in single JSON
+        /// field, named by the resource being fetched ("product",
+        /// "products", and so on.)
         /// 
-        /// This will return that wrapped resource in a type-safe fashion.
+        /// This will return that wrapped resource in a type-safe
+        /// fashion.
         /// </summary>
         T ResourceDecode<T>(String subfieldName, String content);
 
         /// <summary>
-        /// Analagous to ResourceDecode(), serializes a model
-        /// wrapped in an object with a single JSON field of the specified
+        /// Analagous to ResourceDecode(), serializes a model wrapped
+        /// in an object with a single JSON field of the specified
         /// type name.
         /// </summary>
         string ResourceEncode<T>(string subFieldName, T model);

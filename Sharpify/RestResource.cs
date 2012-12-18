@@ -22,12 +22,14 @@ namespace Sharpify
     public interface IUntypedResource
     {
         /// <summary>
-        /// Return the type of models (always inherits from IResourceModel) used by this resource?
+        /// Return the type of models (always inherits from
+        /// IResourceModel) used by this resource?
         /// </summary>
         Type GetModelType();
 
         /// <summary>
-        /// Request the number of models this resource will match on the service.
+        /// Request the number of models this resource will match on
+        /// the service.
         /// </summary>
         Task<int> Count();
 
@@ -75,34 +77,34 @@ namespace Sharpify
         where T : IResourceModel, new() 
     {
         /// <summary>
-        /// Fetch all the records matched by this resource, and asynchronously call
-        /// the provided callback with each.
+        /// Fetch all the records matched by this resource, and
+        /// asynchronously call the provided callback with each.
         /// </summary>
         /// <param name="cb"></param>
         /// <returns></returns>
         Task Each(Action<T> cb);
 
         /// <summary>
-        /// Fetch and buffer the entire set of records matched by this resource,
-        /// and return them all together.
+        /// Fetch and buffer the entire set of records matched by this
+        /// resource, and return them all together.
         /// </summary>
         Task<IList<T>> AsListUnpaginated();
 
         /// <summary>
-        /// Fetch and buffer up all resource models matched by this resource view on the service
-        /// and return them in a list.
+        /// Fetch and buffer up all resource models matched by this
+        /// resource view on the service and return them in a list.
         /// </summary>
         Task<IList<T>> AsList();
 
         /// <summary>
-        /// Returns a new view of this resource filtered to a specific page (for
-        /// paginated resources).
+        /// Returns a new view of this resource filtered to a specific
+        /// page (for paginated resources).
         /// </summary>
         IRestResourceView<T> Page(int p);
 
         /// <summary>
-        /// Return a new view of this RestResource with the specified additional field
-        /// constraint added.
+        /// Return a new view of this RestResource with the specified
+        /// additional field constraint added.
         /// </summary>
         /// <param name="propertyLambda"></param>
         /// <param name="isEqualTo"></param>
@@ -112,8 +114,8 @@ namespace Sharpify
         IRestResourceView<T> Where(string field, string isEqualTo);
 
         /// <summary>
-        /// Returns the full set of query string parameters that this resource view
-        /// will pass to the REST API.
+        /// Returns the full set of query string parameters that this
+        /// resource view will pass to the REST API.
         /// </summary>
         NameValueCollection FullParameters();
     }
@@ -126,9 +128,9 @@ namespace Sharpify
 
         /// <summary>
         /// Not to be confused with the parenting of SubResources,
-        /// this relation is for chaining multiple RestResource instances
-        /// pointing to the same effective Resource path on the REST
-        /// service with separate filter/query parameters.
+        /// this relation is for chaining multiple RestResource
+        /// instances pointing to the same effective Resource path on
+        /// the REST service with separate filter/query parameters.
         /// 
         /// Clear as mud, right?
         /// </summary>
@@ -137,7 +139,8 @@ namespace Sharpify
         public NameValueCollection QueryParameters { get; protected set; }
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="ShopifyAPIAdapterLibrary.RestResource`1"/> class.
+        /// Initializes a new instance of the <see
+        /// cref="ShopifyAPIAdapterLibrary.RestResource`1"/> class.
         /// </summary>
         /// <param name='name'>
         /// The lowercase resource name, as it would appear in URIs.

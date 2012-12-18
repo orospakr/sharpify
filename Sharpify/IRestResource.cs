@@ -5,10 +5,12 @@ namespace Sharpify
      where T : Sharpify.Models.IResourceModel, new()
     {
         /// <summary>
-        /// Call a special per-resource action on the server (such as "Cancel" on an Order).
+        /// Call a special per-resource action on the server (such as
+        /// "Cancel" on an Order).
         /// </summary>
-        /// <param name="actionPropertyLambda">Use a "member expression" to identify the SpecialAction
-        /// property of the resource model, ie.,
+        /// <param name="actionPropertyLambda">Use a "member
+        /// expression" to identify the SpecialAction property of the
+        /// resource model, ie.,
         /// <example><code>
         /// Orders.CallAction(myOrder, () => myOrder.Cancel);
         /// </code></example>
@@ -16,15 +18,18 @@ namespace Sharpify
         System.Threading.Tasks.Task CallAction(T instance, System.Linq.Expressions.Expression<Func<SpecialAction>> actionPropertyLambda);
 
         /// <summary>
-        /// Call a special per-resource action on the server (such as "cancel" on an Order);
+        /// Call a special per-resource action on the server (such as
+        /// "cancel" on an Order);
         /// </summary>
         /// <param name="instance"></param>
-        /// <param name="action">The action, specified in lowercase underscorized format expected by the API.</param>
+        /// <param name="action">The action, specified in lowercase
+        /// underscorized format expected by the API.</param>
         /// <returns></returns>
         System.Threading.Tasks.Task CallAction(T instance, string action);
 
         /// <summary>
-        /// Set a "has one" relation on the specified object to a new target.
+        /// Set a "has one" relation on the specified object to a new
+        /// target.
         /// </summary>
         /// <typeparam name="H">The type of the target of the has one.</typeparam>
         /// <param name="belongsTo">The resource model instance containing the IHasOne field</param>
@@ -38,7 +43,8 @@ namespace Sharpify
         string Name { get; }
 
         /// <summary>
-        /// Save a new (that is, does not yet exist in the service) model instance into this REST resource on the service.
+        /// Save a new (that is, does not yet exist in the service)
+        /// model instance into this REST resource on the service.
         /// </summary>
         /// <typeparam name="T1">Pass the type of the model back in;  this is needed so an additional type check of the creatability of the model type is possible</typeparam>
         /// <returns>The newly created model instance sent back from the service</returns>
@@ -50,8 +56,9 @@ namespace Sharpify
         System.Threading.Tasks.Task<T> Find(int id);
 
         /// <summary>
-        /// Save over an existing model instance back into the REST resource.  The resource must
-        /// have an ID set in order to identify the resource to update.
+        /// Save over an existing model instance back into the REST
+        /// resource.  The resource must have an ID set in order to
+        /// identify the resource to update.
         /// 
         /// Only modified fields will be included in the sent JSON, and Shopify/Rails will
         /// merge (aka update_attributes) them into the existing record.

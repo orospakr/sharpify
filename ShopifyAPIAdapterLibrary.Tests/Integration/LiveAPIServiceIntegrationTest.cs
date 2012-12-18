@@ -14,9 +14,12 @@ namespace Sharpify.Tests.Integration
 {
     /// <summary>
     /// Test the interaction with the actual, running service at :shop.myshopify.com.
+    /// 
+    /// These tests are obviously pretty naiive, and considering that
+    /// we can make few guarantees about the state of the store, may
+    /// succeed or fail quite differently depending on conditions.
     /// </summary>
     [TestFixture]
-    [Ignore]
     public class LiveAPIServiceIntegrationTest
     {
         ShopifyAuthorizationState AuthorizationState {
@@ -74,9 +77,9 @@ namespace Sharpify.Tests.Integration
                 var authUrl = sa.GetAuthorizationURL (new string[] { "write_content", "write_themes", "write_products", "write_customers", "write_script_tags", "write_orders" }, ConfigurationManager.AppSettings ["Shopify.TestHttpServerUri"]);
                 Console.WriteLine (authUrl);
 
-
-                // pop a web browser with the authorization:
+                // pop a web browser with the authorization UI:
                 Process.Start (authUrl);
+
                 Console.WriteLine ("Waiting for Shopify to answer...");
                 redirectReplyPromise.Wait ();
                 var shopCode = redirectReplyPromise.Result;
@@ -241,7 +244,6 @@ namespace Sharpify.Tests.Integration
 
         [Test]
         public void ShouldFetchAllOrders() {
-            // TODO oh shit paging
             var answer = ShopifyClient.GetResource<Order>().AsList();
             answer.Wait();
             Console.WriteLine("dsafdasf");
@@ -250,10 +252,6 @@ namespace Sharpify.Tests.Integration
         [Test]
         public void ShouldFetchAllTopLevelResources()
         {
-            // this test is obviously pretty naiive, and considering that
-            // we can make few guarantees about the state of the store, may
-            // succeed or fail quite different depending on conditions.
-
             // all it will really do it flush out some obvious crashes lurking
             // in fetching and translating the toplevel resources.
 

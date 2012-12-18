@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace Sharpify
 {
     /// <summary>
-    /// A property of this this placed on a IResourceModel
-    /// in order to indicate a special action.
+    /// A property of this this placed on a IResourceModel in order to
+    /// indicate a special action.
     /// 
-    /// Then, they are specified to IResourceView#CallAction()
-    /// using the "as MemberExpression" pattern.
+    /// Then, they are specified to IResourceView#CallAction() using
+    /// the "as MemberExpression" pattern.
     /// </summary>
     public class SpecialAction
     {
