@@ -20,6 +20,7 @@ namespace Sharpify.Tests.Integration
     /// succeed or fail quite differently depending on conditions.
     /// </summary>
     [TestFixture]
+    [Ignore]
     public class LiveAPIServiceIntegrationTest
     {
         ShopifyAuthorizationState AuthorizationState {
