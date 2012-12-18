@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>@ViewBag.Title - My ASP.NET MVC Application</title>
+        <title>@ViewBag.Title - Sharpify Sample App</title>
         <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
         <link href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Content/css")" rel="stylesheet" type="text/css" />
         <link href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Content/themes/base/css")" rel="stylesheet" type="text/css" />
@@ -13,7 +13,7 @@
         <header>
             <div class="content-wrapper">
                 <div class="float-left">
-                    <p class="site-title">@Html.ActionLink("your logo here.", "Index", "Home")</p>
+                    <p class="site-title">@Html.ActionLink("Sharpify Sample App", "Index", "Home")</p>
                 </div>
                 <div class="float-right">
                     <section id="login">
@@ -22,7 +22,7 @@
                     <nav>
                         <ul id="menu">
                             <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                            <li>@Html.ActionLink("Products", "Products", "Home")</li>
+                            <li>@Html.ActionLink("Products", "Index", "Products")</li>
                             <li>@Html.ActionLink("Blogs", "Index", "Blogs")</li>
                         </ul>
                     </nav>

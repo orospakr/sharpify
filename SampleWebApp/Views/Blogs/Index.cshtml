@@ -1,10 +1,12 @@
-﻿@{
+﻿@model IList<Sharpify.Models.Blog>
+
+@{
     ViewBag.Title = "Index";
 }
 
 <h2>Shopify Blogs</h2>
 
-@if (ViewBag.Blogs == null || ViewBag.Blogs.Count == 0)
+@if (Model.Count == 0)
 {
     <p>There are no blogs yet.</p>
 } else {
@@ -17,12 +19,12 @@
             </tr>
         </thead>
         <tbody>
-    @foreach (var blog in ViewBag.Blogs)
+    @foreach (var blog in Model)
     {
             <tr>
-                <td>@Html.ActionLink("Edit", "Edit",new { id = blog.id })</td>
-                <td>@Html.ActionLink("Delete", "Delete",new { id = blog.id })</td>
-                <td>@blog.title</td>
+                <td>@Html.ActionLink("Edit", "Edit",new { id = blog.Id })</td>
+                <td>@Html.ActionLink("Delete", "Delete",new { id = blog.Id })</td>
+                <td>@blog.Title</td>
             </tr>
     }
         </tbody>

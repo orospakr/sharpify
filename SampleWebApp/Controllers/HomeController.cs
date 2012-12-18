@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Newtonsoft.Json.Linq;
 using SampleWebApp.Shopify;
-using ShopifyAPIAdapterLibrary;
+using Sharpify;
 
 namespace SampleWebApp.Controllers
 {

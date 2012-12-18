@@ -5,7 +5,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SampleWebApp.Shopify;
-using ShopifyAPIAdapterLibrary;
+using Sharpify;
+using System.Threading.Tasks;
+using Sharpify.Models;
 
 namespace SampleWebApp.Controllers
 {
@@ -24,12 +26,11 @@ namespace SampleWebApp.Controllers
             }
         }
 
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             // get all shopify blogs
-            dynamic blogResponse = _shopify.Get("/admin/blogs.json");
-            ViewBag.Blogs = blogResponse.blogs;
-            return View();
+            var blogs = await _shopify.GetResource<Blog>().AsList();
+            return View(blogs);
         }
 
         public ActionResult Create()
@@ -39,26 +40,16 @@ namespace SampleWebApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(FormCollection collection)
+        public async Task<ActionResult> Create(FormCollection collection)
         {
             try
             {
-                // From the shopify docs, this is the expected format
-                //{
-                //  "blog": {
-                //    "title": "Apple main blog"
-                //  }
-                //}
-                //so create the .NET equivalent of that
-                dynamic blogData = new
-                { 
-                    blog = new { 
-                        title = collection["Title"] 
-                    } 
+                var newBlog = new Blog()
+                {
+                    Title = collection["Title"]
                 };
-                dynamic createBlogResponse = this._shopify.Post("/admin/blogs.json", blogData);
 
-                //check response for errors
+                await _shopify.GetResource<Blog>().Save<Blog>(newBlog);
 
                 return RedirectToAction("Index");
             }
@@ -69,65 +60,36 @@ namespace SampleWebApp.Controllers
             }
         }
 
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            dynamic blogData = this._shopify.Get(String.Format("/admin/blogs/{0}.json", id));
-
-            ViewBag.blog = blogData.blog;
-            return View();
+            var blog = await _shopify.GetResource<Blog>().Find(id);
+            return View(blog);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, FormCollection collection)
+        public async Task<ActionResult> Edit(Blog data)
         {
-            try
-            {
-                // TODO: Add update logic here
-                dynamic blogData = new
-                {
-                    blog = new
-                    {
-                        title = collection["Title"]
-                    }
-                };
-                dynamic updateBlogResponse = this._shopify.Put(String.Format("/admin/blogs/{0}.json", id), blogData);
-
-                //TODO: Check the repsponse and make sure the action you wanted to happen happened
+                await _shopify.GetResource<Blog>().Update<Blog>(data);
 
                 return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
         }
 
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            dynamic blogData = this._shopify.Get(String.Format("/admin/blogs/{0}.json", id));
-
-            ViewBag.blog = blogData.blog;
-
-            return View();
+            var blog = await _shopify.GetResource<Blog>().Find(id);
+            
+            
+            return View(blog);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, FormCollection collection)
+        public async Task<ActionResult> Delete(Blog condemned)
         {
-            try
-            {
-                dynamic deleteBlogResponse = this._shopify.Delete(String.Format("/admin/blogs/{0}.json", id));
+            await _shopify.GetResource<Blog>().Delete<Blog>(condemned);
 
-                //TODO: Check the repsponse and make sure the action you wanted to happen happened
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Index");
         }
     }
 }

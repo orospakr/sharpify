@@ -1,0 +1,54 @@
+﻿@model Sharpify.Models.Product
+
+@{
+    ViewBag.Title = "Edit";
+    var title = Model.Title;
+}
+
+<h2>Edit Product</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <fieldset>
+        @Html.EditorFor(x => x.Title)
+	</fieldset>
+
+    <fieldset>
+        @Html.EditorFor(x => x.BodyHtml)
+	</fieldset>
+
+    <fieldset>
+        @Html.EditorFor(x => x.Handle)
+	</fieldset>
+
+    <fieldset>
+        @Html.EditorFor(x => x.PublishedAt)
+	</fieldset>
+
+    <fieldset>
+        @Html.EditorFor(x => x.TemplateSuffix)
+	</fieldset>
+
+    <fieldset>
+        @Html.EditorFor(x => x.ProductType)
+	</fieldset>
+
+    <fieldset>
+        @Html.EditorFor(x => x.Vendor)
+	</fieldset>
+
+    <fieldset>
+        @Html.EditorFor(x => x.Tags)
+	</fieldset>
+
+    
+	<fieldset class="form-actions">
+		<input type="submit" value="Submit" />
+	</fieldset>
+}
+
+
+<p>@Html.ActionLink("Back to List", "Index")</p>

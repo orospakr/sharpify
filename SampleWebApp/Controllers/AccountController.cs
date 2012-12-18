@@ -6,7 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using SampleWebApp.Models;
-using ShopifyAPIAdapterLibrary;
+using Sharpify;
 using System.Threading.Tasks;
 
 namespace SampleWebApp.Controllers
@@ -39,10 +39,9 @@ namespace SampleWebApp.Controllers
 
                 // prepare the URL that will be executed after authorization is requested
                 Uri requestUrl = this.Url.RequestContext.HttpContext.Request.Url;
-                Uri returnURL = new Uri(string.Format("{0}://{1}{2}",
-                                                        requestUrl.Scheme,
-                                                        requestUrl.Authority,
-                                                        this.Url.Action("ShopifyAuthCallback", "Account")));
+                Uri returnURL = new Uri(string.Format("{0}{1}",
+                    ConfigurationManager.AppSettings["Shopify.AppUrl"],
+                    this.Url.Action("ShopifyAuthCallback", "Account")));
 
                 var authorizer = new ShopifyAPIAuthorizer(shopName, ConfigurationManager.AppSettings["Shopify.ConsumerKey"], ConfigurationManager.AppSettings["Shopify.ConsumerSecret"]);
                 var authUrl = authorizer.GetAuthorizationURL(new string[] { ConfigurationManager.AppSettings["Shopify.Scope"] }, returnURL.ToString());

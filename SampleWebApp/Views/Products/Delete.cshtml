@@ -1,15 +1,15 @@
-﻿@model Sharpify.Models.Blog
+﻿@model Sharpify.Models.Product
 
 @{
     ViewBag.Title = "Delete";
 }
 
-<h2>Delete Blog</h2>
+<h2>Delete Product</h2>
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
-<p>Are you sure you want to delete this blog? <input type="submit" value="Delete" /></p>
+<p>Are you sure you want to delete this product? <input type="submit" value="Delete" /></p>
 <p>Title: @Model.Title</p>
 
 <p>@Html.ActionLink("Back to List", "Index")</p>
