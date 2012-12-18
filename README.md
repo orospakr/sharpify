@@ -27,8 +27,9 @@ this:
 
     git submodule add git://github.com/orospakr/sharpify dependencies/Sharpify
 
-MonoDevelop and Visual Studio 2012 happily consume the sln and csproj
-without problems.
+Both MonoDevelop and Visual Studio 2012 happily consume the sln and
+csproj without problems, and are apparently well-behaved these days in
+that they don't seem to squish one another's settings.
 
 For now, I added all of the dependencies as binaries for the purpose
 of convenience into the repository because NuGet isn't usable on Mono,
@@ -53,13 +54,13 @@ that.
 
 This adapter is type-safe, with the intention of being locally
 discoverable with the help of your IDE's code completion feature, and
-that your usage is verifiable at compile time.  Regardless, it is
-recommended that you review the
+that your usage is largely verifiable at compile time.  Regardless, it
+is recommended that you review the
 [Shopify API documentation](http://api.shopify.com/).
 
-After obtaining your authorization token, you can create a
-`ShopifyApiContext` from which in turn you can get access to the
-`RestResource` objects, which can fetch and push individual model
+After obtaining your authorization token (detailed below), you can
+create a `ShopifyApiContext` from which in turn you can get access to
+the `RestResource` objects, which can fetch and push individual model
 objects (an Order, Customer, and so on).
 
 However, unlike ActiveRecord and ActiveResource, the model instances
@@ -235,8 +236,9 @@ Orders.CallAction(order, "cancel");
 
 ### Fetch all Models in a Resource
 
-This takes care of all the pagination for you.  Asynchronously iterate
-over all of the models:
+This takes care of the API pagination for you (that is, it will make
+all the potentially multiple requests necessarily to retrieve all of
+the models).  Asynchronously iterate over all of the models:
 
 ```csharp
 await Products.Each((product) => {
@@ -489,6 +491,8 @@ Setup procedure:
    same value as you provided to the Shopify Partners UI, with no
    trailing slash.
 
-2. Start the webapp and enter your shop name.
+2. Start the webapp (use the built-in ASP.net development server and
+   not IIS Express, as IIS Express expects the incoming `Host:` header to
+   be `http://localhost...`) and enter your shop name.
 
 ## Happy Trading!
