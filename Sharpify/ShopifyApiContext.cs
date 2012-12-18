@@ -138,6 +138,11 @@ namespace Sharpify
                 reqBody = Translator.Encode(data);
             }
             var result = await CallRaw(method, GetRequestContentType(), path, parameters, reqBody);
+
+            //At least one endpoint will return an empty string, that we need to account for.
+            if (string.IsNullOrWhiteSpace(result))
+                return null;
+
             if (Translator != null) {
                 return Translator.Decode(result);
             } else {
